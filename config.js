@@ -15,17 +15,21 @@ export const MANNEQUIN_CFG = {
         seamStrokeWidth: '0.35',
         seamDash: '1.5 1.5',
         label: 'Illustration',
-        free: true
+        free: true,
+        hasBack: false
     },
     iso: {
         file: 'mannequin_iso.svg',
-        previewViewBox: '400 550 1500 1900',
-        exportViewBox: '500 600 1300 1700',
+        previewViewBox: '380 650 1520 1750',
+        backViewBox: '2648 650 1520 1750',
+        exportViewBox: '400 680 1480 1700',
+        exportBackViewBox: '2668 680 1480 1700',
         strokeWidth: '3',
         seamStrokeWidth: '1.5',
         seamDash: '12 12',
         label: 'ISO EU38',
-        free: false
+        free: false,
+        hasBack: true
     }
 };
 

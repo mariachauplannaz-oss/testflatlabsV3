@@ -16,28 +16,22 @@ const state = {
     emailCaptured: false
 };
 
-// SVG cache — loaded once, reused
 const svgCache = {};
 
-// ═══ LOGGER ═══
-const logEl = document.getElementById('log');
+// ═══ LOGGER (console only, no UI) ═══
 function log(m, t='info') {
-    logEl.style.display = 'block';
-    const l = document.createElement('div');
-    l.className = t;
-    l.textContent = m;
-    logEl.appendChild(l);
-    logEl.scrollTop = logEl.scrollHeight;
+    const prefix = t === 'ok' ? '✓' : t === 'err' ? '✗' : t === 'warn' ? '⚠' : 'ℹ';
+    console.log(`[FlatLabs ${prefix}] ${m}`);
 }
 
-// ═══ LOAD SVG (fetch external file) ═══
+// ═══ LOAD SVG ═══
 async function loadSVG() {
     const cfg = MANNEQUIN_CFG[state.currentMannequin];
     const file = cfg.file;
 
     if (svgCache[file]) {
         state.svgData = parseSVG(svgCache[file]);
-        log(`Loaded ${state.currentMannequin} (cached): ${Object.keys(state.svgData.torsos).length}T ${Object.keys(state.svgData.necks).length}N ${Object.keys(state.svgData.sleeves).length}S`, 'ok');
+        log(`Loaded ${state.currentMannequin} (cached): F=${Object.keys(state.svgData.front.torsos).length}T ${Object.keys(state.svgData.front.necks).length}N ${Object.keys(state.svgData.front.sleeves).length}S | B=${Object.keys(state.svgData.back.torsos).length}T`, 'ok');
         return;
     }
 
@@ -47,7 +41,7 @@ async function loadSVG() {
         const svgText = await resp.text();
         svgCache[file] = svgText;
         state.svgData = parseSVG(svgText);
-        log(`Loaded ${state.currentMannequin}: ${Object.keys(state.svgData.torsos).length}T ${Object.keys(state.svgData.necks).length}N ${Object.keys(state.svgData.sleeves).length}S`, 'ok');
+        log(`Loaded ${state.currentMannequin}: F=${Object.keys(state.svgData.front.torsos).length}T ${Object.keys(state.svgData.front.necks).length}N ${Object.keys(state.svgData.front.sleeves).length}S | B=${Object.keys(state.svgData.back.torsos).length}T`, 'ok');
     } catch(err) {
         log(`Failed to load ${file}: ${err.message}`, 'err');
     }
@@ -60,7 +54,6 @@ async function setMannequin(type) {
     document.getElementById('btnIso').classList.toggle('active', type==='iso');
     await loadSVG();
     if (state.currentStep === 1) buildStep1(state);
-    // Re-generate if preview exists
     if (document.querySelector('#svg-preview svg')) {
         generate(state, log);
     }
@@ -86,7 +79,6 @@ function doEmailSubmit(e) { handleEmailSubmit(e, state, doTriggerDownload); }
 function doSkipEmail() { skipEmail(state, doTriggerDownload); }
 
 // ═══ EXPOSE TO HTML ═══
-// (These are called from onclick attributes in index.html)
 window.setMannequin = setMannequin;
 window.toggleSidebar = toggleSidebar;
 window.closeSidebar = closeSidebar;

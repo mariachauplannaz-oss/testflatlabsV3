@@ -161,11 +161,12 @@ input[type="color"]{width:32px;height:32px;border:2px solid var(--gray3);border-
 }
 .topbar-download:hover{background:var(--blue);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
 
-.canvas-area{flex:1;padding:28px;overflow:auto;display:flex;align-items:center;justify-content:center}
+.canvas-area{flex:1;padding:28px;overflow:auto;display:flex;align-items:flex-start;justify-content:center;flex-wrap:wrap;gap:20px}
 .canvas-card{
-    background:white;border-radius:20px;padding:36px;
+    background:white;border-radius:20px;padding:24px 36px 36px;
     box-shadow:0 20px 60px rgba(0,0,0,.06);transition:box-shadow .4s;
-    min-width:420px;min-height:500px;display:flex;align-items:center;justify-content:center;
+    min-width:280px;min-height:400px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    flex:1 1 280px;max-width:500px;
 }
 .canvas-card:hover{box-shadow:0 28px 70px rgba(0,0,0,.09)}
 #svg-preview{width:400px;height:700px}
@@ -177,12 +178,7 @@ input[type="color"]{width:32px;height:32px;border:2px solid var(--gray3);border-
 .empty p{font-size:13px;color:var(--gray2);line-height:1.5}
 
 /* Log */
-.log{
-    margin-top:10px;background:var(--gray1);border-radius:10px;padding:10px 12px;
-    font-family:"SF Mono",ui-monospace,monospace;font-size:10px;
-    color:#8b949e;max-height:100px;overflow-y:auto;line-height:1.6;
-}
-.log .ok{color:#3fb950} .log .warn{color:#d29922} .log .err{color:#f85149} .log .info{color:#58a6ff}
+/* Log removed — debug goes to console */
 
 /* Modals */
 .modal-overlay{
@@ -257,3 +253,11 @@ input[type="color"]{width:32px;height:32px;border:2px solid var(--gray3);border-
     .sidebar-bottom{padding:12px 20px}
     .support-button{bottom:12px;right:12px;padding:8px 14px;font-size:11px;z-index:35}
 }
+/* Canvas label (FRONT / BACK) */
+.canvas-label{
+    font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+    color:var(--gray2);text-align:center;margin-bottom:8px;
+}
+
+/* Dual canvas layout for ISO */
+.canvas-area{flex-wrap:wrap;gap:20px}

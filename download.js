@@ -1,4 +1,4 @@
-// ═══ download.js — Download, lead capture, watermark removal ═══
+// ═══ download.js — Download, lead capture ═══
 
 import { MANNEQUIN_CFG } from './config.js';
 
@@ -19,15 +19,13 @@ export function triggerDownload(state, log) {
     if (!svg) return;
     const clone = svg.cloneNode(true);
 
-    // Remove ghost body from export
+    // Remove ghost body + watermark from export
     const bodyLayer = clone.querySelector('#layer-body');
     if (bodyLayer) bodyLayer.remove();
-
-    // Remove watermark from export
     const wmLayer = clone.querySelector('#layer-watermark');
     if (wmLayer) wmLayer.remove();
 
-    // Use export viewBox (cropped to garment)
+    // Use export viewBox
     const cfg = MANNEQUIN_CFG[state.currentMannequin];
     clone.setAttribute('viewBox', cfg.exportViewBox);
 
@@ -36,7 +34,7 @@ export function triggerDownload(state, log) {
     const u = URL.createObjectURL(b);
     const a = document.createElement('a');
     a.href = u;
-    a.download = 'flatlabs_' + (state.selectedCategory||'garment') + '_' + state.currentMannequin + '_' + Date.now() + '.svg';
+    a.download = 'flatlabs_' + (state.selectedCategory||'garment') + '_' + state.currentMannequin + '_front_' + Date.now() + '.svg';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

@@ -1,4 +1,4 @@
-// ═══ ui.js — Navigation, steps, toggles, component builder ═══
+// ═══ ui.js — Navigation, steps, dynamic toggles, component builder ═══
 
 import { DICT, GARMENT_ICONS, CATEGORIES } from './config.js';
 
@@ -87,21 +87,35 @@ export function buildStep1(state) {
         container.appendChild(sec);
     }
 
-    buildOptions('Torso', svgData.torsos, 'torso', false);
-    buildOptions('Neckline', svgData.necks, 'neck', false);
-    buildOptions('Sleeves', svgData.sleeves, 'sleeve', true);
+    buildOptions('Torso', svgData.front.torsos, 'torso', false);
+    buildOptions('Neckline', svgData.front.necks, 'neck', false);
+    buildOptions('Sleeves', svgData.front.sleeves, 'sleeve', true);
+
+    // Dynamic toggles container
+    const togContainer = document.getElementById('dynamicToggles');
+    if (togContainer) togContainer.innerHTML = '';
+
+    // Only show pocket toggle if pockets exist in SVG
+    const togPocket = document.getElementById('togPocket');
+    const togPocketRow = togPocket ? togPocket.closest('.tog-row') : null;
+    if (togPocketRow) {
+        togPocketRow.style.display = Object.keys(svgData.front.pockets).length > 0 ? '' : 'none';
+    }
 }
 
 export function initToggles() {
-    document.getElementById('togSeams').onclick = function() {
+    const togSeams = document.getElementById('togSeams');
+    if (togSeams) togSeams.onclick = function() {
         this.classList.toggle('on');
         this.setAttribute('aria-checked', this.classList.contains('on'));
     };
-    document.getElementById('togPocket').onclick = function() {
+    const togPocket = document.getElementById('togPocket');
+    if (togPocket) togPocket.onclick = function() {
         this.classList.toggle('on');
         this.setAttribute('aria-checked', this.classList.contains('on'));
     };
-    document.getElementById('cFill').oninput = function() {
+    const cFill = document.getElementById('cFill');
+    if (cFill) cFill.oninput = function() {
         document.getElementById('hFill').textContent = this.value;
     };
 }
