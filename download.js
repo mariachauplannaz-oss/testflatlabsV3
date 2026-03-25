@@ -1,67 +1,100 @@
-// ═══ download.js — Download, lead capture ═══
+// ═══ download.js — SVG download & email capture logic ═══
 
 import { MANNEQUIN_CFG } from './config.js';
 
 export function downloadSVG(state, log) {
-    if (!MANNEQUIN_CFG[state.currentMannequin].free) {
+    const cfg = MANNEQUIN_CFG[state.currentMannequin];
+    
+    // If Pro mannequin, show Pro modal instead
+    if (!cfg.free) {
         document.getElementById('proModal').classList.add('show');
         return;
     }
-    if (!state.emailCaptured) {
-        document.getElementById('emailModal').classList.add('show');
+    
+    // Check if email already captured
+    if (state.emailCaptured || localStorage.getItem('fl_email_captured')) {
+        triggerDownload(state, log);
         return;
     }
-    triggerDownload(state, log);
+    
+    // Show email modal
+    document.getElementById('emailModal').classList.add('show');
 }
 
 export function triggerDownload(state, log) {
-    const svg = document.querySelector('#svg-preview svg');
-    if (!svg) return;
-    const clone = svg.cloneNode(true);
-
-    // Remove ghost body + watermark from export
-    const bodyLayer = clone.querySelector('#layer-body');
-    if (bodyLayer) bodyLayer.remove();
-    const wmLayer = clone.querySelector('#layer-watermark');
-    if (wmLayer) wmLayer.remove();
-
-    // Use export viewBox
+    const svgEl = document.querySelector('#svg-preview svg');
+    if (!svgEl) {
+        log('No SVG to download', 'err');
+        return;
+    }
+    
     const cfg = MANNEQUIN_CFG[state.currentMannequin];
+    
+    // Clone and prepare for export
+    const clone = svgEl.cloneNode(true);
     clone.setAttribute('viewBox', cfg.exportViewBox);
-
-    const s = '<?xml version="1.0" encoding="UTF-8"?>\n' + new XMLSerializer().serializeToString(clone);
-    const b = new Blob([s], {type:'image/svg+xml'});
-    const u = URL.createObjectURL(b);
+    
+    // Remove watermark if present
+    const watermark = clone.querySelector('#layer-watermark');
+    if (watermark) watermark.remove();
+    
+    // Serialize
+    const serializer = new XMLSerializer();
+    let svgString = serializer.serializeToString(clone);
+    
+    // Add XML declaration
+    svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
+    
+    // Create blob and download
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    
     const a = document.createElement('a');
-    a.href = u;
-    a.download = 'flatlabs_' + (state.selectedCategory||'garment') + '_' + state.currentMannequin + '_front_' + Date.now() + '.svg';
+    a.href = url;
+    a.download = `flatlabs-${state.selectedCategory || 'garment'}-${Date.now()}.svg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(u);
-    log('Downloaded: ' + a.download, 'ok');
+    URL.revokeObjectURL(url);
+    
+    log('SVG downloaded!', 'ok');
+    
+    // Close modal if open
+    document.getElementById('emailModal').classList.remove('show');
 }
 
-export function handleEmailSubmit(e, state, triggerDl) {
-    e.preventDefault();
-    const formData = new FormData(e.target);
+export function handleEmailSubmit(event, state, triggerDownloadFn) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const email = form.querySelector('input[name="email"]').value;
+    
+    if (!email || !email.includes('@')) {
+        return;
+    }
+    
+    // Submit to Netlify
+    const formData = new FormData(form);
+    
     fetch('/', {
-        method:'POST',
-        headers:{'Content-Type':'application/x-www-form-urlencoded'},
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(formData).toString()
-    }).then(() => {
+    })
+    .then(() => {
         state.emailCaptured = true;
-        document.getElementById('emailModal').classList.remove('show');
-        triggerDl();
-    }).catch(() => {
-        state.emailCaptured = true;
-        document.getElementById('emailModal').classList.remove('show');
-        triggerDl();
+        localStorage.setItem('fl_email_captured', 'true');
+        triggerDownloadFn();
+    })
+    .catch(err => {
+        console.error('Form submission error:', err);
+        // Still allow download on error
+        triggerDownloadFn();
     });
 }
 
-export function skipEmail(state, triggerDl) {
+export function skipEmail(state, triggerDownloadFn) {
     state.emailCaptured = true;
-    document.getElementById('emailModal').classList.remove('show');
-    triggerDl();
+    localStorage.setItem('fl_email_captured', 'true');
+    triggerDownloadFn();
 }

@@ -78,22 +78,42 @@ function doTriggerDownload() { triggerDownload(state, log); }
 function doEmailSubmit(e) { handleEmailSubmit(e, state, doTriggerDownload); }
 function doSkipEmail() { skipEmail(state, doTriggerDownload); }
 
-// ═══ EXPOSE TO HTML ═══
-window.setMannequin = setMannequin;
-window.toggleSidebar = toggleSidebar;
-window.closeSidebar = closeSidebar;
-window.downloadSVG = doDownload;
-window.nextAction = nextAction;
-window.goStep = (n) => goStep(n, state, doUpdateButton);
-window.handleEmailSubmit = doEmailSubmit;
-window.skipEmail = doSkipEmail;
-
 // ═══ INIT ═══
 async function init() {
     initCategories(state, doUpdateButton);
     initToggles();
     await loadSVG();
     goStep(0, state, doUpdateButton);
+    
+    // Event listeners (ES6 modules don't work with inline onclick)
+    document.getElementById('burgerBtn')?.addEventListener('click', toggleSidebar);
+    document.getElementById('sidebarBackdrop')?.addEventListener('click', closeSidebar);
+    document.getElementById('mobileDownload')?.addEventListener('click', doDownload);
+    document.getElementById('btnDownload')?.addEventListener('click', doDownload);
+    document.getElementById('btnSty')?.addEventListener('click', () => setMannequin('sty'));
+    document.getElementById('btnIso')?.addEventListener('click', () => setMannequin('iso'));
+    document.getElementById('btnBack')?.addEventListener('click', () => goStep(0, state, doUpdateButton));
+    document.getElementById('btnNext')?.addEventListener('click', nextAction);
+    
+    // Modal listeners
+    document.getElementById('leadForm')?.addEventListener('submit', doEmailSubmit);
+    document.getElementById('btnSkipEmail')?.addEventListener('click', doSkipEmail);
+    document.getElementById('btnCloseEmailModal')?.addEventListener('click', () => {
+        document.getElementById('emailModal').classList.remove('show');
+    });
+    document.getElementById('btnCloseProModal')?.addEventListener('click', () => {
+        document.getElementById('proModal').classList.remove('show');
+    });
+
+    // Email input focus/blur styles
+    const emailInput = document.getElementById('emailInput');
+    emailInput?.addEventListener('focus', function() { this.style.borderColor = 'var(--accent)'; });
+    emailInput?.addEventListener('blur', function() { this.style.borderColor = 'var(--gray3)'; });
+
+    // Skip email hover
+    const btnSkip = document.getElementById('btnSkipEmail');
+    btnSkip?.addEventListener('mouseover', function() { this.style.opacity = '1'; });
+    btnSkip?.addEventListener('mouseout', function() { this.style.opacity = '.6'; });
 }
 
 init();

@@ -1,0 +1,8 @@
+# FlatLabs robots.txt
+# https://flatsgenerator.com
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://flatsgenerator.com/sitemap.xml

@@ -49,10 +49,12 @@ export function merge2(torsoD, neckD, log) {
     log(`  TOR: (${tE.start.x.toFixed(1)},${tE.start.y.toFixed(1)})\u2192(${tE.end.x.toFixed(1)},${tE.end.y.toFixed(1)})`, 'info');
     log(`  NCK: (${nE.start.x.toFixed(1)},${nE.start.y.toFixed(1)})\u2192(${nE.end.x.toFixed(1)},${nE.end.y.toFixed(1)})`, 'info');
 
+    // Torso.end -> Neck.start, Neck.end -> Torso.start
     if (near(tE.end, nE.start) && near(nE.end, tE.start)) {
         log('  Circuit: Torso\u2192Neck\u2192Z', 'ok');
         return torsoD.replace(/Z\s*$/i,'').trim() + ' ' + stripM(neckD) + ' Z';
     }
+    // Reversed
     if (near(tE.start, nE.end) && near(nE.start, tE.end)) {
         log('  Circuit: Neck\u2192Torso\u2192Z', 'ok');
         return neckD.replace(/Z\s*$/i,'').trim() + ' ' + stripM(torsoD) + ' Z';

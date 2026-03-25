@@ -44,3 +44,120 @@ export const CATEGORIES = [
     { id:'pants',  label:'Pants',   icon:'pants',  disabled:true },
     { id:'jacket', label:'Jacket',  icon:'jacket', disabled:true }
 ];
+
+// ═══ COMPONENT_META — ISO Size 38 Female measurements ═══
+// Add this block to your existing config.js
+
+export const COMPONENT_META = {
+
+    // ─── TORSOS ───────────────────────────────────────────────
+    torsos: {
+        reg: {
+            label: 'Regular Fit',
+            measures: {
+                chest:      { label: 'Chest',             value: 92,   unit: 'cm' },
+                waist:      { label: 'Waist',             value: 74,   unit: 'cm' },
+                length:     { label: 'Total Length (HPS)', value: 62,  unit: 'cm' },
+                shoulder:   { label: 'Shoulder to Shoulder', value: 38.5, unit: 'cm' },
+                hem:        { label: 'Hem Width',         value: 96,   unit: 'cm' }
+            },
+            construction: 'ISO 514 — Jersey stitch on side seams and hem. Double-needle hem 2cm.',
+            iso_norm: 'ISO 514'
+        },
+        crp: {
+            label: 'Crop Fit',
+            measures: {
+                chest:      { label: 'Chest',             value: 92,   unit: 'cm' },
+                waist:      { label: 'Waist',             value: 74,   unit: 'cm' },
+                length:     { label: 'Total Length (HPS)', value: 42,  unit: 'cm' },
+                shoulder:   { label: 'Shoulder to Shoulder', value: 38.5, unit: 'cm' },
+                hem:        { label: 'Hem Width',         value: 96,   unit: 'cm' }
+            },
+            construction: 'ISO 514 — Jersey stitch on side seams. Exposed hem or coverseam finish.',
+            iso_norm: 'ISO 514'
+        }
+    },
+
+    // ─── SLEEVES ──────────────────────────────────────────────
+    sleeves: {
+        lon: {
+            label: 'Long Sleeve',
+            measures: {
+                sleeve_length:  { label: 'Sleeve Length',  value: 60,   unit: 'cm' },
+                cuff_opening:   { label: 'Cuff Opening',   value: 10.5, unit: 'cm' },
+                bicep:          { label: 'Bicep Width',    value: 31,   unit: 'cm' }
+            },
+            construction: 'ISO 514 — Coverseam at cuff (ISO 406). Set-in or raglan attachment.',
+            iso_norm: 'ISO 514'
+        },
+        cap: {
+            label: 'Short Sleeve',
+            measures: {
+                sleeve_length:  { label: 'Sleeve Length',  value: 22,   unit: 'cm' },
+                sleeve_opening: { label: 'Sleeve Opening', value: 15,   unit: 'cm' }
+            },
+            construction: 'ISO 514 — Coverseam at sleeve hem (ISO 406).',
+            iso_norm: 'ISO 514'
+        }
+    },
+
+    // ─── NECKS ────────────────────────────────────────────────
+    necks: {
+        rnd: {
+            label: 'Crew Neck',
+            measures: {
+                neck_width: { label: 'Neck Width',      value: 18,  unit: 'cm' },
+                front_drop: { label: 'Front Drop',      value: 8.5, unit: 'cm' }
+            },
+            construction: 'ISO 301 — Flatlock stitch 0.1cm from edge. Rib binding 2×1.',
+            iso_norm: 'ISO 301'
+        },
+        v: {
+            label: 'V-Neck',
+            measures: {
+                neck_width: { label: 'Neck Width',      value: 18,  unit: 'cm' },
+                front_drop: { label: 'Front Drop',      value: 16,  unit: 'cm' }
+            },
+            construction: 'ISO 301 — Flatlock stitch 0.1cm from edge. Tape finish at V-point.',
+            iso_norm: 'ISO 301'
+        },
+        mok: {
+            label: 'Mock Neck',
+            measures: {
+                neck_height: { label: 'Neck Height',    value: 4.5, unit: 'cm' },
+                neck_width:  { label: 'Neck Width',     value: 17,  unit: 'cm' }
+            },
+            construction: 'ISO 301 — Flatlock stitch on collar seam. Self-fabric fold at 4.5cm.',
+            iso_norm: 'ISO 301'
+        },
+        scp: {
+            label: 'Scoop Neck',
+            measures: {
+                neck_width: { label: 'Neck Width',      value: 18,  unit: 'cm' },
+                front_drop: { label: 'Front Drop',      value: 12,  unit: 'cm' }
+            },
+            construction: 'ISO 301 — Flatlock stitch 0.1cm from edge.',
+            iso_norm: 'ISO 301'
+        },
+        bot: {
+            label: 'Boat Neck',
+            measures: {
+                neck_width: { label: 'Neck Width',      value: 24,  unit: 'cm' },
+                front_drop: { label: 'Front Drop',      value: 5,   unit: 'cm' }
+            },
+            construction: 'ISO 301 — Clean finish at neckline edge.',
+            iso_norm: 'ISO 301'
+        }
+    },
+
+    // ─── BOM (Bill of Materials) — default for jersey T-shirt ─
+    bom: {
+        tshirt: [
+            { ref: 'FAB-001', description: 'Main fabric — Jersey 180g/m² (95% Cotton, 5% Elastane)', unit: 'ml', qty: '1.2' },
+            { ref: 'THR-001', description: 'Polyester thread — ISO 180/2',                           unit: 'cone', qty: '1' },
+            { ref: 'LAB-001', description: 'Care label — woven (EN ISO 3758)',                        unit: 'pc', qty: '1' },
+            { ref: 'LAB-002', description: 'Brand label — woven heat transfer',                       unit: 'pc', qty: '1' },
+            { ref: 'PKG-001', description: 'Polybag 35×45cm, recycled PE',                           unit: 'pc', qty: '1' }
+        ]
+    }
+};
