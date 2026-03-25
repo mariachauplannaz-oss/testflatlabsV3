@@ -5,6 +5,7 @@ import { parseSVG } from './parser.js';
 import { generate } from './generator.js';
 import { initCategories, goStep, updateButton, buildStep1, initToggles, toggleSidebar, closeSidebar } from './ui.js';
 import { downloadSVG, triggerDownload, handleEmailSubmit, skipEmail } from './download.js';
+import { exportSpecSheet } from './specsheet.js';
 
 // ═══ STATE ═══
 const state = {
@@ -77,6 +78,13 @@ function doDownload() { downloadSVG(state, log); }
 function doTriggerDownload() { triggerDownload(state, log); }
 function doEmailSubmit(e) { handleEmailSubmit(e, state, doTriggerDownload); }
 function doSkipEmail() { skipEmail(state, doTriggerDownload); }
+async function doExportTechPack() {
+    await exportSpecSheet(state, {
+        name: 'My Collection',
+        sku:  'FL-TS-001',
+        season: 'SS26'
+    });
+}
 
 // ═══ INIT ═══
 async function init() {
