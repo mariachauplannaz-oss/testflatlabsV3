@@ -6,10 +6,10 @@ export function downloadSVG(state, log) {
     const cfg = MANNEQUIN_CFG[state.currentMannequin];
     
     // If Pro mannequin, show Pro modal instead
-    if (!cfg.free) {
-        document.getElementById('proModal').classList.add('show');
-        return;
-    }
+// if (!cfg.free) {
+//     document.getElementById('proModal').classList.add('show');
+//     return;
+// }
     
     // Check if email already captured
     if (state.emailCaptured || localStorage.getItem('fl_email_captured')) {
