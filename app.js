@@ -98,6 +98,7 @@ async function init() {
     document.getElementById('sidebarBackdrop')?.addEventListener('click', closeSidebar);
     document.getElementById('mobileDownload')?.addEventListener('click', doDownload);
     document.getElementById('btnDownload')?.addEventListener('click', doDownload);
+    document.getElementById('btnTechPack')?.addEventListener('click', doExportTechPack);
     document.getElementById('btnSty')?.addEventListener('click', () => setMannequin('sty'));
     document.getElementById('btnIso')?.addEventListener('click', () => setMannequin('iso'));
     document.getElementById('btnBack')?.addEventListener('click', () => goStep(0, state, doUpdateButton));
