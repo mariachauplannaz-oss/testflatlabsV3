@@ -129,3 +129,11 @@ export function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebarBackdrop').classList.remove('show');
 }
+
+export function setIsoMode(isIso) {
+    if (isIso) {
+        document.body.classList.add('iso-mode');
+    } else {
+        document.body.classList.remove('iso-mode');
+    }
+}
