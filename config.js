@@ -394,3 +394,73 @@ export function collectConstruction(selections) {
 
     return notes;
 }
+
+// ═══════════════════════════════════════════════════════════════
+// COLORWAY — Pantone TCX approximate matching
+// ═══════════════════════════════════════════════════════════════
+// Source: ~30 common fashion industry colors.
+// Matching is done via Euclidean distance in RGB space.
+// This is an approximation only — not a calibrated color management system.
+ 
+export const PANTONE_APPROX = [
+    { hex: '#000000', name: 'Black',        pantone: '19-0303 TCX Jet Black' },
+    { hex: '#FFFFFF', name: 'White',        pantone: '11-0601 TCX Bright White' },
+    { hex: '#1C1C1C', name: 'Off Black',    pantone: '19-0508 TCX Peat' },
+    { hex: '#F5F5DC', name: 'Cream',        pantone: '11-0507 TCX Winter White' },
+    { hex: '#C4B9A8', name: 'Sand',         pantone: '14-1012 TCX Gilded Beige' },
+    { hex: '#808080', name: 'Grey',         pantone: '17-4402 TCX Neutral Gray' },
+    { hex: '#D3D3D3', name: 'Light Grey',   pantone: '14-4002 TCX Glacier Gray' },
+    { hex: '#4A4A4A', name: 'Charcoal',     pantone: '18-0601 TCX Charcoal Gray' },
+    { hex: '#000080', name: 'Navy',         pantone: '19-3832 TCX Medieval Blue' },
+    { hex: '#00008B', name: 'Dark Navy',    pantone: '19-3939 TCX Blueprint' },
+    { hex: '#4169E1', name: 'Royal Blue',   pantone: '19-3955 TCX Royal Blue' },
+    { hex: '#87CEEB', name: 'Sky Blue',     pantone: '14-4318 TCX Sky Blue' },
+    { hex: '#B0E0E6', name: 'Powder Blue',  pantone: '13-4411 TCX Crystal Blue' },
+    { hex: '#FF0000', name: 'Red',          pantone: '18-1763 TCX High Risk Red' },
+    { hex: '#8B0000', name: 'Burgundy',     pantone: '19-1725 TCX Tawny Port' },
+    { hex: '#DC143C', name: 'Crimson',      pantone: '19-1762 TCX Jester Red' },
+    { hex: '#FF6B6B', name: 'Coral',        pantone: '16-1546 TCX Living Coral' },
+    { hex: '#FFC0CB', name: 'Pink',         pantone: '13-2010 TCX Crystal Rose' },
+    { hex: '#FF69B4', name: 'Hot Pink',     pantone: '17-2127 TCX Shocking Pink' },
+    { hex: '#006400', name: 'Forest Green', pantone: '18-0135 TCX Treetop' },
+    { hex: '#556B2F', name: 'Olive',        pantone: '18-0527 TCX Olive Drab' },
+    { hex: '#90EE90', name: 'Mint',         pantone: '13-6110 TCX Misty Jade' },
+    { hex: '#008080', name: 'Teal',         pantone: '18-4930 TCX Deep Lake' },
+    { hex: '#FFD700', name: 'Gold',         pantone: '14-0846 TCX Yolk Yellow' },
+    { hex: '#FFA500', name: 'Orange',       pantone: '16-1359 TCX Orange Peel' },
+    { hex: '#F5F5F0', name: 'Off White',    pantone: '11-0602 TCX Whisper White' },
+    { hex: '#A0522D', name: 'Brown',        pantone: '18-1140 TCX Mocha Bisque' },
+    { hex: '#D2B48C', name: 'Tan',          pantone: '15-1225 TCX Sand' },
+    { hex: '#800080', name: 'Purple',       pantone: '19-3536 TCX Grape Juice' },
+    { hex: '#E6E6FA', name: 'Lavender',     pantone: '13-3820 TCX Lavender Fog' }
+];
+ 
+// ─── findClosestPantone ────────────────────────────────────────
+// Returns the closest PANTONE_APPROX entry for a given HEX string.
+// Uses Euclidean distance in RGB space.
+// Input: '#RRGGBB' (6-char hex, with or without leading #)
+// Output: { hex, name, pantone }
+ 
+export function findClosestPantone(hex) {
+    // Normalize: ensure leading #, uppercase
+    const h = hex.startsWith('#') ? hex : '#' + hex;
+    const r = parseInt(h.slice(1, 3), 16);
+    const g = parseInt(h.slice(3, 5), 16);
+    const b = parseInt(h.slice(5, 7), 16);
+ 
+    let closest = PANTONE_APPROX[0];
+    let minDist = Infinity;
+ 
+    for (const p of PANTONE_APPROX) {
+        const pr = parseInt(p.hex.slice(1, 3), 16);
+        const pg = parseInt(p.hex.slice(3, 5), 16);
+        const pb = parseInt(p.hex.slice(5, 7), 16);
+        const dist = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
+        if (dist < minDist) {
+            minDist = dist;
+            closest = p;
+        }
+    }
+ 
+    return closest;
+}
