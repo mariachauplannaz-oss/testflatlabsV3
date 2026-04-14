@@ -50,7 +50,7 @@ export function updateButton(state) {
 
 export function buildStep1(state) {
     const { svgData, selections } = state;
-    const container = document.getElementById('manufContainer');
+    const container = document.getElementById('componentsContainer');
     container.innerHTML = '';
 
     function buildOptions(label, dataObj, selKey, allowNone) {
@@ -112,7 +112,7 @@ export function buildStep1(state) {
 }
 
 export function buildStep2(state) {
-    const container = document.getElementById('componentsContainer');
+    const container = document.getElementById('manufContainer');
     container.innerHTML = '';
 
     // ── Fabric Weight selector ──
