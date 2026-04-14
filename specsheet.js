@@ -427,11 +427,11 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // Flat visual
     y = await drawFlat(doc, y);
 
-    // Colorway section (uses state.fillColor — skipped gracefully if absent)
-    if (state.fillColor) {
-        y = drawSectionLabel(doc, '00 — Colorway', y);
-        y = drawColorway(doc, state.fillColor, y);
-    }
+    // Colorway section 
+    if (state.colorHex) {
+    y = drawSectionLabel(doc, '00 — Colorway', y);
+    y = drawColorway(doc, state.colorHex, y);
+}
 
     // POM section
     y = drawSectionLabel(doc, '01 — Points of Measure (POM) · ISO 3635 · EU Size 38', y);
@@ -458,4 +458,5 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     const filename = `FlatLabs_TechPack_${techPack.header.sku}_${new Date().toISOString().slice(0,10)}.pdf`;
     doc.save(filename);
     console.log(`[FlatLabs ✓] Tech Pack exported: ${filename}`);
+
 }
