@@ -20,8 +20,9 @@ function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
     const gA = { fill, stroke:'#1a1a1a', 'stroke-width':sw, 'stroke-linejoin':'round', 'stroke-linecap':'round' };
     const seamA = { fill:'none', stroke:'#1a1a1a', 'stroke-width':seamSw, 'stroke-linecap':'round' };
 
-    // Ghost mannequin
-    if (ghostMarkup) {
+// Ghost mannequin — hidden in ISO mode (production view = garment only)
+    const isIsoMode = document.body.classList.contains('iso-mode');
+    if (ghostMarkup && !isIsoMode) {
         const tmp = new DOMParser().parseFromString(
             '<svg xmlns="http://www.w3.org/2000/svg">' + ghostMarkup + '</svg>', 'image/svg+xml'
         );
@@ -31,7 +32,7 @@ function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
         });
         svgEl.appendChild(ghost);
     }
-
+    
     // Get component names for IDs
     const torsoName = selections.torso || Object.keys(components.torsos)[0] || 'torso';
     const neckName = selections.neck || 'neck';
