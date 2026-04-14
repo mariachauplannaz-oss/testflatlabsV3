@@ -4,6 +4,7 @@
 //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 import { buildTechPackState } from './techpack.js';
+import { findClosestPantone } from './config.js';
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const COLORS = {
@@ -43,6 +44,23 @@ function pageWidth(doc) {
 
 function pageHeight(doc) {
     return doc.internal.pageSize.getHeight();
+}
+
+// ─── HELPER: parse HEX → [R, G, B] ──────────────────────────────────────────
+function hexToRgb(hex) {
+    const h = hex.startsWith('#') ? hex : '#' + hex;
+    return [
+        parseInt(h.slice(1, 3), 16),
+        parseInt(h.slice(3, 5), 16),
+        parseInt(h.slice(5, 7), 16),
+    ];
+}
+
+// ─── HELPER: decide label color (black or white) based on luminance ──────────
+function contrastColor(r, g, b) {
+    // Relative luminance (WCAG formula)
+    const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    return lum > 140 ? COLORS.black : COLORS.white;
 }
 
 // ─── HEADER BAND ─────────────────────────────────────────────────────────────
@@ -173,6 +191,74 @@ async function drawFlat(doc, y) {
         console.warn('[FlatLabs] Could not render SVG to PDF:', e);
         return y;
     }
+}
+
+// ─── COLORWAY SECTION ────────────────────────────────────────────────────────
+// Renders a color swatch with Name, HEX, and closest Pantone TCX reference.
+// fillColorHex: string like '#DC143C' or 'DC143C' from state.fillColor
+
+function drawColorway(doc, fillColorHex, y) {
+    if (!fillColorHex) return y;
+
+    const pw = pageWidth(doc);
+
+    // Normalize hex
+    const hex = fillColorHex.startsWith('#') ? fillColorHex.toUpperCase() : '#' + fillColorHex.toUpperCase();
+    const [r, g, b] = hexToRgb(hex);
+    const pantoneMatch = findClosestPantone(hex);
+
+    // Layout constants
+    const swatchW   = 28;   // mm — width of color rectangle
+    const swatchH   = 18;   // mm — height of color rectangle
+    const swatchX   = MARGIN.left;
+    const textX     = swatchX + swatchW + 6;  // text starts 6mm after swatch
+
+    // ── Color swatch ──
+    doc.setFillColor(r, g, b);
+    doc.rect(swatchX, y, swatchW, swatchH, 'F');
+
+    // Swatch border
+    doc.setDrawColor(...COLORS.gray2);
+    doc.setLineWidth(0.3);
+    doc.rect(swatchX, y, swatchW, swatchH);
+
+    // HEX label centered inside swatch (contrast-aware)
+    const labelRgb = contrastColor(r, g, b);
+    setFont(doc, 'bold', FONT.small);
+    setColor(doc, labelRgb);
+    doc.text(hex, swatchX + swatchW / 2, y + swatchH / 2 + 1, { align: 'center' });
+
+    // ── Text block (right of swatch) ──
+    const lineH = 5.5;  // mm between text lines
+
+    // Color name
+    setFont(doc, 'bold', FONT.body);
+    setColor(doc, COLORS.gray4);
+    doc.text(pantoneMatch.name, textX, y + 5);
+
+    // HEX value row
+    setFont(doc, 'bold', FONT.small);
+    setColor(doc, COLORS.gray3);
+    doc.text('HEX', textX, y + 5 + lineH);
+    setFont(doc, 'normal', FONT.small);
+    setColor(doc, COLORS.gray4);
+    doc.text(hex, textX + 10, y + 5 + lineH);
+
+    // Pantone row
+    setFont(doc, 'bold', FONT.small);
+    setColor(doc, COLORS.gray3);
+    doc.text('PANTONE', textX, y + 5 + lineH * 2);
+    setFont(doc, 'normal', FONT.small);
+    setColor(doc, COLORS.gray4);
+    doc.text(pantoneMatch.pantone + '  ·  approx.', textX + 18, y + 5 + lineH * 2);
+
+    // Approx disclaimer — far right, italic, small
+    setFont(doc, 'italic', 5.5);
+    setColor(doc, COLORS.gray3);
+    doc.text('Color matching is approximate. Verify against physical Pantone swatch before production.',
+        pw - MARGIN.right, y + swatchH, { align: 'right' });
+
+    return y + swatchH + 8;  // cursor Y after colorway block
 }
 
 // ─── POM TABLE ───────────────────────────────────────────────────────────────
@@ -340,6 +426,12 @@ export async function exportSpecSheet(state, projectMeta = {}) {
 
     // Flat visual
     y = await drawFlat(doc, y);
+
+    // Colorway section (uses state.fillColor — skipped gracefully if absent)
+    if (state.fillColor) {
+        y = drawSectionLabel(doc, '00 — Colorway', y);
+        y = drawColorway(doc, state.fillColor, y);
+    }
 
     // POM section
     y = drawSectionLabel(doc, '01 — Points of Measure (POM) · ISO 3635 · EU Size 38', y);
