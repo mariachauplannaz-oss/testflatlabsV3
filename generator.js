@@ -7,13 +7,13 @@ const NS = 'http://www.w3.org/2000/svg';
 
 function mkEl(tag, attrs) {
     const el = document.createElementNS(NS, tag);
+    state.colorHex = document.getElementById('cFill').value;
     Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
     return el;
 }
 
 function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
     const fill = document.getElementById('cFill').value;
-    state.fillColor = fill;  
     const showSeams = document.getElementById('togSeams').classList.contains('on');
 
     const sw = cfg.strokeWidth;
@@ -129,6 +129,7 @@ export function generate(state, log) {
 
     log('Generating...', 'info');
 
+    state.colorHex = document.getElementById('cFill').value;
     const previewFront = document.getElementById('svg-preview');
     const previewBack = document.getElementById('svg-preview-back');
     previewFront.innerHTML = '';
