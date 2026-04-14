@@ -4,7 +4,7 @@
 //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 import { buildTechPackState } from './techpack.js';
-import { findClosestPantone } from './config.js';
+import { findClosestPantone, collectMeasurements } from './config.js'; 
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const COLORS = {
@@ -436,6 +436,13 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // POM section
     y = drawSectionLabel(doc, '01 — Points of Measure (POM) · ISO 3635 · EU Size 38', y);
     y = drawPOMTable(doc, techPack.pom, y);
+    // Back POM section
+    const backPom = collectMeasurements(state.selections, 'EU38', 'back');
+    if (backPom.length > 0) {
+    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '01B — Back View · Points of Measure', y);
+    y = drawPOMTable(doc, backPom, y);
+}
 
     // BOM section
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
