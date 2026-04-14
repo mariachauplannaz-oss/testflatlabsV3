@@ -7,7 +7,6 @@ const NS = 'http://www.w3.org/2000/svg';
 
 function mkEl(tag, attrs) {
     const el = document.createElementNS(NS, tag);
-    state.colorHex = document.getElementById('cFill').value;
     Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
     return el;
 }
