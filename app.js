@@ -3,7 +3,7 @@
 import { MANNEQUIN_CFG } from './config.js';
 import { parseSVG } from './parser.js';
 import { generate } from './generator.js';
-import { initCategories, goStep, updateButton, buildStep1, initToggles, toggleSidebar, closeSidebar, setIsoMode } from './ui.js';
+import { initCategories, goStep, updateButton, buildStep1, buildStep2, initToggles, toggleSidebar, closeSidebar, setIsoMode } from './ui.js';
 import { downloadSVG, triggerDownload, handleEmailSubmit, skipEmail } from './download.js';
 import { exportSpecSheet } from './specsheet.js';
 
@@ -14,9 +14,10 @@ const state = {
     currentMannequin: 'sty',
     svgData: null,
     selections: { torso: null, neck: null, sleeve: null },
-    emailCaptured: false
+    emailCaptured: false,
+    fabric: 'jersey_180',
+    stitchType: 'overlock_4t'
 };
-
 const svgCache = {};
 
 // ═══ LOGGER (console only, no UI) ═══
@@ -65,6 +66,9 @@ function nextAction() {
     if (state.currentStep === 0) {
         goStep(1, state, doUpdateButton);
         buildStep1(state);
+    } else if (state.currentStep === 1 && state.currentMannequin === 'iso') {
+        goStep(2, state, doUpdateButton);
+        buildStep2(state);
     } else {
         generate(state, log);
         if (window.innerWidth <= 800) closeSidebar();
