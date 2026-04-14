@@ -1,6 +1,7 @@
 // ═══ ui.js — Navigation, steps, dynamic toggles, component builder ═══
 
 import { DICT, GARMENT_ICONS, CATEGORIES, FABRIC_SPECS, STITCH_SPECS } from './config.js';
+import { showTooltip, hideTooltip, openInfoPanel } from './infoPanel.js';
 
 export function initCategories(state, updateButton) {
     const grid = document.getElementById('catGrid');
@@ -123,25 +124,43 @@ export function buildStep2(state) {
     fabricScroll.setAttribute('role', 'radiogroup');
     fabricScroll.setAttribute('aria-label', 'Fabric Weight');
 
-    Object.entries(FABRIC_SPECS).forEach(([key, fab]) => {
-        const opt = document.createElement('div');
-        const isSelected = state.fabric === key;
-        opt.className = 'opt-card' + (isSelected ? ' selected' : '');
-        opt.setAttribute('role', 'radio');
-        opt.setAttribute('aria-label', fab.label);
-        opt.innerHTML = `
-            <div class="opt-preview" style="font-size:10px;font-weight:700;line-height:1.2">
-                ${fab.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>
-            </div>
-            <div class="opt-name">${fab.label}</div>
-        `;
-        opt.onclick = () => {
-            state.fabric = key;
-            fabricScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
-            opt.classList.add('selected');
-        };
-        fabricScroll.appendChild(opt);
-    });
+    const fabricTermMap = {
+    jersey_150: 'ft_tex_001',
+    jersey_180: 'ft_tex_002',
+    jersey_200: 'ft_tex_003',
+    rib_1x1:    'ft_tex_004',
+    };
+
+        Object.entries(FABRIC_SPECS).forEach(([key, fab]) => {
+            const opt = document.createElement('div');
+            const isSelected = state.fabric === key;
+            opt.className = 'opt-card' + (isSelected ? ' selected' : '');
+            opt.setAttribute('role', 'radio');
+            opt.setAttribute('aria-label', fab.label);
+        
+            const fabricTerm = fabricTermMap[key];
+            opt.innerHTML = `
+                <div class="opt-preview" style="font-size:10px;font-weight:700;line-height:1.2">
+                    ${fab.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>
+                </div>
+                <div class="opt-name">
+                    ${fab.label}
+                    ${fabricTerm ? `<span class="info-icon" data-term="${fabricTerm}">?</span>` : ''}
+                </div>
+            `;
+            if (fabricTerm) {
+                const icon = opt.querySelector('.info-icon');
+                icon.addEventListener('mouseenter', () => showTooltip(fabricTerm, icon));
+                icon.addEventListener('mouseleave', hideTooltip);
+                icon.addEventListener('click', (e) => { e.stopPropagation(); openInfoPanel(fabricTerm); });
+            }
+            opt.onclick = () => {
+                state.fabric = key;
+                fabricScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+            };
+            fabricScroll.appendChild(opt);
+        });
 
     fabricSec.appendChild(fabricScroll);
     container.appendChild(fabricSec);
@@ -154,25 +173,42 @@ export function buildStep2(state) {
     stitchScroll.setAttribute('role', 'radiogroup');
     stitchScroll.setAttribute('aria-label', 'Main Seam Type');
 
-    Object.entries(STITCH_SPECS).forEach(([key, stitch]) => {
-        const opt = document.createElement('div');
-        const isSelected = state.stitchType === key;
-        opt.className = 'opt-card' + (isSelected ? ' selected' : '');
-        opt.setAttribute('role', 'radio');
-        opt.setAttribute('aria-label', stitch.label);
-        opt.innerHTML = `
-            <div class="opt-preview" style="font-size:9px;font-weight:700;line-height:1.2">
-                ${stitch.iso}
-            </div>
-            <div class="opt-name">${stitch.label}</div>
-        `;
-        opt.onclick = () => {
-            state.stitchType = key;
-            stitchScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
-            opt.classList.add('selected');
-        };
-        stitchScroll.appendChild(opt);
-    });
+const stitchTermMap = {
+    overlock_4t:  'iso_514',
+    coverseam_3n: 'iso_406',
+    flatlock:     null,
+};
+
+        Object.entries(STITCH_SPECS).forEach(([key, stitch]) => {
+            const opt = document.createElement('div');
+            const isSelected = state.stitchType === key;
+            opt.className = 'opt-card' + (isSelected ? ' selected' : '');
+            opt.setAttribute('role', 'radio');
+            opt.setAttribute('aria-label', stitch.label);
+        
+            const stitchTerm = stitchTermMap[key];
+            opt.innerHTML = `
+                <div class="opt-preview" style="font-size:9px;font-weight:700;line-height:1.2">
+                    ${stitch.iso}
+                </div>
+                <div class="opt-name">
+                    ${stitch.label}
+                    ${stitchTerm ? `<span class="info-icon" data-term="${stitchTerm}">?</span>` : ''}
+                </div>
+            `;
+            if (stitchTerm) {
+                const icon = opt.querySelector('.info-icon');
+                icon.addEventListener('mouseenter', () => showTooltip(stitchTerm, icon));
+                icon.addEventListener('mouseleave', hideTooltip);
+                icon.addEventListener('click', (e) => { e.stopPropagation(); openInfoPanel(stitchTerm); });
+            }
+            opt.onclick = () => {
+                state.stitchType = key;
+                stitchScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+            };
+            stitchScroll.appendChild(opt);
+        });
 
     stitchSec.appendChild(stitchScroll);
     container.appendChild(stitchSec);
