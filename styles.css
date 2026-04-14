@@ -495,7 +495,6 @@ body.iso-mode .man-btn.active {
         transform: translateY(0);
         pointer-events: auto;
     }
-}
 
     .info-panel-handle {
         display: block;
@@ -506,4 +505,4 @@ body.iso-mode .man-btn.active {
         margin: 12px auto 0;
         flex-shrink: 0;
     }
-
+}
