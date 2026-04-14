@@ -53,12 +53,9 @@ async function setMannequin(type) {
     state.currentMannequin = type;
     document.getElementById('btnSty').classList.toggle('active', type==='sty');
     document.getElementById('btnIso').classList.toggle('active', type==='iso');
-    setIsoMode(type === 'iso');  // dark theme + ghost mannequin off
+    setIsoMode(type === 'iso');
     await loadSVG();
     if (state.currentStep === 1) buildStep1(state);
-    if (document.querySelector('#svg-preview svg')) {
-        generate(state, log);
-    }
 }
 
 // ═══ NAVIGATION ═══
