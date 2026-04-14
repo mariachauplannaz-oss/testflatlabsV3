@@ -1,7 +1,7 @@
 // ═══ ui.js — Navigation, steps, dynamic toggles, component builder ═══
 
 import { DICT, GARMENT_ICONS, CATEGORIES, FABRIC_SPECS, STITCH_SPECS } from './config.js';
-import { showTooltip, hideTooltip, openInfoPanel } from './infoPanel.js';
+import { showTooltip, hideTooltip, openInfoPanel, closeInfoPanel } from './infoPanel.js';
 
 export function initCategories(state, updateButton) {
     const grid = document.getElementById('catGrid');
@@ -232,6 +232,7 @@ export function initToggles() {
 }
 
 export function toggleSidebar() {
+    closeInfoPanel();   
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarBackdrop').classList.toggle('show');
 }
