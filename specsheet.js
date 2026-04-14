@@ -145,20 +145,19 @@ function drawSectionLabel(doc, label, y) {
 // Serializes the live SVG DOM node to a PNG data URL, injects into PDF
 async function drawFlat(doc, y) {
     const pw = pageWidth(doc);
-    const svgEl = document.querySelector('#svg-preview svg');
-    if (!svgEl) return y;
+    const svgFront = document.querySelector('#svg-preview svg');
+    const svgBack  = document.querySelector('#svg-preview-back svg');
 
-    try {
+    async function svgToPng(svgEl) {
         const serializer = new XMLSerializer();
         const svgStr = serializer.serializeToString(svgEl);
         const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(blob);
-
-        await new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                const scale = 3; // retina
+                const scale = 3;
                 canvas.width  = 240 * scale;
                 canvas.height = 280 * scale;
                 const ctx = canvas.getContext('2d');
@@ -167,30 +166,54 @@ async function drawFlat(doc, y) {
                 ctx.scale(scale, scale);
                 ctx.drawImage(img, 0, 0, 240, 280);
                 URL.revokeObjectURL(url);
-
-                const imgData = canvas.toDataURL('image/png');
-                const imgW = 60;
-                const imgH = 70;
-                const imgX = pw / 2 - imgW / 2;
-                doc.addImage(imgData, 'PNG', imgX, y, imgW, imgH);
-                resolve();
+                resolve(canvas.toDataURL('image/png'));
             };
             img.onerror = reject;
             img.src = url;
         });
+    }
 
-        // Light border around flat
-        doc.setDrawColor(...COLORS.gray2);
-        doc.setLineWidth(0.3);
-        const imgW = 60, imgH = 70;
-        const imgX = pw / 2 - imgW / 2;
-        doc.rect(imgX, y, imgW, imgH);
+    try {
+        if (svgFront && svgBack) {
+            // Side by side: front left, back right
+            const imgW = 55, imgH = 65, gap = 6;
+            const totalW = imgW * 2 + gap;
+            const startX = pw / 2 - totalW / 2;
 
-        return y + imgH + 6;
+            const frontData = await svgToPng(svgFront);
+            const backData  = await svgToPng(svgBack);
+
+            doc.addImage(frontData, 'PNG', startX, y, imgW, imgH);
+            doc.addImage(backData,  'PNG', startX + imgW + gap, y, imgW, imgH);
+
+            doc.setDrawColor(...COLORS.gray2);
+            doc.setLineWidth(0.3);
+            doc.rect(startX, y, imgW, imgH);
+            doc.rect(startX + imgW + gap, y, imgW, imgH);
+
+            // Labels
+            setFont(doc, 'normal', FONT.small);
+            setColor(doc, COLORS.gray3);
+            doc.text('FRONT', startX + imgW / 2, y + imgH + 4, { align: 'center' });
+            doc.text('BACK',  startX + imgW + gap + imgW / 2, y + imgH + 4, { align: 'center' });
+
+            return y + imgH + 10;
+        } else if (svgFront) {
+            // Single front view (original behavior)
+            const imgData = await svgToPng(svgFront);
+            const imgW = 60, imgH = 70;
+            const imgX = pw / 2 - imgW / 2;
+            doc.addImage(imgData, 'PNG', imgX, y, imgW, imgH);
+            doc.setDrawColor(...COLORS.gray2);
+            doc.setLineWidth(0.3);
+            doc.rect(imgX, y, imgW, imgH);
+            return y + imgH + 6;
+        }
     } catch (e) {
         console.warn('[FlatLabs] Could not render SVG to PDF:', e);
-        return y;
     }
+
+    return y;
 }
 
 // ─── COLORWAY SECTION ────────────────────────────────────────────────────────
