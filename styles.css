@@ -262,7 +262,7 @@ input[type="color"]{width:32px;height:32px;border:2px solid var(--gray3);border-
     }
     .sidebar.open{transform:translateX(0)}
     .sidebar-header{padding:16px 20px}
-    .app-title{font-size:14px;margin-top:50}
+    .app-title{font-size:14px;margin-top:50px}
     .app-sub{font-size:10px}
     .step-content{padding:16px 20px 100px}
     .sidebar-bottom{padding:12px 20px}
@@ -278,60 +278,6 @@ input[type="color"]{width:32px;height:32px;border:2px solid var(--gray3);border-
 /* Dual canvas layout for ISO */
 .canvas-area{flex-wrap:wrap;gap:20px}
 
-/* ── ISO MODE — Dark technical theme ───────────────────────────────── */
-body.iso-mode {
-    --ink:          #e8e8ed;
-    --ink-soft:     #8e8e9a;
-    --surface:      #141418;
-    --surface-warm: #1c1c22;
-    --surface-dark: #e8e8ed;
-    --accent:       #00C853;
-    --accent-hover: #00E676;
-    --accent-text:  #0a0a0c;
-    --accent-soft:  rgba(0,200,83,.12);
-    --gray1:        #e8e8ed;
-    --gray2:        #8e8e9a;
-    --gray3:        #2a2a32;
-    --gray4:        #0a0a0c;
-    --white:        #141418;
-    transition: background 0.3s, color 0.3s;
-}
-
-/* Canvas y sidebar en ISO */
-body.iso-mode .sidebar {
-    background: rgba(20,20,24,.92);
-    border-right-color: rgba(255,255,255,.07);
-}
-body.iso-mode .sidebar-header {
-    border-bottom-color: rgba(255,255,255,.06);
-}
-body.iso-mode .man-toggle {
-    background: rgba(0,200,83,.04);
-    border-bottom-color: rgba(255,255,255,.06);
-}
-body.iso-mode .topbar {
-    background: rgba(20,20,24,.88);
-    border-bottom-color: rgba(255,255,255,.07);
-}
-body.iso-mode .canvas-area {
-    background: #0a0a0c;
-}
-body.iso-mode .canvas-card {
-    background: #141418;
-    box-shadow: 0 20px 60px rgba(0,0,0,.4);
-    border: 1px solid #2a2a32;
-}
-body.iso-mode .sidebar-bottom {
-    background: rgba(20,20,24,.95);
-    border-top-color: rgba(255,255,255,.06);
-}
-body.iso-mode .modal-content {
-    background: #1c1c22;
-    border: 1px solid #2a2a32;
-}
-body.iso-mode .modal-title { color: #e8e8ed; }
-body.iso-mode .modal-text  { color: #8e8e9a; }
-
 /* Toggle button en ISO mode — activo en oscuro */
 body.iso-mode .man-btn.active {
     border-color: #212B31;
@@ -340,20 +286,6 @@ body.iso-mode .man-btn.active {
     box-shadow: none;
 }
 
-/* Canvas label en ISO */
-body.iso-mode .canvas-label {
-    color: #00C853;
-    letter-spacing: 2px;
-}
-
-/* Transición global suave */
-.sidebar, .topbar, .canvas-area, .canvas-card,
-.sidebar-bottom, .man-btn, .canvas-label {
-    transition: background 0.3s var(--ease),
-                border-color 0.3s var(--ease),
-                color 0.3s var(--ease),
-                box-shadow 0.3s var(--ease);
-}
 /* FAB mobile — Ready to create */
 .fab-create{
     display:none;position:fixed;bottom:28px;left:50%;
