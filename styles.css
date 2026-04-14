@@ -356,10 +356,12 @@ body.iso-mode .man-btn.active {
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    pointer-events: none;
 }
 
 .info-panel.open {
     transform: translateX(0);
+    pointer-events: auto;
 }
 
 .info-panel-handle {
@@ -486,11 +488,14 @@ body.iso-mode .man-btn.active {
         border-radius: 16px 16px 0 0;
         transform: translateY(100%);
         box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
+        pointer-events: none;
     }
 
     .info-panel.open {
         transform: translateY(0);
+        pointer-events: auto;
     }
+}
 
     .info-panel-handle {
         display: block;
@@ -501,4 +506,4 @@ body.iso-mode .man-btn.active {
         margin: 12px auto 0;
         flex-shrink: 0;
     }
-}
+
