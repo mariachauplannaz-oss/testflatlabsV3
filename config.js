@@ -181,6 +181,11 @@ export const COMPONENT_META = {
                 shoulder:   { label: 'Shoulder Width',        value: 38.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
                 hem:        { label: 'Hem Width (1/2)',       value: 48,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
                 armhole:    { label: 'Armhole Straight',      value: 21,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
+                
+            },
+            back_measures: {
+                across_back: { label: 'Across Back (1/2)', value: 37, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
+                back_length:  { label: 'CB Length',         value: 64, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
             },
             construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: double-needle coverseam 2 cm.',
             iso_norm: 'ISO 514'
@@ -195,6 +200,10 @@ export const COMPONENT_META = {
                 shoulder:   { label: 'Shoulder Width',        value: 38.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
                 hem:        { label: 'Hem Width (1/2)',       value: 46,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
                 armhole:    { label: 'Armhole Straight',      value: 21,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
+            },
+            back_measures: {
+                across_back: { label: 'Across Back (1/2)', value: 37, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
+                back_length:  { label: 'CB Length',         value: 50, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
             },
             construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: exposed raw edge or coverseam.',
             iso_norm: 'ISO 514'
@@ -308,38 +317,57 @@ export const COMPONENT_META = {
 //   const pom = collectMeasurements(selections);
 //   → returns flat array of { key, label, value, unit, tolerance, pom }
 
-export function collectMeasurements(selections, size = 'EU38') {
+export function collectMeasurements(selections, size = 'EU38', view = 'front') {
     const results = [];
 
     // Torso measurements
     if (selections.torso && COMPONENT_META.torsos[selections.torso]) {
         const torso = COMPONENT_META.torsos[selections.torso];
-        for (const [key, m] of Object.entries(torso.measures)) {
-            const value = GRADING.getForSize(size, key, m.value);
-            results.push({
-                key,
-                label:     m.label,
-                value:     value,
-                unit:      m.unit,
-                tolerance: TOLERANCES.formatTolerance(value),
-                pom:       m.pom || ''
-            });
+        const measureSource = view === 'back' ? torso.back_measures : torso.measures;
+        if (measureSource) {
+            for (const [key, m] of Object.entries(measureSource)) {
+                const value = GRADING.getForSize(size, key, m.value);
+                results.push({
+                    key,
+                    label:     m.label,
+                    value:     value,
+                    unit:      m.unit,
+                    tolerance: TOLERANCES.formatTolerance(value),
+                    pom:       m.pom || ''
+                });
+            }
         }
     }
 
     // Neck measurements
     if (selections.neck && COMPONENT_META.necks[selections.neck]) {
         const neck = COMPONENT_META.necks[selections.neck];
-        for (const [key, m] of Object.entries(neck.measures)) {
-            const value = GRADING.getForSize(size, key, m.value);
-            results.push({
-                key,
-                label:     m.label,
-                value:     value,
-                unit:      m.unit,
-                tolerance: TOLERANCES.formatTolerance(value),
-                pom:       m.pom || ''
-            });
+        if (view === 'back') {
+            // Back view: only back_drop
+            const m = neck.measures.back_drop;
+            if (m) {
+                const value = GRADING.getForSize(size, 'back_drop', m.value);
+                results.push({
+                    key: 'back_drop',
+                    label:     m.label,
+                    value:     value,
+                    unit:      m.unit,
+                    tolerance: TOLERANCES.formatTolerance(value),
+                    pom:       m.pom || ''
+                });
+            }
+        } else {
+            for (const [key, m] of Object.entries(neck.measures)) {
+                const value = GRADING.getForSize(size, key, m.value);
+                results.push({
+                    key,
+                    label:     m.label,
+                    value:     value,
+                    unit:      m.unit,
+                    tolerance: TOLERANCES.formatTolerance(value),
+                    pom:       m.pom || ''
+                });
+            }
         }
     }
 
