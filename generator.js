@@ -13,6 +13,7 @@ function mkEl(tag, attrs) {
 
 function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
     const fill = document.getElementById('cFill').value;
+    state.fillColor = fill;  
     const showSeams = document.getElementById('togSeams').classList.contains('on');
 
     const sw = cfg.strokeWidth;
