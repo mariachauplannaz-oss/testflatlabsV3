@@ -210,5 +210,17 @@
 </a>
 
 <script type="module" src="app.js"></script>
+
+  <!-- Info Panel container (will be created dynamically by infoPanel.js) -->
+
+<script type="module">
+    // Make info panel functions globally available for inline event handlers
+    import { showTooltip, hideTooltip, openInfoPanel, closeInfoPanel } from './js/infoPanel.js';
+    window.showTooltip = showTooltip;
+    window.hideTooltip = hideTooltip;
+    window.openInfoPanel = openInfoPanel;
+    window.closeInfoPanel = closeInfoPanel;
+</script>
+  
 </body>
 </html>
