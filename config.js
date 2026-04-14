@@ -492,3 +492,86 @@ export function findClosestPantone(hex) {
  
     return closest;
 }
+// ═══════════════════════════════════════════════════════════════
+// FABRIC_SPECS
+// ═══════════════════════════════════════════════════════════════
+export const FABRIC_SPECS = {
+    jersey_150: {
+        label: 'Jersey 150 g/m²',
+        weight: 150,
+        composition: '100% Cotton',
+        width: 150,
+        shrinkage: { length: 5, width: 3 },
+        knit_type: 'Single Jersey',
+        recommended_for: ['Lightweight tees', 'Summer basics']
+    },
+    jersey_180: {
+        label: 'Jersey 180 g/m²',
+        weight: 180,
+        composition: '95% Cotton, 5% Elastane',
+        width: 160,
+        shrinkage: { length: 5, width: 3 },
+        knit_type: 'Single Jersey',
+        recommended_for: ['Standard tees', 'Year-round basics']
+    },
+    jersey_200: {
+        label: 'Jersey 200 g/m²',
+        weight: 200,
+        composition: '100% Cotton',
+        width: 150,
+        shrinkage: { length: 3, width: 2 },
+        knit_type: 'Single Jersey',
+        recommended_for: ['Premium tees', 'Heavyweight basics']
+    },
+    rib_1x1: {
+        label: 'Rib 1×1',
+        weight: 220,
+        composition: '95% Cotton, 5% Elastane',
+        width: 80,
+        shrinkage: { length: 5, width: 5 },
+        knit_type: '1×1 Rib',
+        recommended_for: ['Neckbands', 'Cuffs', 'Hem bands']
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// STITCH_SPECS
+// ═══════════════════════════════════════════════════════════════
+export const STITCH_SPECS = {
+    overlock_4t: {
+        label: '4-Thread Overlock',
+        iso: 'ISO 514',
+        spi: 12,
+        needle: 'Ballpoint 80/12 (SUK)',
+        tension: 'Medium — adjusted for stretch',
+        use: 'Side seams, shoulder seams'
+    },
+    coverseam_3n: {
+        label: '3-Needle Coverseam',
+        iso: 'ISO 406',
+        spi: 10,
+        needle: 'Ballpoint 75/11 (SUK)',
+        tension: 'Light — allows stretch recovery',
+        use: 'Hems, sleeve hems, topstitching'
+    },
+    flatlock: {
+        label: 'Flatlock Stitch',
+        iso: 'ISO 301',
+        spi: 14,
+        needle: 'Ballpoint 70/10 (SUK)',
+        tension: 'Light',
+        use: 'Neckband attachment, decorative flat seams'
+    }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// PACKING_SPECS
+// ═══════════════════════════════════════════════════════════════
+export const PACKING_SPECS = {
+    standard: {
+        label: 'Standard Fold Pack',
+        method: 'Garment folded with tissue paper insert. Placed in individual polybag (recycled PE, 35×45 cm). Size sticker on bag.',
+        carton: '60×40×30 cm export carton. Max 24 pcs per carton.',
+        labels: 'Individual polybag + carton label with PO#, style, size, color, qty'
+    }
+};
