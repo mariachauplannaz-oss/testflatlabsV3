@@ -1,6 +1,6 @@
 // ═══ ui.js — Navigation, steps, dynamic toggles, component builder ═══
 
-import { DICT, GARMENT_ICONS, CATEGORIES } from './config.js';
+import { DICT, GARMENT_ICONS, CATEGORIES, FABRIC_SPECS, STITCH_SPECS } from './config.js';
 
 export function initCategories(state, updateButton) {
     const grid = document.getElementById('catGrid');
@@ -26,7 +26,7 @@ export function initCategories(state, updateButton) {
 
 export function goStep(n, state, updateButton) {
     state.currentStep = n;
-    document.getElementById('stepsTrack').style.transform = 'translateX(-' + (n*50) + '%)';
+    document.getElementById('stepsTrack').style.transform = 'translateX(-' + (n*33.333) + '%)';
     document.querySelectorAll('.step-dot').forEach((d,i) => {
         d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
     });
@@ -36,8 +36,16 @@ export function goStep(n, state, updateButton) {
 
 export function updateButton(state) {
     const btn = document.getElementById('btnNext');
-    if (state.currentStep === 0) { btn.textContent = 'Next'; btn.disabled = !state.selectedCategory; }
-    else { btn.textContent = 'Generate'; btn.disabled = false; }
+    if (state.currentStep === 0) {
+        btn.textContent = 'Next';
+        btn.disabled = !state.selectedCategory;
+    } else if (state.currentStep === 1 && state.currentMannequin === 'iso') {
+        btn.textContent = 'Next';
+        btn.disabled = false;
+    } else {
+        btn.textContent = 'Generate';
+        btn.disabled = false;
+    }
 }
 
 export function buildStep1(state) {
@@ -101,6 +109,73 @@ export function buildStep1(state) {
     if (togPocketRow) {
         togPocketRow.style.display = Object.keys(svgData.front.pockets).length > 0 ? '' : 'none';
     }
+}
+
+export function buildStep2(state) {
+    const container = document.getElementById('componentsContainer');
+    container.innerHTML = '';
+
+    // ── Fabric Weight selector ──
+    const fabricSec = document.createElement('div');
+    fabricSec.innerHTML = '<div class="sec-label">Fabric Weight</div>';
+    const fabricScroll = document.createElement('div');
+    fabricScroll.className = 'opt-scroll';
+    fabricScroll.setAttribute('role', 'radiogroup');
+    fabricScroll.setAttribute('aria-label', 'Fabric Weight');
+
+    Object.entries(FABRIC_SPECS).forEach(([key, fab]) => {
+        const opt = document.createElement('div');
+        const isSelected = state.fabric === key;
+        opt.className = 'opt-card' + (isSelected ? ' selected' : '');
+        opt.setAttribute('role', 'radio');
+        opt.setAttribute('aria-label', fab.label);
+        opt.innerHTML = `
+            <div class="opt-preview" style="font-size:10px;font-weight:700;line-height:1.2">
+                ${fab.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>
+            </div>
+            <div class="opt-name">${fab.label}</div>
+        `;
+        opt.onclick = () => {
+            state.fabric = key;
+            fabricScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+        };
+        fabricScroll.appendChild(opt);
+    });
+
+    fabricSec.appendChild(fabricScroll);
+    container.appendChild(fabricSec);
+
+    // ── Main Seam Type selector ──
+    const stitchSec = document.createElement('div');
+    stitchSec.innerHTML = '<div class="sec-label">Main Seam Type</div>';
+    const stitchScroll = document.createElement('div');
+    stitchScroll.className = 'opt-scroll';
+    stitchScroll.setAttribute('role', 'radiogroup');
+    stitchScroll.setAttribute('aria-label', 'Main Seam Type');
+
+    Object.entries(STITCH_SPECS).forEach(([key, stitch]) => {
+        const opt = document.createElement('div');
+        const isSelected = state.stitchType === key;
+        opt.className = 'opt-card' + (isSelected ? ' selected' : '');
+        opt.setAttribute('role', 'radio');
+        opt.setAttribute('aria-label', stitch.label);
+        opt.innerHTML = `
+            <div class="opt-preview" style="font-size:9px;font-weight:700;line-height:1.2">
+                ${stitch.iso}
+            </div>
+            <div class="opt-name">${stitch.label}</div>
+        `;
+        opt.onclick = () => {
+            state.stitchType = key;
+            stitchScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
+            opt.classList.add('selected');
+        };
+        stitchScroll.appendChild(opt);
+    });
+
+    stitchSec.appendChild(stitchScroll);
+    container.appendChild(stitchSec);
 }
 
 export function initToggles() {
