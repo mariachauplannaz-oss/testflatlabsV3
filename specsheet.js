@@ -4,7 +4,7 @@
 //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 import { buildTechPackState } from './techpack.js';
-import { findClosestPantone, collectMeasurements } from './config.js'; 
+import { findClosestPantone, collectMeasurements, STITCH_SPECS, FABRIC_SPECS, PACKING_SPECS } from './config.js';
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const COLORS = {
@@ -415,6 +415,123 @@ function drawConstructionNotes(doc, notes, y) {
     return y;
 }
 
+// ─── STITCH & CONSTRUCTION TABLE ─────────────────────────────────────────────
+function drawStitchTable(doc, y) {
+    const stitches = Object.values(STITCH_SPECS);
+    const head = [['Stitch', 'ISO', 'SPI', 'Needle', 'Use']];
+    const body = stitches.map(s => [
+        s.label,
+        s.iso,
+        String(s.spi),
+        s.needle,
+        s.use
+    ]);
+
+    doc.autoTable({
+        startY: y,
+        head,
+        body,
+        margin: { left: MARGIN.left, right: MARGIN.right },
+        styles: {
+            font: 'helvetica',
+            fontSize: FONT.small,
+            cellPadding: 2.5,
+            textColor: COLORS.gray4,
+            lineColor: COLORS.gray2,
+            lineWidth: 0.2,
+        },
+        headStyles: {
+            fillColor: COLORS.black,
+            textColor: COLORS.white,
+            fontStyle: 'bold',
+            fontSize: FONT.small,
+        },
+        columnStyles: {
+            0: { cellWidth: 38, fontStyle: 'bold' },
+            1: { cellWidth: 20, textColor: COLORS.accent, fontStyle: 'bold' },
+            2: { cellWidth: 12, halign: 'center' },
+            3: { cellWidth: 40 },
+            4: { cellWidth: 'auto' },
+        },
+        alternateRowStyles: { fillColor: [250, 250, 252] }
+    });
+
+    return doc.lastAutoTable.finalY + 8;
+}
+
+// ─── FABRIC SPECIFICATIONS TABLE ─────────────────────────────────────────────
+function drawFabricTable(doc, fabricKey, y) {
+    // Default to jersey_180 if key not found
+    const fabric = FABRIC_SPECS[fabricKey] || FABRIC_SPECS['jersey_180'];
+    const head = [['Property', 'Value']];
+    const body = [
+        ['Fabric',        fabric.label],
+        ['Weight',        fabric.weight + ' g/m²'],
+        ['Composition',   fabric.composition],
+        ['Knit Type',     fabric.knit_type],
+        ['Roll Width',    fabric.width + ' cm'],
+        ['Shrinkage — Length', fabric.shrinkage.length + '% (after wash)'],
+        ['Shrinkage — Width',  fabric.shrinkage.width  + '% (after wash)'],
+        ['Recommended For', fabric.recommended_for.join(', ')],
+    ];
+
+    doc.autoTable({
+        startY: y,
+        head,
+        body,
+        margin: { left: MARGIN.left, right: MARGIN.right },
+        styles: {
+            font: 'helvetica',
+            fontSize: FONT.small,
+            cellPadding: 2.5,
+            textColor: COLORS.gray4,
+            lineColor: COLORS.gray2,
+            lineWidth: 0.2,
+        },
+        headStyles: {
+            fillColor: COLORS.black,
+            textColor: COLORS.white,
+            fontStyle: 'bold',
+            fontSize: FONT.small,
+        },
+        columnStyles: {
+            0: { cellWidth: 55, fontStyle: 'bold', textColor: COLORS.gray3 },
+            1: { cellWidth: 'auto' },
+        },
+        alternateRowStyles: { fillColor: [250, 250, 252] }
+    });
+
+    return doc.lastAutoTable.finalY + 8;
+}
+
+// ─── PACKING INSTRUCTIONS ────────────────────────────────────────────────────
+function drawPackingInstructions(doc, packingKey, y) {
+    const packing = PACKING_SPECS[packingKey] || PACKING_SPECS['standard'];
+    const pw = pageWidth(doc);
+    const colW = pw - MARGIN.left - MARGIN.right;
+
+    const items = [
+        ['Method',  packing.method],
+        ['Carton',  packing.carton],
+        ['Labels',  packing.labels],
+    ];
+
+    items.forEach(([key, val]) => {
+        setFont(doc, 'bold', FONT.small);
+        setColor(doc, COLORS.gray3);
+        doc.text(key.toUpperCase(), MARGIN.left, y);
+
+        setFont(doc, 'normal', FONT.small);
+        setColor(doc, COLORS.gray4);
+        const lines = doc.splitTextToSize(val, colW - 25);
+        doc.text(lines, MARGIN.left + 22, y);
+
+        y += lines.length * 4.5 + 3;
+    });
+
+    return y + 4;
+}
+
 // ─── FOOTER ──────────────────────────────────────────────────────────────────
 function drawFooter(doc, pageNum, totalPages, date) {
     const pw = pageWidth(doc);
@@ -473,9 +590,24 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     y = drawBOMTable(doc, techPack.bom, y);
 
     // Construction notes section
+   // Stitch & Construction section
+    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '03 — Stitch & Construction Specifications', y);
+    y = drawStitchTable(doc, y);
+    
+    // Fabric specifications section
+    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '04 — Fabric Specifications', y);
+    y = drawFabricTable(doc, 'jersey_180', y);  // hardcoded for now — wire to state.fabricKey later
+    
+    // Packing instructions section
     if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '03 — Construction Notes & ISO Standards', y);
-    y = drawConstructionNotes(doc, techPack.constructionNotes, y);
+    y = drawSectionLabel(doc, '05 — Packing Instructions', y);
+    y = drawPackingInstructions(doc, 'standard', y);
+    
+    // Construction notes section
+    if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '06 — Construction Notes & ISO Standards', y);
 
     // Footers on all pages
     const totalPages = doc.internal.getNumberOfPages();
