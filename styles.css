@@ -247,6 +247,8 @@ input[type="color"]{width:32px;height:32px;border:2px solid var(--gray3);border-
 .mobile-download:active{transform:translateX(-50%) scale(.95)}
 
 @media(max-width:800px){
+    .app-title { font-size: 14px; margin-top: 50; }
+    .app-sub { font-size: 10px; }
     .burger-btn{display:flex}
     .home-btn{display:flex}
     .app{flex-direction:column;position:relative}
@@ -356,4 +358,28 @@ body.iso-mode .canvas-label {
                 border-color 0.3s var(--ease),
                 color 0.3s var(--ease),
                 box-shadow 0.3s var(--ease);
+}
+.fab-create {
+    display: none;
+    position: fixed;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 55;
+    padding: 14px 28px;
+    background: var(--accent);
+    color: var(--accent-text);
+    border: none;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(255,154,110,.35);
+    white-space: nowrap;
+    transition: all .3s var(--ease);
+}
+
+@media(max-width:800px) {
+    .fab-create { display: flex; align-items: center; gap: 8px; }
 }
