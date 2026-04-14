@@ -6,6 +6,12 @@ import { generate } from './generator.js';
 import { initCategories, goStep, updateButton, buildStep1, buildStep2, initToggles, toggleSidebar, closeSidebar, setIsoMode } from './ui.js';
 import { downloadSVG, triggerDownload, handleEmailSubmit, skipEmail } from './download.js';
 import { exportSpecSheet } from './specsheet.js';
+import { showTooltip, hideTooltip, openInfoPanel, closeInfoPanel } from './infoPanel.js';
+
+window.showTooltip   = showTooltip;
+window.hideTooltip   = hideTooltip;
+window.openInfoPanel = openInfoPanel;
+window.closeInfoPanel = closeInfoPanel;
 
 // ═══ STATE ═══
 const state = {
