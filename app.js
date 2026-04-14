@@ -3,7 +3,7 @@
 import { MANNEQUIN_CFG } from './config.js';
 import { parseSVG } from './parser.js';
 import { generate } from './generator.js';
-import { initCategories, goStep, updateButton, buildStep1, initToggles, toggleSidebar, closeSidebar } from './ui.js';
+import { initCategories, goStep, updateButton, buildStep1, initToggles, toggleSidebar, closeSidebar, setIsoMode } from './ui.js';
 import { downloadSVG, triggerDownload, handleEmailSubmit, skipEmail } from './download.js';
 import { exportSpecSheet } from './specsheet.js';
 
@@ -53,6 +53,7 @@ async function setMannequin(type) {
     state.currentMannequin = type;
     document.getElementById('btnSty').classList.toggle('active', type==='sty');
     document.getElementById('btnIso').classList.toggle('active', type==='iso');
+    setIsoMode(type === 'iso');  // dark theme + ghost mannequin off
     await loadSVG();
     if (state.currentStep === 1) buildStep1(state);
     if (document.querySelector('#svg-preview svg')) {
