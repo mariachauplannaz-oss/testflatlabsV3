@@ -288,7 +288,7 @@ body.iso-mode .man-btn.active {
 
 /* FAB mobile — Ready to create */
 .fab-create{
-    display:none;margin-top:20px;
+    display:inline-flex;margin-top:20px;
     padding:14px 28px;background:var(--accent);color:var(--accent-text);
     border:none;border-radius:100px;font-size:14px;font-weight:600;
     font-family:inherit;cursor:pointer;white-space:nowrap;
@@ -296,5 +296,5 @@ body.iso-mode .man-btn.active {
     transition:all .3s var(--ease);gap:8px;align-items:center;justify-content:center;
 }
 @media(max-width:800px){
-    .fab-create{display:flex}
+    .fab-create{display:inline-flex}
 }
