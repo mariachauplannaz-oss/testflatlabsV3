@@ -50,7 +50,7 @@ export function updateButton(state) {
 
 export function buildStep1(state) {
     const { svgData, selections } = state;
-    const container = document.getElementById('componentsContainer');
+    const container = document.getElementById('manufContainer');
     container.innerHTML = '';
 
     function buildOptions(label, dataObj, selKey, allowNone) {
