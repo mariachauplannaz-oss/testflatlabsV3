@@ -252,14 +252,12 @@ export function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarBackdrop').classList.toggle('show');
     const mDl = document.getElementById('mobileDownload');
-    if (mDl) mDl.style.display = isOpening ? 'none' : '';
+    if (mDl && isOpening) mDl.classList.remove('show');
 }
 
 export function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebarBackdrop').classList.remove('show');
-    const mDl = document.getElementById('mobileDownload');
-    if (mDl) mDl.style.display = '';
 }
 
 export function setIsoMode(isIso) {
