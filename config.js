@@ -113,7 +113,7 @@ export const TOLERANCES = {
     // Label for spec sheet
     formatTolerance(valueCm) {
         const tol = this.getRuleCm(valueCm);
-        return `± ${tol}`;
+        return `± ${tol.toFixed(1)}`;
     }
 };
 
