@@ -42,6 +42,7 @@ dots.forEach((d,i) => {
             d.onclick = null;
         }
     });
+    document.getElementById('btnBack').style.display = n > 0 ? '' : 'none';
     updateButton(state);
 }
 
