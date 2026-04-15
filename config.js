@@ -341,7 +341,7 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
     }
 
         // Neck measurements
-        if (selections.neck && COMPONENT_META.necks[selections.neck]) {
+        if (view === 'front' && selections.neck && COMPONENT_META.necks[selections.neck]) {
             const neck = COMPONENT_META.necks[selections.neck];
             for (const [key, m] of Object.entries(neck.measures)) {
                 const value = GRADING.getForSize(size, key, m.value);
