@@ -596,7 +596,7 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     y = drawStitchTable(doc, y);
     
     // Fabric specifications section
-    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    doc.addPage(); y = MARGIN.top + 10;
     y = drawSectionLabel(doc, '04 — Fabric Specifications', y);
     y = drawFabricTable(doc, state.fabric || 'jersey_180', y);
     
