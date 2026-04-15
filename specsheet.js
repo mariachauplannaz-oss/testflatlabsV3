@@ -114,15 +114,9 @@ function drawHeader(doc, header) {
     });
 
     // Thin separator line
-    setColor(doc, COLORS.gray2, 'fill');
     doc.setDrawColor(...COLORS.gray2);
     doc.setLineWidth(0.3);
-        // separador con más espacio
-    y += 4;
-    doc.setDrawColor(...COLORS.gray2);
-    doc.setLineWidth(0.2);
-    doc.line(MARGIN.left, y, pw - MARGIN.right, y);
-    y += 4;
+    doc.line(MARGIN.left, metaY + 9, pw - MARGIN.right, metaY + 9);
     
     // Components tag line
     if (header.components) {
