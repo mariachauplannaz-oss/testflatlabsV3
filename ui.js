@@ -247,14 +247,19 @@ export function initToggles() {
 }
 
 export function toggleSidebar() {
-    closeInfoPanel();   
+    closeInfoPanel();
+    const isOpening = !document.getElementById('sidebar').classList.contains('open');
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarBackdrop').classList.toggle('show');
+    const mDl = document.getElementById('mobileDownload');
+    if (mDl) mDl.style.display = isOpening ? 'none' : '';
 }
 
 export function closeSidebar() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebarBackdrop').classList.remove('show');
+    const mDl = document.getElementById('mobileDownload');
+    if (mDl) mDl.style.display = '';
 }
 
 export function setIsoMode(isIso) {
