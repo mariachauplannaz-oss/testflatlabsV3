@@ -601,13 +601,14 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     y = drawFabricTable(doc, state.fabric || 'jersey_180', y);
     
     // Packing instructions section
-    if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
+    if (y > pageHeight(doc) - 70) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '05 — Packing Instructions', y);
     y = drawPackingInstructions(doc, 'standard', y);
     
     // Construction notes section
     if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '06 — Construction Notes & ISO Standards', y);
+    y = drawConstructionNotes(doc, techPack.constructionNotes, y);
 
     // Footers on all pages
     const totalPages = doc.internal.getNumberOfPages();
