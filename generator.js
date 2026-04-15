@@ -179,5 +179,5 @@ export function generate(state, log) {
 
     document.getElementById('topbarTitle').textContent = (DICT[selections.torso]||'T-Shirt') + ' \u2014 Generated';
     log('Done!', 'ok');
-    document.getElementById('btnTechPack').style.display = '';
+    document.getElementById('btnTechPack').style.display = cfg.free ? 'none' : '';
 }
