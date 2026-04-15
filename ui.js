@@ -33,8 +33,15 @@ export function goStep(n, state, updateButton) {
     const dots = document.querySelectorAll('.step-dot');
     dots[2].style.display = totalSteps === 3 ? '' : 'none';
     dots.forEach((d,i) => {
-        d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
-    });
+    d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
+    if (i < n) {
+        d.style.cursor = 'pointer';
+        d.onclick = () => goStep(i, state, updateButton);
+    } else {
+        d.style.cursor = 'default';
+        d.onclick = null;
+    }
+});
 }
 
 export function updateButton(state) {
