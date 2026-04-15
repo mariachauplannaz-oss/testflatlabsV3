@@ -136,7 +136,8 @@ export function buildTechPackState(state, projectMeta = {}) {
             season:      projectMeta.season || `SS${String(now.getFullYear()).slice(2)}`,
             date:        dateStr,
             size:        'EU 38 (ISO 3635)',
-            fabric:      'Jersey 180g/m²',
+            brand:  projectMeta.brand  || 'FlatLabs',
+            fabric: 'Jersey 180g/m²',
             components:  activeComponents.join(' · ')
         },
         // POM table rows
