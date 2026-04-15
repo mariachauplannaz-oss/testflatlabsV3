@@ -117,8 +117,13 @@ function drawHeader(doc, header) {
     setColor(doc, COLORS.gray2, 'fill');
     doc.setDrawColor(...COLORS.gray2);
     doc.setLineWidth(0.3);
-    doc.line(MARGIN.left, metaY + 9, pw - MARGIN.right, metaY + 9);
-
+        // separador con más espacio
+    y += 4;
+    doc.setDrawColor(...COLORS.gray2);
+    doc.setLineWidth(0.2);
+    doc.line(MARGIN.left, y, pw - MARGIN.right, y);
+    y += 4;
+    
     // Components tag line
     if (header.components) {
         setFont(doc, 'italic', FONT.small);
@@ -606,6 +611,7 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // Construction notes section
     if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '06 — Construction Notes & ISO Standards', y);
+    y += 4;
     y = drawConstructionNotes(doc, techPack.constructionNotes, y);
 
     // Footers on all pages
