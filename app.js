@@ -86,6 +86,14 @@ function nextAction() {
         goStep(2, state, doUpdateButton);
         buildStep2(state);
     } else {
+        // Validar selecciones obligatorias
+        const missing = [];
+        if (!state.selections.torso) missing.push('Torso');
+        if (!state.selections.neck)  missing.push('Neckline');
+        if (missing.length > 0) {
+            alert(`⚠ Please select: ${missing.join(' and ')}`);
+            return;
+        }
         generate(state, log);
         if (window.innerWidth <= 800) closeSidebar();
     }
