@@ -104,12 +104,19 @@ function doDownload() { downloadSVG(state, log); }
 function doTriggerDownload() { triggerDownload(state, log); }
 function doEmailSubmit(e) { handleEmailSubmit(e, state, doTriggerDownload); }
 function doSkipEmail() { skipEmail(state, doTriggerDownload); }
-async function doExportTechPack() {
-    await exportSpecSheet(state, {
-        name: 'My Collection',
-        sku:  'FL-TS-001',
-        season: 'SS26'
-    });
+function doExportTechPack() {
+    document.getElementById('techPackModal').classList.add('show');
+}
+
+async function doConfirmTechPack() {
+    const brand   = document.getElementById('tpBrand').value.trim()   || 'FlatLabs';
+    const name    = document.getElementById('tpProject').value.trim() || 'My Collection';
+    const sku     = document.getElementById('tpSku').value.trim()     || 'FL-TS-001';
+    const season  = document.getElementById('tpSeason').value.trim()  || 'SS26';
+
+    document.getElementById('techPackModal').classList.remove('show');
+
+    await exportSpecSheet(state, { brand, name, sku, season });
 }
 
 // ═══ INIT ═══
@@ -133,6 +140,10 @@ async function init() {
     if (prev === 1) buildStep1(state);});
     document.getElementById('fabCreate')?.addEventListener('click', () => {toggleSidebar(); });
     document.getElementById('btnNext')?.addEventListener('click', nextAction);
+    document.getElementById('btnConfirmTechPack')?.addEventListener('click', doConfirmTechPack);
+    document.getElementById('btnCloseTechPackModal')?.addEventListener('click', () => {
+    document.getElementById('techPackModal').classList.remove('show');
+    });
     
     // Modal listeners
     document.getElementById('leadForm')?.addEventListener('submit', doEmailSubmit);
