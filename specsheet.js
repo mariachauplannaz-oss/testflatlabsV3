@@ -8,13 +8,14 @@ import { findClosestPantone, collectMeasurements, STITCH_SPECS, FABRIC_SPECS, PA
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const COLORS = {
-    black:      [15,  15,  15],
-    white:      [255, 255, 255],
-    accent:     [0,   122, 255],   // FlatLabs blue
-    gray1:      [245, 245, 247],   // table header bg
-    gray2:      [200, 200, 205],   // borders
-    gray3:      [110, 110, 115],   // secondary text
-    gray4:      [60,  60,  65],    // body text
+    black:      [33,  43,  49],    // --ink / --gray1
+    white:      [255, 255, 255],   // --white
+    accent:     [255, 154, 110],   // --accent
+    accentText: [33,  43,  49],    // --accent-text
+    gray1:      [248, 248, 248],   // --gray4 (table row bg)
+    gray2:      [210, 210, 215],   // --gray3 (borders)
+    gray3:      [95,  115, 133],   // --ink-soft (secondary text)
+    gray4:      [33,  43,  49],    // --ink (body text)
 };
 
 const FONT = {
@@ -386,17 +387,14 @@ function drawConstructionNotes(doc, notes, y) {
             y = MARGIN.top;
         }
 
-        // Component + norm pill
-        setFont(doc, 'bold', FONT.label);
-        setColor(doc, COLORS.gray4);
-        doc.text(component, MARGIN.left, y);
-
-        // ISO norm badge
+        // Component + norm in one accent pill
+        const pillText = component + '   ' + norm;
+        const pillW = doc.getTextWidth(pillText) + 10;
         setColor(doc, COLORS.accent, 'fill');
-        doc.roundedRect(MARGIN.left + 60, y - 4, 22, 6, 1, 1, 'F');
+        doc.roundedRect(MARGIN.left, y - 4.5, pillW, 7, 1.5, 1.5, 'F');
         setFont(doc, 'bold', FONT.small);
-        setColor(doc, COLORS.white);
-        doc.text(norm, MARGIN.left + 71, y, { align: 'center' });
+        setColor(doc, COLORS.accentText);
+        doc.text(pillText, MARGIN.left + 5, y);
 
         // Note text
         setFont(doc, 'normal', FONT.small);
