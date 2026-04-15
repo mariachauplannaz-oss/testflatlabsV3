@@ -30,11 +30,11 @@ export function goStep(n, state, updateButton) {
     const totalSteps = state.currentMannequin === 'iso' ? 3 : 2;
     const pct = n * (100 / totalSteps);
     document.getElementById('stepsTrack').style.transform = 'translateX(-' + pct + '%)';
-    document.querySelectorAll('.step-dot').forEach((d,i) => {
+    const dots = document.querySelectorAll('.step-dot');
+    dots[2].style.display = totalSteps === 3 ? '' : 'none';
+    dots.forEach((d,i) => {
         d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
     });
-    document.getElementById('btnBack').style.display = n>0 ? '' : 'none';
-    updateButton();
 }
 
 export function updateButton(state) {
