@@ -356,7 +356,7 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
             }
         }
         
-            // Sleeve measurements — front view only (same front and back, no need to duplicate)
+        // Sleeve measurements — front view only (same front and back, no need to duplicate)
         if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
             const sleeve = COMPONENT_META.sleeves[selections.sleeve];
             for (const [key, m] of Object.entries(sleeve.measures)) {
@@ -369,9 +369,10 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
                     tolerance:   TOLERANCES.formatTolerance(value),
                     pom:         m.pom || ''
                 });
-            }
-        }
-
+            }          
+        }             
+        return results;
+        } 
 
 // ═══════════════════════════════════════════════════════════════
 // HELPER: Get construction notes for a garment configuration
