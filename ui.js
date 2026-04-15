@@ -27,7 +27,9 @@ export function initCategories(state, updateButton) {
 
 export function goStep(n, state, updateButton) {
     state.currentStep = n;
-    document.getElementById('stepsTrack').style.transform = 'translateX(-' + (n*33.333) + '%)';
+    const totalSteps = state.currentMannequin === 'iso' ? 3 : 2;
+    const pct = n * (100 / totalSteps);
+    document.getElementById('stepsTrack').style.transform = 'translateX(-' + pct + '%)';
     document.querySelectorAll('.step-dot').forEach((d,i) => {
         d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
     });
@@ -42,6 +44,9 @@ export function updateButton(state) {
         btn.disabled = !state.selectedCategory;
     } else if (state.currentStep === 1 && state.currentMannequin === 'iso') {
         btn.textContent = 'Next';
+        btn.disabled = false;
+    } else if (state.currentStep === 1 && state.currentMannequin === 'sty') {
+        btn.textContent = 'Generate';
         btn.disabled = false;
     } else {
         btn.textContent = 'Generate';
