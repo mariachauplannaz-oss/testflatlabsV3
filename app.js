@@ -62,7 +62,16 @@ async function setMannequin(type) {
     document.getElementById('btnIso').classList.toggle('active', type==='iso');
     setIsoMode(type === 'iso');
     await loadSVG();
-    if (state.currentStep === 1) buildStep1(state);
+    goStep(1, state, doUpdateButton);
+    buildStep1(state);
+    // Reset canvas
+    document.getElementById('svg-preview').innerHTML = '';
+    const previewBack = document.getElementById('svg-preview-back');
+    if (previewBack) previewBack.innerHTML = '';
+    const backCard = document.getElementById('canvas-card-back');
+    if (backCard) backCard.style.display = 'none';
+    document.getElementById('btnDownload').style.display = 'none';
+    document.getElementById('btnTechPack').style.display = 'none';
 }
 
 // ═══ NAVIGATION ═══
