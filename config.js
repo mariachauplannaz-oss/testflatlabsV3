@@ -372,23 +372,20 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         }
     }
 
-    // Sleeve measurements
-    if (selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
-        const sleeve = COMPONENT_META.sleeves[selections.sleeve];
-        for (const [key, m] of Object.entries(sleeve.measures)) {
-            const value = GRADING.getForSize(size, key, m.value);
-            results.push({
-                code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
-                description: m.label,
-                value:       value,
-                unit:        m.unit,
-                tolerance:   TOLERANCES.formatTolerance(value),
-                pom:         m.pom || ''
-            });
-        }
+    // Sleeve measurements — front view only (same front and back, no need to duplicate)
+if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
+    const sleeve = COMPONENT_META.sleeves[selections.sleeve];
+    for (const [key, m] of Object.entries(sleeve.measures)) {
+        const value = GRADING.getForSize(size, key, m.value);
+        results.push({
+            code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
+            description: m.label,
+            value:       value,
+            unit:        m.unit,
+            tolerance:   TOLERANCES.formatTolerance(value),
+            pom:         m.pom || ''
+        });
     }
-
-    return results;
 }
 
 
