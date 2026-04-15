@@ -28,7 +28,7 @@ export function initCategories(state, updateButton) {
 export function goStep(n, state, updateButton) {
     state.currentStep = n;
     const totalSteps = state.currentMannequin === 'iso' ? 3 : 2;
-    const pct = n * (100 / totalSteps);
+    const pct = n * (100 / 3);
     document.getElementById('stepsTrack').style.transform = 'translateX(-' + pct + '%)';
     const dots = document.querySelectorAll('.step-dot');
     dots[2].style.display = totalSteps === 3 ? '' : 'none';
