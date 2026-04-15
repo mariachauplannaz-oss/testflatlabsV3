@@ -315,7 +315,7 @@ export const COMPONENT_META = {
 // Usage:
 //   const selections = { torso: 'reg', neck: 'rnd', sleeve: 'cap' };
 //   const pom = collectMeasurements(selections);
-//   → returns flat array of { key, label, value, unit, tolerance, pom }
+//  → returns flat array of { code, description, value, unit, tolerance, pom }
 
 export function collectMeasurements(selections, size = 'EU38', view = 'front') {
     const results = [];
@@ -327,13 +327,14 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         if (measureSource) {
             for (const [key, m] of Object.entries(measureSource)) {
                 const value = GRADING.getForSize(size, key, m.value);
+                const prefix = view === 'back' ? 'BCK' : 'TRS';
                 results.push({
-                    key,
-                    label:     m.label,
-                    value:     value,
-                    unit:      m.unit,
-                    tolerance: TOLERANCES.formatTolerance(value),
-                    pom:       m.pom || ''
+                    code:        `${prefix}-${String(results.length + 1).padStart(3, '0')}`,
+                    description: m.label,
+                    value:       value,
+                    unit:        m.unit,
+                    tolerance:   TOLERANCES.formatTolerance(value),
+                    pom:         m.pom || ''
                 });
             }
         }
@@ -348,24 +349,24 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
             if (m) {
                 const value = GRADING.getForSize(size, 'back_drop', m.value);
                 results.push({
-                    key: 'back_drop',
-                    label:     m.label,
-                    value:     value,
-                    unit:      m.unit,
-                    tolerance: TOLERANCES.formatTolerance(value),
-                    pom:       m.pom || ''
+                    code:        `BCK-${String(results.length + 1).padStart(3, '0')}`,
+                    description: m.label,
+                    value:       value,
+                    unit:        m.unit,
+                    tolerance:   TOLERANCES.formatTolerance(value),
+                    pom:         m.pom || ''
                 });
             }
         } else {
             for (const [key, m] of Object.entries(neck.measures)) {
                 const value = GRADING.getForSize(size, key, m.value);
                 results.push({
-                    key,
-                    label:     m.label,
-                    value:     value,
-                    unit:      m.unit,
-                    tolerance: TOLERANCES.formatTolerance(value),
-                    pom:       m.pom || ''
+                    code:        `NCK-${String(results.length + 1).padStart(3, '0')}`,
+                    description: m.label,
+                    value:       value,
+                    unit:        m.unit,
+                    tolerance:   TOLERANCES.formatTolerance(value),
+                    pom:         m.pom || ''
                 });
             }
         }
@@ -377,12 +378,12 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         for (const [key, m] of Object.entries(sleeve.measures)) {
             const value = GRADING.getForSize(size, key, m.value);
             results.push({
-                key,
-                label:     m.label,
-                value:     value,
-                unit:      m.unit,
-                tolerance: TOLERANCES.formatTolerance(value),
-                pom:       m.pom || ''
+                code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
+                description: m.label,
+                value:       value,
+                unit:        m.unit,
+                tolerance:   TOLERANCES.formatTolerance(value),
+                pom:         m.pom || ''
             });
         }
     }
