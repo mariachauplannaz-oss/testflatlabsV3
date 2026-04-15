@@ -32,17 +32,19 @@ export function goStep(n, state, updateButton) {
     document.getElementById('stepsTrack').style.transform = 'translateX(-' + pct + '%)';
     const dots = document.querySelectorAll('.step-dot');
     dots[2].style.display = totalSteps === 3 ? '' : 'none';
-    dots.forEach((d,i) => {
-    d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
-    if (i < n) {
-        d.style.cursor = 'pointer';
-        d.onclick = () => goStep(i, state, updateButton);
-    } else {
-        d.style.cursor = 'default';
-        d.onclick = null;
-    }
-});
+dots.forEach((d,i) => {
+        d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
+        if (i < n) {
+            d.style.cursor = 'pointer';
+            d.onclick = () => goStep(i, state, updateButton);
+        } else {
+            d.style.cursor = 'default';
+            d.onclick = null;
+        }
+    });
+    updateButton(state);
 }
+
 
 export function updateButton(state) {
     const btn = document.getElementById('btnNext');
