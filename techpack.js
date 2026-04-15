@@ -88,16 +88,21 @@ export function buildConstructionNotes(selections, garmentType = 'tshirt') {
     });
 
     // Static notes always included
-    notes.push({
-        component: 'Hem / Bottom',
-        norm: 'ISO 406',
-        note: 'Coverseam stitch at hem (ISO 406). Double-needle 2 cm fold. No raw edges permitted.'
-    });
-    notes.push({
-        component: 'Labels',
-        norm: 'EN ISO 3758',
-        note: 'Care label required per EN ISO 3758. Brand label placement: center back neck, 1 cm from seam.'
-    });
+        notes.push({
+            component: 'Hem — Bottom Edge',
+            norm: 'ISO 406',
+            note: 'Bottom hem finished with 3-needle coverseam stitch (ISO 406). Fold: 2 cm double-needle. Thread: Tex 18 coverseam thread. No raw edges permitted on finished garment.'
+        });
+        notes.push({
+            component: 'Care Label — Center Back Neck',
+            norm: 'EN ISO 3758',
+            note: 'Woven care label required per EN ISO 3758. Placement: center back neck, 1 cm below neckline seam. Brand label sewn immediately above care label. Size label: separate woven label, same placement stack.'
+        });
+        notes.push({
+            component: 'Seam Allowance — All Seams',
+            norm: 'ISO 4916',
+            note: 'Standard seam allowance: 1.0 cm throughout. Shoulder seams: 1.0 cm, pressed toward back. Side seams: 1.0 cm, pressed open. Armhole seams: 1.0 cm, serged together and pressed toward sleeve.'
+        });
 
     return notes;
 }
