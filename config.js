@@ -340,24 +340,9 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         }
     }
 
-    // Neck measurements
-    if (selections.neck && COMPONENT_META.necks[selections.neck]) {
-        const neck = COMPONENT_META.necks[selections.neck];
-        if (view === 'back') {
-            // Back view: only back_drop
-            const m = neck.measures.back_drop;
-            if (m) {
-                const value = GRADING.getForSize(size, 'back_drop', m.value);
-                results.push({
-                    code:        `BCK-${String(results.length + 1).padStart(3, '0')}`,
-                    description: m.label,
-                    value:       value,
-                    unit:        m.unit,
-                    tolerance:   TOLERANCES.formatTolerance(value),
-                    pom:         m.pom || ''
-                });
-            }
-        } else {
+        // Neck measurements
+        if (selections.neck && COMPONENT_META.necks[selections.neck]) {
+            const neck = COMPONENT_META.necks[selections.neck];
             for (const [key, m] of Object.entries(neck.measures)) {
                 const value = GRADING.getForSize(size, key, m.value);
                 results.push({
@@ -370,23 +355,22 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
                 });
             }
         }
-    }
-
-    // Sleeve measurements — front view only (same front and back, no need to duplicate)
-if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
-    const sleeve = COMPONENT_META.sleeves[selections.sleeve];
-    for (const [key, m] of Object.entries(sleeve.measures)) {
-        const value = GRADING.getForSize(size, key, m.value);
-        results.push({
-            code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
-            description: m.label,
-            value:       value,
-            unit:        m.unit,
-            tolerance:   TOLERANCES.formatTolerance(value),
-            pom:         m.pom || ''
-        });
-    }
-}
+        
+            // Sleeve measurements — front view only (same front and back, no need to duplicate)
+        if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
+            const sleeve = COMPONENT_META.sleeves[selections.sleeve];
+            for (const [key, m] of Object.entries(sleeve.measures)) {
+                const value = GRADING.getForSize(size, key, m.value);
+                results.push({
+                    code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
+                    description: m.label,
+                    value:       value,
+                    unit:        m.unit,
+                    tolerance:   TOLERANCES.formatTolerance(value),
+                    pom:         m.pom || ''
+                });
+            }
+        }
 
 
 // ═══════════════════════════════════════════════════════════════
