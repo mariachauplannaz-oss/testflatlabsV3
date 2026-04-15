@@ -62,9 +62,10 @@ async function setMannequin(type) {
     document.getElementById('btnIso').classList.toggle('active', type==='iso');
     setIsoMode(type === 'iso');
     await loadSVG();
+    // Siempre va a Step 1 manteniendo selecciones
     goStep(1, state, doUpdateButton);
     buildStep1(state);
-    // Reset canvas
+    // Limpia canvas
     document.getElementById('svg-preview').innerHTML = '';
     const previewBack = document.getElementById('svg-preview-back');
     if (previewBack) previewBack.innerHTML = '';
@@ -118,7 +119,10 @@ async function init() {
     document.getElementById('btnTechPack')?.addEventListener('click', doExportTechPack);
     document.getElementById('btnSty')?.addEventListener('click', () => setMannequin('sty'));
     document.getElementById('btnIso')?.addEventListener('click', () => setMannequin('iso'));
-    document.getElementById('btnBack')?.addEventListener('click', () => goStep(0, state, doUpdateButton));
+    document.getElementById('btnBack')?.addEventListener('click', () => {
+    const prev = state.currentStep - 1;
+    goStep(prev, state, doUpdateButton);
+    if (prev === 1) buildStep1(state);});
     document.getElementById('fabCreate')?.addEventListener('click', () => {toggleSidebar(); });
     document.getElementById('btnNext')?.addEventListener('click', nextAction);
     
