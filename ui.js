@@ -252,7 +252,14 @@ export function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarBackdrop').classList.toggle('show');
     const mDl = document.getElementById('mobileDownload');
-    if (mDl && isOpening) mDl.classList.remove('show');
+    if (mDl) {
+        if (isOpening) {
+            mDl.dataset.wasShown = mDl.classList.contains('show');
+            mDl.classList.remove('show');
+        } else {
+            if (mDl.dataset.wasShown === 'true') mDl.classList.add('show');
+        }
+    }
 }
 
 export function closeSidebar() {
