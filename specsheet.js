@@ -93,11 +93,11 @@ function drawHeader(doc, header) {
     // Metadata row below band
     const metaY = 34;
     const metaItems = [
+        ['BRAND',   header.brand],
         ['SKU',     header.sku],
         ['SIZE',    header.size],
         ['SEASON',  header.season],
         ['DATE',    header.date],
-        ['FABRIC',  header.fabric],
     ];
 
     const colW = (pw - MARGIN.left - MARGIN.right) / metaItems.length;
