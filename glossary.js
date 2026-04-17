@@ -10,7 +10,7 @@ export const GLOSSARY = {
         tooltip: `Breathable and soft, perfect for summer garments or inner layers.`,
         detail: `100% Cotton. Provides high breathability but may be slightly sheer in lighter colors. Ideal for fast-fashion basics.`,
         production: `140-150 g/m2`,
-        url: `/learn/fabrics/lightweight-jersey`
+        url: `learn/fabrics/lightweight-jersey`
     },
     'ft_tex_002': {
         id: `FT-TEX-002`,
@@ -19,7 +19,7 @@ export const GLOSSARY = {
         tooltip: `The industry standard for high-quality T-shirts.`,
         detail: `95% Cotton, 5% Elastane. The elastane provides excellent shape recovery, preventing sagging after multiple washes.`,
         production: `180 g/m2`,
-        url: `/learn/fabrics/midweight-jersey`
+        url: `learn/fabrics/midweight-jersey`
     },
     'ft_tex_003': {
         id: `FT-TEX-003`,
@@ -28,7 +28,7 @@ export const GLOSSARY = {
         tooltip: `Thick, structured fabric for a premium "Oversized" look.`,
         detail: `100% Cotton. High durability and rigid structure that holds the silhouette without clinging to the body.`,
         production: `220-240 g/m2`,
-        url: `/learn/fabrics/heavyweight-jersey`
+        url: `learn/fabrics/heavyweight-jersey`
     },
     'ft_tex_004': {
         id: `FT-TEX-004`,
@@ -37,7 +37,7 @@ export const GLOSSARY = {
         tooltip: `Highly elastic knitted fabric used for finishing.`,
         detail: `Great stretch and recovery. Primarily used for necklines (Neck Width) and cuffs to ensure a snug fit.`,
         production: `95% Cot, 5% Ela`,
-        url: `/learn/fabrics/rib-knit-basics`
+        url: `learn/fabrics/rib-knit-basics`
     },
     'iso_514': {
         id: `ISO-514`,
@@ -46,7 +46,7 @@ export const GLOSSARY = {
         tooltip: `Secure and elastic seam for joining knitted panels.`,
         detail: `Prevents fraying while allowing the seam to stretch with the fabric. Essential for side seams and shoulders.`,
         production: `ISO 514`,
-        url: `/learn/seams/iso-514-overlock`
+        url: `learn/seams/iso-514-overlock`
     },
     'iso_406': {
         id: `ISO-406`,
@@ -55,7 +55,7 @@ export const GLOSSARY = {
         tooltip: `Professional flat finish for hems and sleeve openings.`,
         detail: `Double-needle stitch with bottom cover. Provides a clean look and prevents raw edges from rolling.`,
         production: `ISO 406`,
-        url: `/learn/seams/iso-406-coverseam`
+        url: `learn/seams/iso-406-coverseam`
     },
     'nd_bp_01': {
         id: `ND-BP-01`,
@@ -64,7 +64,7 @@ export const GLOSSARY = {
         tooltip: `Designed to pass between fabric loops without cutting fibers.`,
         detail: `Essential for jersey and knitted fabrics to avoid "run" holes or fabric damage during sewing.`,
         production: `Size 70/10 - 80/12`,
-        url: `/learn/needles/ball-point-ses`
+        url: `learn/needles/ball-point-ses`
     },
     'lab_wvn_01': {
         id: `LAB-WVN-01`,
@@ -73,7 +73,7 @@ export const GLOSSARY = {
         tooltip: `Woven label for brand identification.`,
         detail: `High-definition damask weave. Placement: Center back neck, 1 cm below seam.`,
         production: `Woven Polyester`,
-        url: `/learn/trims/woven-labels`
+        url: `learn/trims/woven-labels`
     },
     'lab_care_01': {
         id: `LAB-CARE-01`,
@@ -82,7 +82,7 @@ export const GLOSSARY = {
         tooltip: `Required label for legal and care information.`,
         detail: `Includes fiber content and wash symbols per EN ISO 3758. Placement: Left side seam, 10 cm from hem.`,
         production: `Satin or Nylon`,
-        url: `/learn/trims/care-labels-standards`
+        url: `learn/trims/care-labels-standards`
     },
     'lab_size_01': {
         id: `LAB-SIZE-01`,
@@ -91,7 +91,7 @@ export const GLOSSARY = {
         tooltip: `Small woven label indicating the garment size.`,
         detail: `Usually placed next to the brand label or integrated into the care label.`,
         production: `EU/US Sizing`,
-        url: `/learn/trims/size-labeling`
+        url: `learn/trims/size-labeling`
     },
     'thr_p_27': {
         id: `THR-P-27`,
@@ -100,7 +100,7 @@ export const GLOSSARY = {
         tooltip: `Standard high-tenacity thread for general sewing.`,
         detail: `Corespun polyester (ISO 180/2). Offers high resistance to chemicals and abrasion.`,
         production: `Tex 27 / Ticket 120`,
-        url: `/learn/threads/polyester-tex-27`
+        url: `learn/threads/polyester-tex-27`
     },
     'thr_c_18': {
         id: `THR-C-18`,
@@ -109,7 +109,7 @@ export const GLOSSARY = {
         tooltip: `Finer thread for soft, low-profile seams.`,
         detail: `Ideal for overlock and coverseam to prevent bulkiness against the skin.`,
         production: `Tex 18 / Ticket 180`,
-        url: `/learn/threads/low-profile-seams`
+        url: `learn/threads/low-profile-seams`
     },
     'spi_1012': {
         id: `SPI-1012`,
@@ -118,7 +118,7 @@ export const GLOSSARY = {
         tooltip: `Standard stitch density for knitted garments.`,
         detail: `10 to 12 Stitches Per Inch (SPI). Balances production speed with seam strength and elasticity.`,
         production: `10-12 SPI`,
-        url: `/learn/construction/stitches-per-inch`
+        url: `learn/construction/stitches-per-inch`
     },
     'pkg_poly_01': {
         id: `PKG-POLY-01`,
@@ -127,7 +127,7 @@ export const GLOSSARY = {
         tooltip: `Protective bag for storage and shipping.`,
         detail: `Made from 100% Recycled PE. Includes suffocation warning in multiple languages.`,
         production: `35x45 cm`,
-        url: `/learn/packing/recycled-polybags`
+        url: `learn/packing/recycled-polybags`
     },
     'pkg_fold_01': {
         id: `PKG-FOLD-01`,
@@ -136,7 +136,7 @@ export const GLOSSARY = {
         tooltip: `Garment is folded flat to fit the polybag.`,
         detail: `Folded with tissue paper to prevent moisture and wrinkles. Front view facing up.`,
         production: `Flat Fold`,
-        url: `/learn/packing/folding-guides`
+        url: `learn/packing/folding-guides`
     },
     'ft_clr_001': {
         id: `FT-CLR-001`,
@@ -145,7 +145,7 @@ export const GLOSSARY = {
         tooltip: `The global standard for textile color on cotton.`,
         detail: `"Textile Cotton eXtended". Essential for accurate color matching between screen and dye house.`,
         production: `Pantone FHI`,
-        url: `/learn/color/pantone-tcx-system`
+        url: `learn/color/pantone-tcx-system`
     },
     'ft_dye_001': {
         id: `FT-DYE-001`,
@@ -154,7 +154,7 @@ export const GLOSSARY = {
         tooltip: `Fabric is dyed in rolls before the garment is cut.`,
         detail: `The most common method. Ensures uniform color across the entire production lot.`,
         production: `Reactive Dyeing`,
-        url: `/learn/dyeing/piece-dyed-process`
+        url: `learn/dyeing/piece-dyed-process`
     },
     'ft_dye_002': {
         id: `FT-DYE-002`,
@@ -163,7 +163,7 @@ export const GLOSSARY = {
         tooltip: `The finished garment is dyed after being sewn.`,
         detail: `Creates a vintage, "washed" look with slight color variations at the seams.`,
         production: `Post-Assembly`,
-        url: `/learn/dyeing/garment-dye-guide`
+        url: `learn/dyeing/garment-dye-guide`
     },
     'ft_prt_001': {
         id: `FT-PRT-001`,
@@ -172,7 +172,7 @@ export const GLOSSARY = {
         tooltip: `Eco-friendly ink that integrates into the fabric.`,
         detail: `Very soft hand feel. Breathable and ideal for large graphics on light-colored fabrics.`,
         production: `Pigment Ink`,
-        url: `/learn/printing/water-based-screen`
+        url: `learn/printing/water-based-screen`
     },
     'ft_prt_002': {
         id: `FT-PRT-002`,
@@ -181,7 +181,7 @@ export const GLOSSARY = {
         tooltip: `Standard durable ink with vibrant color opacity.`,
         detail: `Sits on top of the fabric. Best for dark fabrics but has a thicker, "plastic" feel.`,
         production: `PVC-Free Plastisol`,
-        url: `/learn/printing/plastisol-guide`
+        url: `learn/printing/plastisol-guide`
     },
     'ft_emb_001': {
         id: `FT-EMB-001`,
@@ -190,7 +190,7 @@ export const GLOSSARY = {
         tooltip: `Classic thread-based logo or design.`,
         detail: `High durability and premium feel. Measured in stitch count (e.g., 5,000 stitches).`,
         production: `Rayon/Poly Thread`,
-        url: `/learn/embellishments/embroidery-basics`
+        url: `learn/embellishments/embroidery-basics`
     },
     'ft_fin_001': {
         id: `FT-FIN-001`,
@@ -199,7 +199,7 @@ export const GLOSSARY = {
         tooltip: `Gives the fabric an ultra-soft, silky touch.`,
         detail: `Chemical softener that reduces friction and increases fabric drape. Common for premium T-shirts.`,
         production: `Softener Finish`,
-        url: `/learn/finishes/silicon-wash`
+        url: `learn/finishes/silicon-wash`
     },
     'ft_fin_002': {
         id: `FT-FIN-002`,
@@ -208,7 +208,7 @@ export const GLOSSARY = {
         tooltip: `Removes surface fuzz for a clean, pill-resistant look.`,
         detail: `Uses cellulase enzymes to eat away loose fibers. Improves color brightness and prevents pilling.`,
         production: `Bio-Polishing`,
-        url: `/learn/finishes/enzyme-wash`
+        url: `learn/finishes/enzyme-wash`
     },
     'ft_fin_003': {
         id: `FT-FIN-003`,
@@ -217,7 +217,7 @@ export const GLOSSARY = {
         tooltip: `Pre-shrinking process to ensure dimensional stability.`,
         detail: `Mechanical process that limits residual shrinkage to less than 3%. Critical for consistent sizing.`,
         production: `Pre-shrunk`,
-        url: `/learn/finishes/sanforized-standards`
+        url: `learn/finishes/sanforized-standards`
     }
 };
 
