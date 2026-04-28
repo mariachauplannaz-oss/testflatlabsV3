@@ -146,3 +146,4 @@ async function init() {
 }
 
 init();
+window.state = state;
