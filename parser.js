@@ -45,8 +45,97 @@ export function parseSVG(svgText) {
     data.sleeves = data.front.sleeves;
     data.pockets = data.front.pockets;
 
+    // NEW: extract measurement cross-points from the mannequin SVG
+    data.measurementPoints = parseMeasurementPoints(root);
+
     return data;
 }
+
+// ─── NEW FUNCTION ────────────────────────────────────────────────────────────
+// Reads all fm_* and bm_* cross markers from the SVG.
+// Each marker is a <g> containing 2 <line> elements (one horizontal, one vertical).
+// Returns { front: { key: {x, y}, ... }, back: { key: {x, y}, ... } }
+function parseMeasurementPoints(root) {
+    const result = { front: {}, back: {} };
+
+    // Helper: given a container group, extract all cross-point centers
+    // prefix = 'fm_' for front, 'bm_' for back
+    function extractPoints(containerGroup, prefix, store) {
+        containerGroup.querySelectorAll('g[id]').forEach(g => {
+            const rawId = g.getAttribute('id');
+            if (!rawId || !rawId.startsWith(prefix)) return;
+
+            // Key = ID without the prefix (e.g. 'fm_chest_l' → 'chest_l')
+            const key = rawId.slice(prefix.length);
+
+            const lines = Array.from(g.querySelectorAll('line'));
+            if (lines.length < 2) {
+                console.warn(`parseMeasurementPoints: "${rawId}" has fewer than 2 lines — skipping`);
+                return;
+            }
+
+            // Parse a single <line> into its 4 numeric coordinates
+            function readLine(el) {
+                const x1 = parseFloat(el.getAttribute('x1'));
+                const y1 = parseFloat(el.getAttribute('y1'));
+                const x2 = parseFloat(el.getAttribute('x2'));
+                const y2 = parseFloat(el.getAttribute('y2'));
+                if ([x1, y1, x2, y2].some(isNaN)) {
+                    console.warn(`parseMeasurementPoints: a line inside "${rawId}" has invalid coordinates — skipping`);
+                    return null;
+                }
+                return { x1, y1, x2, y2 };
+            }
+
+            const l0 = readLine(lines[0]);
+            const l1 = readLine(lines[1]);
+            if (!l0 || !l1) return;
+
+            // Identify which line is horizontal (y1 === y2) and which is vertical (x1 === x2)
+            // Use approximate equality (±0.1) to tolerate floating-point rounding from Illustrator
+            function isHorizontal(l) { return Math.abs(l.y1 - l.y2) < 0.1; }
+            function isVertical(l)   { return Math.abs(l.x1 - l.x2) < 0.1; }
+
+            const h = isHorizontal(l0) ? l0 : isHorizontal(l1) ? l1 : null;
+            const v = isVertical(l0)   ? l0 : isVertical(l1)   ? l1 : null;
+
+            if (!h || !v) {
+                console.warn(`parseMeasurementPoints: "${rawId}" lines are neither clearly horizontal nor vertical — skipping`);
+                return;
+            }
+
+            // Center of horizontal line: midpoint of x, y is constant
+            const hCenter = { x: (h.x1 + h.x2) / 2, y: h.y1 };
+            // Center of vertical line: x is constant, midpoint of y
+            const vCenter = { x: v.x1, y: (v.y1 + v.y2) / 2 };
+
+            // Average both centers for robustness
+            store[key] = {
+                x: Math.round(((hCenter.x + vCenter.x) / 2) * 100) / 100,
+                y: Math.round(((hCenter.y + vCenter.y) / 2) * 100) / 100
+            };
+        });
+    }
+
+    // Front measurements
+    const frontGroup = root.querySelector('[id="front_measurements"]');
+    if (!frontGroup) {
+        console.warn('parseMeasurementPoints: front_measurements group not found — returning empty');
+    } else {
+        extractPoints(frontGroup, 'fm_', result.front);
+    }
+
+    // Back measurements
+    const backGroup = root.querySelector('[id="back_measurements"]');
+    if (!backGroup) {
+        console.warn('parseMeasurementPoints: back_measurements group not found — returning empty');
+    } else {
+        extractPoints(backGroup, 'bm_', result.back);
+    }
+
+    return result;
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function parseView(viewPrefix, root, store) {
     const cleanId = id => id ? id.replace(/_x5F_/g, '_') : '';
@@ -78,13 +167,10 @@ function parseView(viewPrefix, root, store) {
     });
 
     // Fallback: discover sleeves without _GRP wrapper
-    // Look for direct child groups like f_top_ts_slv_set_l / f_top_ts_slv_set_r
     if (Object.keys(store.sleeves).length === 0 && topGrp) {
-        // Find sleeve groups by pattern: {view}_top_ts_slv_{variant}_{side}
         const slvGroups = {};
         topGrp.querySelectorAll('g[id]').forEach(g => {
             const id = cleanId(g.getAttribute('id'));
-            // Match pattern like f_top_ts_slv_set_l or f_top_ts_slv_set_r
             const match = id.match(new RegExp(`^${viewPrefix}_top_ts_slv_(\\w+)_([lr])$`));
             if (!match) return;
             const variant = match[1];
@@ -92,7 +178,6 @@ function parseView(viewPrefix, root, store) {
                 slvGroups[variant] = { main:null, main_l:null, main_r:null, seams:[], fills:[], borders:[], shapes:[] };
             }
             const side = match[2];
-            // Extract paths from this side group
             g.querySelectorAll('path, polyline, line').forEach(el => {
                 const childId = cleanId(el.getAttribute('id') || '');
                 const pathD = getPathD(el);
@@ -100,13 +185,12 @@ function parseView(viewPrefix, root, store) {
 
                 if (childId.includes('_sem_')) {
                     slvGroups[variant].seams.push(pathD);
-                } else if (childId.includes('_border_') || childId.includes('_border_')) {
+                } else if (childId.includes('_border_')) {
                     slvGroups[variant].borders.push(pathD);
                 } else if (childId.includes('_shape_')) {
                     if (side === 'l') slvGroups[variant].main_l = pathD;
                     else slvGroups[variant].main_r = pathD;
                 } else if (pathD && !childId.includes('_sem_')) {
-                    // Fallback: first non-seam path with _l/_r is the main shape
                     if (childId.endsWith('_l') || side === 'l') {
                         if (!slvGroups[variant].main_l) slvGroups[variant].main_l = pathD;
                     } else if (childId.endsWith('_r') || side === 'r') {
@@ -127,7 +211,6 @@ function extractFromGroup(g, cleanId) {
         const pathD = getPathD(el);
         if (!pathD) return;
  
-        // If element has no ID, check if parent group ID contains _sem_
         if (!childId) {
             const parentId = cleanId(el.parentElement?.getAttribute('id') || el.parentElement?.parentElement?.getAttribute('id') || '');
             if (parentId.includes('_sem_')) {
