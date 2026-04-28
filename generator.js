@@ -66,6 +66,13 @@ function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
         });
     }
 
+    // Rib binding (continuous lines, only on V/round necks)
+    if (neck && neck.rib && neck.rib.length) {
+        neck.rib.forEach((d,i) => {
+            svgEl.appendChild(mkEl('path', { id:'nck_' + neckName + '_rib_' + (i+1), d, fill:'none', stroke:'#1a1a1a', 'stroke-width': seamSw, 'stroke-linecap':'round', 'stroke-linejoin':'round' }));
+        });
+    }
+
     // Sleeves (OVERLAY)
     if (sleeve) {
         log('Adding sleeves...', 'info');
