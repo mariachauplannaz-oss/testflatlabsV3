@@ -27,12 +27,10 @@ export function initCategories(state, updateButton) {
 
 export function goStep(n, state, updateButton) {
     state.currentStep = n;
-    const totalSteps = state.currentMannequin === 'iso' ? 3 : 2;
     const pct = n * (100 / 3);
     document.getElementById('stepsTrack').style.transform = 'translateX(-' + pct + '%)';
     const dots = document.querySelectorAll('.step-dot');
-    dots[2].style.display = totalSteps === 3 ? '' : 'none';
-dots.forEach((d,i) => {
+    dots.forEach((d,i) => {
         d.className = 'step-dot' + (i<n?' done':i===n?' active':'');
         if (i < n) {
             d.style.cursor = 'pointer';
@@ -52,11 +50,8 @@ export function updateButton(state) {
     if (state.currentStep === 0) {
         btn.textContent = 'Next';
         btn.disabled = !state.selectedCategory;
-    } else if (state.currentStep === 1 && state.currentMannequin === 'iso') {
+    } else if (state.currentStep === 1) {
         btn.textContent = 'Next';
-        btn.disabled = false;
-    } else if (state.currentStep === 1 && state.currentMannequin === 'sty') {
-        btn.textContent = 'Generate';
         btn.disabled = false;
     } else {
         btn.textContent = 'Generate';
