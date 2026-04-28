@@ -17,7 +17,7 @@ window.closeInfoPanel = closeInfoPanel;
 const state = {
     currentStep: 0,
     selectedCategory: null,
-    currentMannequin: 'sty',
+    currentMannequin: 'iso',
     svgData: null,
     selections: { torso: null, neck: null, sleeve: null },
     emailCaptured: false,
@@ -53,26 +53,6 @@ async function loadSVG() {
     } catch(err) {
         log(`Failed to load ${file}: ${err.message}`, 'err');
     }
-}
-
-// ═══ MANNEQUIN TOGGLE ═══
-async function setMannequin(type) {
-    state.currentMannequin = type;
-    document.getElementById('btnSty').classList.toggle('active', type==='sty');
-    document.getElementById('btnIso').classList.toggle('active', type==='iso');
-    setIsoMode(type === 'iso');
-    await loadSVG();
-    // Siempre va a Step 1 manteniendo selecciones
-    goStep(1, state, doUpdateButton);
-    buildStep1(state);
-    // Limpia canvas
-    document.getElementById('svg-preview').innerHTML = '';
-    const previewBack = document.getElementById('svg-preview-back');
-    if (previewBack) previewBack.innerHTML = '';
-    const backCard = document.getElementById('canvas-card-back');
-    if (backCard) backCard.style.display = 'none';
-    document.getElementById('btnDownload').style.display = 'none';
-    document.getElementById('btnTechPack').style.display = 'none';
 }
 
 // ═══ NAVIGATION ═══
@@ -123,6 +103,7 @@ async function doConfirmTechPack() {
 async function init() {
     initCategories(state, doUpdateButton);
     initToggles();
+    setIsoMode(true);
     await loadSVG();
     goStep(0, state, doUpdateButton);
     
@@ -132,8 +113,6 @@ async function init() {
     document.getElementById('mobileDownload')?.addEventListener('click', doDownload);
     document.getElementById('btnDownload')?.addEventListener('click', doDownload);
     document.getElementById('btnTechPack')?.addEventListener('click', doExportTechPack);
-    document.getElementById('btnSty')?.addEventListener('click', () => setMannequin('sty'));
-    document.getElementById('btnIso')?.addEventListener('click', () => setMannequin('iso'));
     document.getElementById('btnBack')?.addEventListener('click', () => {
     const prev = state.currentStep - 1;
     goStep(prev, state, doUpdateButton);
