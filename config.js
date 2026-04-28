@@ -18,12 +18,12 @@ export const MANNEQUIN_CFG = {
         free: true,
         hasBack: false
     },
-    iso: {
+iso: {
         file: 'mannequin_iso.svg',
-        previewViewBox: '380 650 1520 1750',
-        backViewBox: '2648 650 1520 1750',
-        exportViewBox: '400 680 1480 1700',
-        exportBackViewBox: '2668 680 1480 1700',
+        previewViewBox: '134 286 3275 4174',
+        backViewBox: '3677 266 3275 4171',
+        exportViewBox: '134 286 3275 4174',
+        exportBackViewBox: '3677 266 3275 4171',
         strokeWidth: '3',
         seamStrokeWidth: '1.5',
         seamDash: '12 12',
