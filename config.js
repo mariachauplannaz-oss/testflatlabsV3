@@ -7,25 +7,14 @@ export const DICT = {
 };
 
 export const MANNEQUIN_CFG = {
-    sty: {
-        file: 'mannequin_sty.svg',
-        previewViewBox: '80 90 240 260',
-        exportViewBox: '80 110 240 250',
-        strokeWidth: '0.7',
-        seamStrokeWidth: '0.35',
-        seamDash: '1.5 1.5',
-        label: 'Illustration',
-        free: true,
-        hasBack: false
-    },
 iso: {
         file: 'mannequin_iso.svg',
         previewViewBox: '134 286 3275 4174',
         backViewBox: '3677 266 3275 4171',
-        exportViewBox: '134 286 3275 4174',
-        exportBackViewBox: '3677 266 3275 4171',
-        strokeWidth: '3',
-        seamStrokeWidth: '1.5',
+        exportViewBox: '204 316 3135 4114',
+        exportBackViewBox: '3747 296 3135 4111',
+        strokeWidth: '8',
+        seamStrokeWidth: '4',
         seamDash: '12 12',
         label: 'ISO EU38',
         free: false,
