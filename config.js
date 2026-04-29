@@ -284,8 +284,8 @@ export const COMPONENT_META = {
     // ─── BOM (Bill of Materials) — default for jersey T-shirt ─
     bom: {
         tshirt: [
-            { ref: 'FAB-001', description: 'Main fabric — Jersey 180g/m² (95% Cotton, 5% Elastane)', unit: 'ml',   qty: '1.2' },
-            { ref: 'FAB-002', description: 'Rib fabric — 1×1 rib (95% Cotton, 5% Elastane)',         unit: 'ml',   qty: '0.15' },
+            { ref: 'FAB-001', description: 'Main fabric — Jersey 180g/m² (95% Cotton, 5% Elastane)', unit: 'm',   qty: '1.2' },
+            { ref: 'FAB-002', description: 'Rib fabric — 1×1 rib (95% Cotton, 5% Elastane)',         unit: 'm',   qty: '0.15' },
             { ref: 'THR-001', description: 'Polyester sewing thread — Tex 27 (ISO 180/2)',            unit: 'cone', qty: '1' },
             { ref: 'THR-002', description: 'Coverseam thread — Tex 18',                              unit: 'cone', qty: '1' },
             { ref: 'LAB-001', description: 'Care label — woven (symbols per EN ISO 3758)',            unit: 'pc',   qty: '1' },
