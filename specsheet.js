@@ -366,12 +366,40 @@ function drawBOMTable(doc, bomRows, y) {
             2: { cellWidth: 18, halign: 'center' },
             3: { cellWidth: 14, halign: 'center' },
         },
-        alternateRowStyles: {
-            fillColor: [250, 250, 252],
-        }
+        alternateRowStyles: { fillColor: [250, 250, 252] }
     });
 
     return doc.lastAutoTable.finalY + 8;
+}
+
+// ─── CONSTRUCTION NOTES ───────────────────────────────────────────────────────
+function drawConstructionNotes(doc, notes, y) {
+    const pw = pageWidth(doc);
+    const colW = pw - MARGIN.left - MARGIN.right;
+
+    notes.forEach(({ component, norm, note }) => {
+        if (y > pageHeight(doc) - 30) {
+            doc.addPage();
+            y = MARGIN.top;
+        }
+        const pillText = component + '   ' + norm;
+        const pillW = doc.getTextWidth(pillText) + 10;
+        setColor(doc, COLORS.accent, 'fill');
+        doc.roundedRect(MARGIN.left, y - 4.5, pillW, 7, 1.5, 1.5, 'F');
+        setFont(doc, 'bold', FONT.small);
+        setColor(doc, COLORS.accentText);
+        doc.text(pillText, MARGIN.left + 5, y);
+        setFont(doc, 'normal', FONT.small);
+        setColor(doc, COLORS.gray3);
+        const lines = doc.splitTextToSize(note, colW - 4);
+        doc.text(lines, MARGIN.left, y + 5);
+        y += 5 + lines.length * 4 + 5;
+        doc.setDrawColor(...COLORS.gray2);
+        doc.setLineWidth(0.2);
+        doc.line(MARGIN.left, y - 3, pw - MARGIN.right, y - 3);
+    });
+
+    return y;
 }
 
 // ─── GRADING SECTION ─────────────────────────────────────────────────────────
@@ -387,7 +415,7 @@ function drawGradingSection(doc, selections, y) {
     const body1 = baseMeasures.map(m => {
         const row = [m.description];
         sizes.forEach(size => {
-            const val = GRADING.getForSize(size, m.description.toLowerCase().replace(/\s+/g, '_'), m.value);
+            const val = GRADING.getForSize(size, m.key, m.value);
             const isBase = size === 'EU38';
             row.push(isBase ? String(val) : String(val));
         });
@@ -471,43 +499,6 @@ function drawGradingSection(doc, selections, y) {
     });
 
     return doc.lastAutoTable.finalY + 8;
-
-// ─── CONSTRUCTION NOTES ───────────────────────────────────────────────────────
-function drawConstructionNotes(doc, notes, y) {
-    const pw = pageWidth(doc);
-    const colW = pw - MARGIN.left - MARGIN.right;
-
-    notes.forEach(({ component, norm, note }) => {
-        // Check page overflow
-        if (y > pageHeight(doc) - 30) {
-            doc.addPage();
-            y = MARGIN.top;
-        }
-
-        // Component + norm in one accent pill
-        const pillText = component + '   ' + norm;
-        const pillW = doc.getTextWidth(pillText) + 10;
-        setColor(doc, COLORS.accent, 'fill');
-        doc.roundedRect(MARGIN.left, y - 4.5, pillW, 7, 1.5, 1.5, 'F');
-        setFont(doc, 'bold', FONT.small);
-        setColor(doc, COLORS.accentText);
-        doc.text(pillText, MARGIN.left + 5, y);
-
-        // Note text
-        setFont(doc, 'normal', FONT.small);
-        setColor(doc, COLORS.gray3);
-        const lines = doc.splitTextToSize(note, colW - 4);
-        doc.text(lines, MARGIN.left, y + 5);
-
-        y += 5 + lines.length * 4 + 5;
-
-        // Light divider
-        doc.setDrawColor(...COLORS.gray2);
-        doc.setLineWidth(0.2);
-        doc.line(MARGIN.left, y - 3, pw - MARGIN.right, y - 3);
-    });
-
-    return y;
 }
 
 // ─── STITCH & CONSTRUCTION TABLE ─────────────────────────────────────────────
@@ -662,61 +653,54 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // Flat visual
     y = await drawFlat(doc, y);
 
-    // Colorway section 
+    // 00 — Colorway
     if (state.colorHex) {
-    y = drawSectionLabel(doc, '00 — Colorway', y);
-    y = drawColorway(doc, state.colorHex, y);
-}
+        y = drawSectionLabel(doc, '00 — Colorway', y);
+        y = drawColorway(doc, state.colorHex, y);
+    }
 
-    // POM section
+    // 01 — POM Front
     y = drawSectionLabel(doc, '01 — Points of Measure (POM) · ISO 3635 · EU Size 38', y);
     y = drawPOMTable(doc, techPack.pom, y);
 
-    // Grading section
-    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '07 — Grading Table', y);
-    y = drawGradingSection(doc, state.selections, y);
-        
-    // Back POM section
+    // 02 — POM Back
     const backPom = collectMeasurements(state.selections, 'EU38', 'back');
     if (backPom.length > 0) {
-    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '01B — Back View · Points of Measure', y);
-    y = drawPOMTable(doc, backPom, y);
-}
+        if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+        y = drawSectionLabel(doc, '02 — Back View · Points of Measure', y);
+        y = drawPOMTable(doc, backPom, y);
+    }
 
-    // BOM section
+    // 03 — Grading
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '02 — Bill of Materials (BOM)', y);
+    y = drawSectionLabel(doc, '03 — Grading Table', y);
+    y = drawGradingSection(doc, state.selections, y);
+
+    // 04 — BOM
+    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '04 — Bill of Materials (BOM)', y);
     y = drawBOMTable(doc, techPack.bom, y);
 
-    // Construction notes section
-   // Stitch & Construction section
+    // 05 — Stitch
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '03 — Stitch & Construction Specifications', y);
+    y = drawSectionLabel(doc, '05 — Stitch & Construction Specifications', y);
     y = drawStitchTable(doc, y);
-    
-    // Fabric specifications section
+
+    // 06 — Fabric
     doc.addPage(); y = MARGIN.top + 10;
-    y = drawSectionLabel(doc, '04 — Fabric Specifications', y);
+    y = drawSectionLabel(doc, '06 — Fabric Specifications', y);
     y = drawFabricTable(doc, state.fabric || 'jersey_180', y);
-    
-    // Packing instructions section
+
+    // 07 — Packing
     if (y > pageHeight(doc) - 70) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '05 — Packing Instructions', y);
+    y = drawSectionLabel(doc, '07 — Packing Instructions', y);
     y = drawPackingInstructions(doc, 'standard', y);
-    
-    // Construction notes section
+
+    // 08 — Construction Notes
     if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '06 — Construction Notes & ISO Standards', y);
+    y = drawSectionLabel(doc, '08 — Construction Notes & ISO Standards', y);
     y += 4;
     y = drawConstructionNotes(doc, techPack.constructionNotes, y);
-
-    // Footers on all pages
-    const totalPages = doc.internal.getNumberOfPages();
-    for (let p = 1; p <= totalPages; p++) {
-        doc.setPage(p);
-        drawFooter(doc, p, totalPages, techPack.header.date);
     }
 
     // Save
