@@ -113,33 +113,80 @@ export const TOLERANCES = {
 
 export const GRADING = {
     baseSize: 'EU38',
-    // Deltas from EU38 for circumference measurements
-    // Each step (EU36→38→40) is typically +/- 4 cm on bust/hip, +/- 4 cm on waist
-    sizes: {
-        EU34: { bust: -8, waist: -8, hip: -8, shoulder: -2, sleeve: -1, length: -1 },
-        EU36: { bust: -4, waist: -4, hip: -4, shoulder: -1, sleeve: -0.5, length: -0.5 },
-        EU38: { bust: 0,  waist: 0,  hip: 0,  shoulder: 0,  sleeve: 0,    length: 0 },
-        EU40: { bust: +4, waist: +4, hip: +4, shoulder: +1, sleeve: +0.5, length: +0.5 },
-        EU42: { bust: +8, waist: +8, hip: +8, shoulder: +2, sleeve: +1,   length: +1 },
-        EU44: { bust: +12, waist: +12, hip: +12, shoulder: +3, sleeve: +1.5, length: +1.5 }
+    
+    // Grading categories with delta per size step (in cm)
+    // Based on ISO 8559-2 standards
+    categories: {
+        circumference_full: 4,    // Bust, Chest, Waist, Hip, Hem
+        circumference_half: 2,    // Bicep, Cuff, Thigh, Knee, Ankle, Neck circ
+        length_long:        1,    // Sleeve length, Inseam, Outseam
+        length_short:       0.5,  // Body length HPS, Across back, Body rise
+        width_shoulder:     1,    // Shoulder width only
+        width_small:        0.4,  // Neck width, Front rise width
+        depth_neck:         0.2,  // Front neck drop, Back neck drop
+        armhole:            0.5,  // Armhole straight, armhole curve
     },
-    // Helper: get garment measurement for any size
-    // Usage: getForSize('EU40', 'bust', 92) → 92 + 4 = 96
+    
+    // Number of size steps from EU38 (base = 0)
+    sizeSteps: {
+        EU34: -2, EU36: -1, EU38: 0, EU40: 1, EU42: 2, EU44: 3
+    },
+    
+    // Map measurement keys to grading category
+    // Keys here are the technical keys used in COMPONENT_META measures
+    keyMap: {
+        // Tops — torso
+        chest:        'circumference_full',
+        bust:         'circumference_full',
+        waist:        'circumference_full',
+        hip:          'circumference_full',
+        hem:          'circumference_full',
+        length:       'length_short',         // Body Length (HPS)
+        body_length:  'length_short',
+        across_back:  'length_short',
+        shoulder:     'width_shoulder',
+        armhole:      'armhole',
+        
+        // Tops — sleeves
+        sleeve_length: 'length_long',
+        bicep:         'circumference_half',
+        cuff_opening:  'circumference_half',
+        sleeve_opening:'circumference_half',
+        
+        // Tops — necks
+        neck_width:    'width_small',
+        front_drop:    'depth_neck',
+        back_drop:     'depth_neck',
+        binding_width: 'width_small',
+        collar_height: 'length_short',
+        
+        // Bottoms (ready for future Pants component)
+        thigh:         'circumference_half',
+        knee:          'circumference_half',
+        ankle:         'circumference_half',
+        inseam:        'length_long',
+        outseam:       'length_long',
+        body_rise:     'length_short',
+    },
+    
+    /**
+     * Get graded value for a measurement at a given size.
+     * Returns { value, hasGradingRule } so the PDF can show "—" when no rule exists.
+     */
     getForSize(size, measureKey, baseValue) {
-        const delta = this.sizes[size];
-        if (!delta) return baseValue;
-        // Map measurement keys to grading categories
-        const keyMap = {
-            chest: 'bust', bust: 'bust',
-            waist: 'waist',
-            hip: 'hip', hem: 'hip',
-            shoulder: 'shoulder',
-            sleeve_length: 'sleeve',
-            length: 'length', body_length: 'length'
+        const category = this.keyMap[measureKey];
+        if (!category) {
+            return { value: baseValue, hasGradingRule: false };
+        }
+        const deltaPerStep = this.categories[category];
+        const steps = this.sizeSteps[size];
+        if (deltaPerStep === undefined || steps === undefined) {
+            return { value: baseValue, hasGradingRule: false };
+        }
+        return {
+            value: baseValue + (deltaPerStep * steps),
+            hasGradingRule: true
         };
-        const gradingKey = keyMap[measureKey] || null;
-        if (!gradingKey || delta[gradingKey] === undefined) return baseValue;
-        return baseValue + delta[gradingKey];
     }
 };
 
@@ -314,9 +361,11 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         const measureSource = view === 'back' ? torso.back_measures : torso.measures;
         if (measureSource) {
             for (const [key, m] of Object.entries(measureSource)) {
-                const value = GRADING.getForSize(size, key, m.value);
+                const grading = GRADING.getForSize(size, key, m.value);
+                const value = grading.value;
                 const prefix = view === 'back' ? 'BCK' : 'TRS';
                 results.push({
+                    hasGradingRule: grading.hasGradingRule,
                     code:        `${prefix}-${String(results.length + 1).padStart(3, '0')}`,
                     description: m.label,
                     key:         key,              
@@ -333,8 +382,10 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         if (view === 'front' && selections.neck && COMPONENT_META.necks[selections.neck]) {
             const neck = COMPONENT_META.necks[selections.neck];
             for (const [key, m] of Object.entries(neck.measures)) {
-                const value = GRADING.getForSize(size, key, m.value);
+                const grading = GRADING.getForSize(size, key, m.value);
+                const value = grading.value;
                 results.push({
+                    hasGradingRule: grading.hasGradingRule,
                     code:        `NCK-${String(results.length + 1).padStart(3, '0')}`,
                     description: m.label,
                     key:         key,              
@@ -350,8 +401,10 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
             const sleeve = COMPONENT_META.sleeves[selections.sleeve];
             for (const [key, m] of Object.entries(sleeve.measures)) {
-                const value = GRADING.getForSize(size, key, m.value);
+                const grading = GRADING.getForSize(size, key, m.value);
+                const value = grading.value;
                 results.push({
+                    hasGradingRule: grading.hasGradingRule,
                     code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
                     description: m.label,
                     key:         key,              
