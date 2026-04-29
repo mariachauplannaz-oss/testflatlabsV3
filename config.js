@@ -17,7 +17,6 @@ iso: {
         seamStrokeWidth: '4',
         seamDash: '12 12',
         label: 'ISO EU38',
-        free: false,
         hasBack: true
     }
 };
