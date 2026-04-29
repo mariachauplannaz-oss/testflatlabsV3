@@ -210,17 +210,16 @@ export const COMPONENT_META = {
             label: 'Regular Fit',
             ease: 'regular',   // 4-6 cm ease on bust
             measures: {
-                chest:      { label: 'Chest (1/2)',           value: 46,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
-                waist:      { label: 'Waist (1/2)',           value: 44,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
-                length:     { label: 'Body Length (HPS)',     value: 62,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
-                shoulder:   { label: 'Shoulder Width',        value: 38.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
-                hem:        { label: 'Hem Width (1/2)',       value: 48,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
-                armhole:    { label: 'Armhole Straight',      value: 21,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
-                
+                chest:      { letter: 'TS-A', label: 'Chest (1/2)',           value: 46,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
+                waist:      { letter: 'TS-B', label: 'Waist (1/2)',           value: 44,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
+                length:     { letter: 'TS-C', label: 'Body Length (HPS)',     value: 62,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
+                shoulder:   { letter: 'TS-D', label: 'Shoulder Width',        value: 38.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
+                hem:        { letter: 'TS-E', label: 'Hem Width (1/2)',       value: 48,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
+                armhole:    { letter: 'TS-F', label: 'Armhole Straight',      value: 21,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
             },
             back_measures: {
-                across_back: { label: 'Across Back (1/2)', value: 37, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
-                back_length:  { label: 'CB Length',         value: 64, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
+                across_back: { letter: 'TS-N', label: 'Across Back (1/2)', value: 37, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
+                back_length: { letter: 'TS-O', label: 'CB Length',         value: 64, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
             },
             construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: double-needle coverseam 2 cm.',
             iso_norm: 'ISO 514'
@@ -229,16 +228,16 @@ export const COMPONENT_META = {
             label: 'Crop Fit',
             ease: 'regular',
             measures: {
-                chest:      { label: 'Chest (1/2)',           value: 46,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
-                waist:      { label: 'Waist (1/2)',           value: 44,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
-                length:     { label: 'Body Length (HPS)',     value: 48,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
-                shoulder:   { label: 'Shoulder Width',        value: 38.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
-                hem:        { label: 'Hem Width (1/2)',       value: 46,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
-                armhole:    { label: 'Armhole Straight',      value: 21,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
+                chest:      { letter: 'TS-A', label: 'Chest (1/2)',           value: 46,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
+                waist:      { letter: 'TS-B', label: 'Waist (1/2)',           value: 44,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
+                length:     { letter: 'TS-C', label: 'Body Length (HPS)',     value: 48,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
+                shoulder:   { letter: 'TS-D', label: 'Shoulder Width',        value: 38.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
+                hem:        { letter: 'TS-E', label: 'Hem Width (1/2)',       value: 46,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
+                armhole:    { letter: 'TS-F', label: 'Armhole Straight',      value: 21,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
             },
             back_measures: {
-                across_back: { label: 'Across Back (1/2)', value: 37, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
-                back_length:  { label: 'CB Length',         value: 50, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
+                across_back: { letter: 'TS-N', label: 'Across Back (1/2)', value: 37, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
+                back_length: { letter: 'TS-O', label: 'CB Length',         value: 50, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
             },
             construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: exposed raw edge or coverseam.',
             iso_norm: 'ISO 514'
@@ -247,16 +246,16 @@ export const COMPONENT_META = {
             label: 'Slim Fit',
             ease: 'slim',
             measures: {
-                chest:      { label: 'Chest (1/2)',       value: 44,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
-                waist:      { label: 'Waist (1/2)',       value: 41,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
-                length:     { label: 'Body Length (HPS)', value: 62,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
-                shoulder:   { label: 'Shoulder Width',    value: 37.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
-                hem:        { label: 'Hem Width (1/2)',   value: 44,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
-                armhole:    { label: 'Armhole Straight',  value: 20,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
+                chest:      { letter: 'TS-A', label: 'Chest (1/2)',       value: 44,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
+                waist:      { letter: 'TS-B', label: 'Waist (1/2)',       value: 41,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
+                length:     { letter: 'TS-C', label: 'Body Length (HPS)', value: 62,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
+                shoulder:   { letter: 'TS-D', label: 'Shoulder Width',    value: 37.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
+                hem:        { letter: 'TS-E', label: 'Hem Width (1/2)',   value: 44,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
+                armhole:    { letter: 'TS-F', label: 'Armhole Straight',  value: 20,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
             },
             back_measures: {
-                across_back: { label: 'Across Back (1/2)', value: 36, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
-                back_length: { label: 'CB Length',         value: 64, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
+                across_back: { letter: 'TS-N', label: 'Across Back (1/2)', value: 36, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
+                back_length: { letter: 'TS-O', label: 'CB Length',         value: 64, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
             },
             construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: double-needle coverseam 2 cm.',
             iso_norm: 'ISO 514'
@@ -268,9 +267,9 @@ export const COMPONENT_META = {
         lon: {
             label: 'Long Sleeve',
             measures: {
-                sleeve_length:  { label: 'Sleeve Length',      value: 60,   unit: 'cm', pom: 'Shoulder seam to cuff edge, arm straight' },
-                bicep:          { label: 'Bicep Width (1/2)',  value: 16,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam' },
-                cuff_opening:   { label: 'Cuff Opening (1/2)', value: 10.5, unit: 'cm', pom: 'Measured flat at cuff, edge to edge' }
+                sleeve_length:  { letter: 'TS-K', label: 'Sleeve Length',      value: 60,   unit: 'cm', pom: 'Shoulder seam to cuff edge, arm straight' },
+                bicep:          { letter: 'TS-L', label: 'Bicep Width (1/2)',  value: 16,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam' },
+                cuff_opening:   { letter: 'TS-M', label: 'Cuff Opening (1/2)', value: 10.5, unit: 'cm', pom: 'Measured flat at cuff, edge to edge' }
             },
             construction: 'Sleeve seam: ISO 514 (overlock). Cuff: coverseam ISO 406, 2 cm.',
             iso_norm: 'ISO 514'
@@ -278,9 +277,9 @@ export const COMPONENT_META = {
         cap: {
             label: 'Short Sleeve',
             measures: {
-                sleeve_length:  { label: 'Sleeve Length',          value: 20,   unit: 'cm', pom: 'Shoulder seam to sleeve hem, arm straight' },
-                bicep:          { label: 'Bicep Width (1/2)',      value: 17,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam' },
-                sleeve_opening: { label: 'Sleeve Opening (1/2)',   value: 15.5, unit: 'cm', pom: 'Measured flat at sleeve hem, edge to edge' }
+                sleeve_length:  { letter: 'TS-K', label: 'Sleeve Length',          value: 20,   unit: 'cm', pom: 'Shoulder seam to sleeve hem, arm straight' },
+                bicep:          { letter: 'TS-L', label: 'Bicep Width (1/2)',      value: 17,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam' },
+                sleeve_opening: { letter: 'TS-M', label: 'Sleeve Opening (1/2)',   value: 15.5, unit: 'cm', pom: 'Measured flat at sleeve hem, edge to edge' }
             },
             construction: 'Sleeve hem: coverseam ISO 406, 2 cm. Set-in sleeve.',
             iso_norm: 'ISO 514'
@@ -292,10 +291,10 @@ export const COMPONENT_META = {
         rnd: {
             label: 'Crew Neck',
             measures: {
-                neck_width:     { label: 'Neck Width (1/2)',    value: 9,    unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
-                front_drop:     { label: 'Front Neck Drop',     value: 8.5,  unit: 'cm', pom: 'From HPS to lowest point of front neckline, straight' },
-                back_drop:      { label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
-                binding_width:  { label: 'Rib Binding Width',   value: 1.5,  unit: 'cm', pom: 'Finished width of neck binding' }
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 9,    unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 8.5,  unit: 'cm', pom: 'From HPS to lowest point of front neckline, straight' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
+                binding_width:  { letter: 'TS-J', label: 'Rib Binding Width',   value: 1.5,  unit: 'cm', pom: 'Finished width of neck binding' }
             },
             construction: 'Rib binding 2×1 (cotton/elastane). Attached with ISO 301 flatlock stitch 0.1 cm from edge. Binding stretched 90% of neckline length.',
             iso_norm: 'ISO 301'
@@ -303,10 +302,10 @@ export const COMPONENT_META = {
         v: {
             label: 'V-Neck',
             measures: {
-                neck_width:     { label: 'Neck Width (1/2)',    value: 9,    unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
-                front_drop:     { label: 'Front Neck Drop',     value: 18,   unit: 'cm', pom: 'From HPS to V-point, straight' },
-                back_drop:      { label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
-                binding_width:  { label: 'Rib Binding Width',   value: 1.5,  unit: 'cm', pom: 'Finished width of neck binding' }
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 9,    unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 18,   unit: 'cm', pom: 'From HPS to V-point, straight' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
+                binding_width:  { letter: 'TS-J', label: 'Rib Binding Width',   value: 1.5,  unit: 'cm', pom: 'Finished width of neck binding' }
             },
             construction: 'Rib binding 2×1. ISO 301 flatlock stitch. V-point: mitered finish with tape reinforcement.',
             iso_norm: 'ISO 301'
@@ -314,10 +313,10 @@ export const COMPONENT_META = {
         mok: {
             label: 'Mock Neck',
             measures: {
-                neck_width:     { label: 'Neck Width (1/2)',    value: 8.5,  unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
-                collar_height:  { label: 'Collar Height',       value: 4.5,  unit: 'cm', pom: 'From neckline seam to top of collar, straight' },
-                front_drop:     { label: 'Front Neck Drop',     value: 1.5,  unit: 'cm', pom: 'From HPS to neckline seam at CF' },
-                back_drop:      { label: 'Back Neck Drop',      value: 1.5,  unit: 'cm', pom: 'From HPS to neckline seam at CB' }
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 8.5,  unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                collar_height:  { letter: 'TS-J', label: 'Collar Height',       value: 4.5,  unit: 'cm', pom: 'From neckline seam to top of collar, straight' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 1.5,  unit: 'cm', pom: 'From HPS to neckline seam at CF' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 1.5,  unit: 'cm', pom: 'From HPS to neckline seam at CB' }
             },
             construction: 'Self-fabric mock collar. ISO 301 flatlock stitch on collar seam. Fold at 4.5 cm.',
             iso_norm: 'ISO 301'
@@ -325,10 +324,10 @@ export const COMPONENT_META = {
         scp: {
             label: 'Scoop Neck',
             measures: {
-                neck_width:     { label: 'Neck Width (1/2)',    value: 10,   unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
-                front_drop:     { label: 'Front Neck Drop',     value: 14,   unit: 'cm', pom: 'From HPS to lowest point of scoop, straight' },
-                back_drop:      { label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
-                binding_width:  { label: 'Rib Binding Width',   value: 1.2,  unit: 'cm', pom: 'Finished width of neck binding' }
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 10,   unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 14,   unit: 'cm', pom: 'From HPS to lowest point of scoop, straight' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
+                binding_width:  { letter: 'TS-J', label: 'Rib Binding Width',   value: 1.2,  unit: 'cm', pom: 'Finished width of neck binding' }
             },
             construction: 'Rib binding 2×1 (cotton/elastane). ISO 301 flatlock stitch 0.1 cm from edge.',
             iso_norm: 'ISO 301'
@@ -336,10 +335,10 @@ export const COMPONENT_META = {
         bot: {
             label: 'Boat Neck',
             measures: {
-                neck_width:     { label: 'Neck Width (1/2)',    value: 12,   unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
-                front_drop:     { label: 'Front Neck Drop',     value: 5,    unit: 'cm', pom: 'From HPS to lowest point of neckline at CF, straight' },
-                back_drop:      { label: 'Back Neck Drop',      value: 5,    unit: 'cm', pom: 'Same as front — symmetric neckline' },
-                binding_width:  { label: 'Self-Finish Width',   value: 1.5,  unit: 'cm', pom: 'Folded self-fabric edge finish' }
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 12,   unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 5,    unit: 'cm', pom: 'From HPS to lowest point of neckline at CF, straight' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 5,    unit: 'cm', pom: 'Same as front — symmetric neckline' },
+                binding_width:  { letter: 'TS-J', label: 'Self-Finish Width',   value: 1.5,  unit: 'cm', pom: 'Folded self-fabric edge finish' }
             },
             construction: 'Self-fabric fold finish. ISO 301 stitch at edge. No separate binding.',
             iso_norm: 'ISO 301'
@@ -367,11 +366,13 @@ export const COMPONENT_META = {
 // ═══════════════════════════════════════════════════════════════
 // Usage:
 //   const selections = { torso: 'reg', neck: 'rnd', sleeve: 'cap' };
-//   const pom = collectMeasurements(selections);
-//  → returns flat array of { code, description, value, unit, tolerance, pom }
+//   const pom = collectMeasurements(selections, 'EU38', 'front');
+//   const pomWithAllSizes = collectMeasurements(selections, 'EU38', 'front', true);
+//   → returns flat array of measure objects (see shape below)
 
-export function collectMeasurements(selections, size = 'EU38', view = 'front') {
+export function collectMeasurements(selections, size = 'EU38', view = 'front', includeAllSizes = false) {
     const results = [];
+    const ALL_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
 
     // Torso measurements
     if (selections.torso && COMPONENT_META.torsos[selections.torso]) {
@@ -380,61 +381,94 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
         if (measureSource) {
             for (const [key, m] of Object.entries(measureSource)) {
                 const grading = GRADING.getForSize(size, key, m.value);
-                const value = grading.value;
-                const prefix = view === 'back' ? 'BCK' : 'TRS';
-                results.push({
+                const gradedValue = grading.value;
+
+                const entry = {
+                    letter:         m.letter,
+                    description:    m.label,
+                    key:            key,
+                    pom:            m.pom || '',
+                    unit:           m.unit,
+                    value:          gradedValue,
+                    tolerance:      TOLERANCES.formatTolerance(gradedValue),
                     hasGradingRule: grading.hasGradingRule,
-                    code:        `${prefix}-${String(results.length + 1).padStart(3, '0')}`,
-                    description: m.label,
-                    key:         key,              
-                    value:       value,
-                    unit:        m.unit,
-                    tolerance:   TOLERANCES.formatTolerance(value),
-                    pom:         m.pom || ''
-                });
+                };
+
+                if (includeAllSizes) {
+                    entry.sizes = {};
+                    ALL_SIZES.forEach(s => {
+                        const g = GRADING.getForSize(s, key, m.value);
+                        entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
+                    });
+                }
+
+                results.push(entry);
             }
         }
     }
 
-        // Neck measurements
-        if (view === 'front' && selections.neck && COMPONENT_META.necks[selections.neck]) {
-            const neck = COMPONENT_META.necks[selections.neck];
-            for (const [key, m] of Object.entries(neck.measures)) {
-                const grading = GRADING.getForSize(size, key, m.value);
-                const value = grading.value;
-                results.push({
-                    hasGradingRule: grading.hasGradingRule,
-                    code:        `NCK-${String(results.length + 1).padStart(3, '0')}`,
-                    description: m.label,
-                    key:         key,              
-                    value:       value,
-                    unit:        m.unit,
-                    tolerance:   TOLERANCES.formatTolerance(value),
-                    pom:         m.pom || ''
+    // Neck measurements (front view only)
+    if (view === 'front' && selections.neck && COMPONENT_META.necks[selections.neck]) {
+        const neck = COMPONENT_META.necks[selections.neck];
+        for (const [key, m] of Object.entries(neck.measures)) {
+            const grading = GRADING.getForSize(size, key, m.value);
+            const gradedValue = grading.value;
+
+            const entry = {
+                letter:         m.letter,
+                description:    m.label,
+                key:            key,
+                pom:            m.pom || '',
+                unit:           m.unit,
+                value:          gradedValue,
+                tolerance:      TOLERANCES.formatTolerance(gradedValue),
+                hasGradingRule: grading.hasGradingRule,
+            };
+
+            if (includeAllSizes) {
+                entry.sizes = {};
+                ALL_SIZES.forEach(s => {
+                    const g = GRADING.getForSize(s, key, m.value);
+                    entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
                 });
             }
+
+            results.push(entry);
         }
-        
-        // Sleeve measurements — front view only (same front and back, no need to duplicate)
-        if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
-            const sleeve = COMPONENT_META.sleeves[selections.sleeve];
-            for (const [key, m] of Object.entries(sleeve.measures)) {
-                const grading = GRADING.getForSize(size, key, m.value);
-                const value = grading.value;
-                results.push({
-                    hasGradingRule: grading.hasGradingRule,
-                    code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
-                    description: m.label,
-                    key:         key,              
-                    value:       value,
-                    unit:        m.unit,
-                    tolerance:   TOLERANCES.formatTolerance(value),
-                    pom:         m.pom || ''
+    }
+
+    // Sleeve measurements (front view only — same front and back, no need to duplicate)
+    if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
+        const sleeve = COMPONENT_META.sleeves[selections.sleeve];
+        for (const [key, m] of Object.entries(sleeve.measures)) {
+            const grading = GRADING.getForSize(size, key, m.value);
+            const gradedValue = grading.value;
+
+            const entry = {
+                letter:         m.letter,
+                description:    m.label,
+                key:            key,
+                pom:            m.pom || '',
+                unit:           m.unit,
+                value:          gradedValue,
+                tolerance:      TOLERANCES.formatTolerance(gradedValue),
+                hasGradingRule: grading.hasGradingRule,
+            };
+
+            if (includeAllSizes) {
+                entry.sizes = {};
+                ALL_SIZES.forEach(s => {
+                    const g = GRADING.getForSize(s, key, m.value);
+                    entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
                 });
-            }          
-        }             
-        return results;
-        } 
+            }
+
+            results.push(entry);
+        }
+    }
+
+    return results;
+}
 
 // ═══════════════════════════════════════════════════════════════
 // HELPER: Get construction notes for a garment configuration
