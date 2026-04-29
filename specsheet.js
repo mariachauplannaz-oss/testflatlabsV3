@@ -701,7 +701,6 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     y = drawSectionLabel(doc, '08 — Construction Notes & ISO Standards', y);
     y += 4;
     y = drawConstructionNotes(doc, techPack.constructionNotes, y);
-    }
 
     // Save
     const filename = `FlatLabs_TechPack_${techPack.header.sku}_${new Date().toISOString().slice(0,10)}.pdf`;
