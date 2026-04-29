@@ -8,18 +8,20 @@ import { findClosestPantone, collectMeasurements, STITCH_SPECS, FABRIC_SPECS, PA
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const COLORS = {
-    black:      [33,  43,  49],    // --ink / --gray1
-    white:      [255, 255, 255],   // --white
+    black:      [33,  43,  49],    // --ink
+    white:      [255, 255, 255],
     accent:     [255, 154, 110],   // --accent
-    accentText: [33,  43,  49],    // --accent-text
-    gray1:      [248, 248, 248],   // --gray4 (table row bg)
-    gray2:      [210, 210, 215],   // --gray3 (borders)
-    gray3:      [95,  115, 133],   // --ink-soft (secondary text)
-    gray4:      [33,  43,  49],    // --ink (body text)
+    accentText: [33,  43,  49],
+    gray1:      [250, 250, 252],   // table alt row bg
+    gray2:      [220, 220, 226],   // borders
+    gray3:      [95,  115, 133],   // secondary text
+    gray4:      [33,  43,  49],    // body text
+    headerMeta: [160, 168, 178],   // muted label in header
+    sectionBg:  [33,  43,  49],    // section header bg (same as black)
 };
 
 const FONT = {
-    heading:   18,
+    heading:    18,
     subheading: 10,
     label:      7.5,
     body:       8.5,
@@ -59,7 +61,6 @@ function hexToRgb(hex) {
 
 // ─── HELPER: decide label color (black or white) based on luminance ──────────
 function contrastColor(r, g, b) {
-    // Relative luminance (WCAG formula)
     const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     return lum > 140 ? COLORS.black : COLORS.white;
 }
@@ -68,77 +69,94 @@ function contrastColor(r, g, b) {
 function drawHeader(doc, header) {
     const pw = pageWidth(doc);
 
-    // Black top band
-    setColor(doc, COLORS.black, 'fill');
-    doc.rect(0, 0, pw, 28, 'F');
+    // ── Top accent stripe (thin orange line) ──
+    setColor(doc, COLORS.accent, 'fill');
+    doc.rect(0, 0, pw, 3, 'F');
 
-    // FlatLabs wordmark — left
+    // ── Dark header band ──
+    setColor(doc, COLORS.black, 'fill');
+    doc.rect(0, 3, pw, 30, 'F');
+
+    // FlatLabs wordmark
     setFont(doc, 'bold', 13);
     setColor(doc, COLORS.white);
-    doc.text('FLATLABS', MARGIN.left, 12);
+    doc.text('FlatLabs', MARGIN.left, 14);
 
-    // Accent dot
+    // "TECH PACK" badge
+    const badgeX = MARGIN.left + doc.getTextWidth('FlatLabs') + 4;
+    const badgeW = 22;
     setColor(doc, COLORS.accent, 'fill');
-    doc.circle(MARGIN.left + 48, 9.5, 1.8, 'F');
+    doc.roundedRect(badgeX, 8.5, badgeW, 7, 1.2, 1.2, 'F');
+    setFont(doc, 'bold', 5.5);
+    setColor(doc, COLORS.accentText);
+    doc.text('TECH PACK', badgeX + badgeW / 2, 13.5, { align: 'center' });
 
-    // "TECH PACK" label — right-aligned
-    setFont(doc, 'normal', 7);
-    setColor(doc, [160, 160, 170]);
-    doc.text('TECH PACK', pw - MARGIN.right, 12, { align: 'right' });
-
-    // Project name
+    // Project name — large
     setFont(doc, 'bold', FONT.heading);
     setColor(doc, COLORS.white);
-    doc.text(header.projectName.toUpperCase(), MARGIN.left, 22);
+    doc.text(header.projectName.toUpperCase(), MARGIN.left, 26);
 
-    // Metadata row below band
-    const metaY = 34;
+    // Brand — muted below project name
+    setFont(doc, 'normal', FONT.small);
+    setColor(doc, COLORS.headerMeta);
+    doc.text(header.brand, MARGIN.left, 30.5);
+
+    // Metadata grid — right side (2×2)
     const metaItems = [
-        ['BRAND',   header.brand],
-        ['SKU',     header.sku],
-        ['SIZE',    header.size],
-        ['SEASON',  header.season],
-        ['DATE',    header.date],
+        ['SKU',    header.sku],
+        ['SEASON', header.season],
+        ['SIZE',   header.size],
+        ['DATE',   header.date],
     ];
-
-    const colW = (pw - MARGIN.left - MARGIN.right) / metaItems.length;
+    const gridColW = 28;
+    const gridStartX = pw - MARGIN.right - gridColW * 2;
     metaItems.forEach(([key, val], i) => {
-        const x = MARGIN.left + i * colW;
-        setFont(doc, 'bold', FONT.small);
-        setColor(doc, COLORS.gray3);
-        doc.text(key, x, metaY);
-
-        setFont(doc, 'normal', FONT.label);
-        setColor(doc, COLORS.gray4);
-        doc.text(val, x, metaY + 4.5);
+        const col = i % 2;
+        const row = Math.floor(i / 2);
+        const x = gridStartX + col * gridColW;
+        const y = 12 + row * 11;
+        setFont(doc, 'bold', 5.5);
+        setColor(doc, COLORS.accent);
+        doc.text(key, x, y);
+        setFont(doc, 'normal', 8);
+        setColor(doc, COLORS.white);
+        doc.text(val, x, y + 5);
     });
 
-    // Thin separator line
+    // Thin separator below header
     doc.setDrawColor(...COLORS.gray2);
-    doc.setLineWidth(0.3);
-    doc.line(MARGIN.left, metaY + 9, pw - MARGIN.right, metaY + 9);
-    
+    doc.setLineWidth(0.2);
+    doc.line(MARGIN.left, 34, pw - MARGIN.right, 34);
+
     // Components tag line
+    const metaY = 38;
     if (header.components) {
         setFont(doc, 'italic', FONT.small);
         setColor(doc, COLORS.gray3);
-        doc.text('Components: ' + header.components, MARGIN.left, metaY + 14);
+        doc.text('Components: ' + header.components, MARGIN.left, metaY + 6);
     }
 
-    return metaY + 20; // return cursor Y after header
+    return metaY + 14; // return cursor Y after header
 }
 
 // ─── SECTION LABEL ───────────────────────────────────────────────────────────
 function drawSectionLabel(doc, label, y) {
     const pw = pageWidth(doc);
-    setColor(doc, COLORS.gray1, 'fill');
-    doc.rect(MARGIN.left, y, pw - MARGIN.left - MARGIN.right, 7, 'F');
 
-    setFont(doc, 'bold', FONT.label);
+    // Dark band
+    setColor(doc, COLORS.sectionBg, 'fill');
+    doc.rect(MARGIN.left, y, pw - MARGIN.left - MARGIN.right, 8, 'F');
+
+    // Orange left accent bar
+    setColor(doc, COLORS.accent, 'fill');
+    doc.rect(MARGIN.left, y, 3, 8, 'F');
+
+    // Label text
+    setFont(doc, 'bold', FONT.small);
     setColor(doc, COLORS.accent);
-    doc.text(label.toUpperCase(), MARGIN.left + 3, y + 4.8);
+    doc.text(label.toUpperCase(), MARGIN.left + 7, y + 5.5);
 
-    return y + 11;
+    return y + 12;
 }
 
 // ─── SVG FLAT VISUAL ─────────────────────────────────────────────────────────
@@ -147,21 +165,14 @@ async function drawFlat(doc, y) {
     const svgFront = document.querySelector('#svg-preview svg');
     const svgBack  = document.querySelector('#svg-preview-back svg');
 
-    // Convert SVG element to PNG respecting its real aspect ratio
     async function svgToPng(svgEl) {
-        // Read real viewBox to get correct aspect ratio
         const vb = svgEl.getAttribute('viewBox');
-        let vbW = 240, vbH = 280; // fallback
+        let vbW = 240, vbH = 280;
         if (vb) {
             const parts = vb.trim().split(/[\s,]+/);
-            if (parts.length === 4) {
-                vbW = parseFloat(parts[2]);
-                vbH = parseFloat(parts[3]);
-            }
+            if (parts.length === 4) { vbW = parseFloat(parts[2]); vbH = parseFloat(parts[3]); }
         }
-        const ratio = vbW / vbH; // width / height
-
-        // Canvas size: scale up for quality, keep aspect ratio
+        const ratio = vbW / vbH;
         const CANVAS_BASE = 600;
         const canvasW = ratio >= 1 ? CANVAS_BASE : Math.round(CANVAS_BASE * ratio);
         const canvasH = ratio >= 1 ? Math.round(CANVAS_BASE / ratio) : CANVAS_BASE;
@@ -175,8 +186,7 @@ async function drawFlat(doc, y) {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                canvas.width  = canvasW;
-                canvas.height = canvasH;
+                canvas.width = canvasW; canvas.height = canvasH;
                 const ctx = canvas.getContext('2d');
                 ctx.fillStyle = '#ffffff';
                 ctx.fillRect(0, 0, canvasW, canvasH);
@@ -189,43 +199,37 @@ async function drawFlat(doc, y) {
         });
     }
 
-    // Fit image into maxW × maxH box preserving aspect ratio, return {w, h}
     function fitBox(ratio, maxW, maxH) {
-        let w = maxW;
-        let h = w / ratio;
-        if (h > maxH) {
-            h = maxH;
-            w = h * ratio;
-        }
+        let w = maxW, h = w / ratio;
+        if (h > maxH) { h = maxH; w = h * ratio; }
         return { w, h };
     }
 
-    const MAX_W = 65, MAX_H = 75; // mm limits per image
+    const MAX_W = 65, MAX_H = 75;
 
     try {
         if (svgFront && svgBack) {
             const [front, back] = await Promise.all([svgToPng(svgFront), svgToPng(svgBack)]);
             const fDim = fitBox(front.ratio, MAX_W, MAX_H);
             const bDim = fitBox(back.ratio, MAX_W, MAX_H);
-
             const gap = 6;
             const totalW = fDim.w + gap + bDim.w;
             const startX = pw / 2 - totalW / 2;
             const maxH   = Math.max(fDim.h, bDim.h);
-
-            // Center each image vertically in the row
             const fY = y + (maxH - fDim.h) / 2;
             const bY = y + (maxH - bDim.h) / 2;
 
             doc.addImage(front.png, 'PNG', startX, fY, fDim.w, fDim.h);
             doc.addImage(back.png,  'PNG', startX + fDim.w + gap, bY, bDim.w, bDim.h);
 
+            // Subtle border
             doc.setDrawColor(...COLORS.gray2);
             doc.setLineWidth(0.3);
             doc.rect(startX, fY, fDim.w, fDim.h);
             doc.rect(startX + fDim.w + gap, bY, bDim.w, bDim.h);
 
-            setFont(doc, 'normal', FONT.small);
+            // Labels
+            setFont(doc, 'bold', FONT.small);
             setColor(doc, COLORS.gray3);
             doc.text('FRONT', startX + fDim.w / 2, y + maxH + 5, { align: 'center' });
             doc.text('BACK',  startX + fDim.w + gap + bDim.w / 2, y + maxH + 5, { align: 'center' });
@@ -252,49 +256,37 @@ async function drawFlat(doc, y) {
 }
 
 // ─── COLORWAY SECTION ────────────────────────────────────────────────────────
-// Renders a color swatch with Name, HEX, and closest Pantone TCX reference.
-// fillColorHex: string like '#DC143C' or 'DC143C' from state.fillColor
-
 function drawColorway(doc, fillColorHex, y) {
     if (!fillColorHex) return y;
 
     const pw = pageWidth(doc);
-
-    // Normalize hex
     const hex = fillColorHex.startsWith('#') ? fillColorHex.toUpperCase() : '#' + fillColorHex.toUpperCase();
     const [r, g, b] = hexToRgb(hex);
     const pantoneMatch = findClosestPantone(hex);
 
-    // Layout constants
-    const swatchW   = 28;   // mm — width of color rectangle
-    const swatchH   = 18;   // mm — height of color rectangle
-    const swatchX   = MARGIN.left;
-    const textX     = swatchX + swatchW + 6;  // text starts 6mm after swatch
+    const swatchW = 28, swatchH = 18;
+    const swatchX = MARGIN.left;
+    const textX   = swatchX + swatchW + 6;
 
-    // ── Color swatch ──
+    // Swatch
     doc.setFillColor(r, g, b);
     doc.rect(swatchX, y, swatchW, swatchH, 'F');
-
-    // Swatch border
     doc.setDrawColor(...COLORS.gray2);
     doc.setLineWidth(0.3);
     doc.rect(swatchX, y, swatchW, swatchH);
 
-    // HEX label centered inside swatch (contrast-aware)
+    // HEX label inside swatch
     const labelRgb = contrastColor(r, g, b);
     setFont(doc, 'bold', FONT.small);
     setColor(doc, labelRgb);
     doc.text(hex, swatchX + swatchW / 2, y + swatchH / 2 + 1, { align: 'center' });
 
-    // ── Text block (right of swatch) ──
-    const lineH = 5.5;  // mm between text lines
-
-    // Color name
+    // Text block
+    const lineH = 5.5;
     setFont(doc, 'bold', FONT.body);
     setColor(doc, COLORS.gray4);
     doc.text(pantoneMatch.name, textX, y + 5);
 
-    // HEX value row
     setFont(doc, 'bold', FONT.small);
     setColor(doc, COLORS.gray3);
     doc.text('HEX', textX, y + 5 + lineH);
@@ -302,7 +294,6 @@ function drawColorway(doc, fillColorHex, y) {
     setColor(doc, COLORS.gray4);
     doc.text(hex, textX + 10, y + 5 + lineH);
 
-    // Pantone row
     setFont(doc, 'bold', FONT.small);
     setColor(doc, COLORS.gray3);
     doc.text('PANTONE', textX, y + 5 + lineH * 2);
@@ -310,24 +301,20 @@ function drawColorway(doc, fillColorHex, y) {
     setColor(doc, COLORS.gray4);
     doc.text(pantoneMatch.pantone + '  ·  approx.', textX + 18, y + 5 + lineH * 2);
 
-    // Approx disclaimer — far right, italic, small
     setFont(doc, 'italic', 5.5);
     setColor(doc, COLORS.gray3);
-    doc.text('Color matching is approximate. Verify against physical Pantone swatch before production.',
-        pw - MARGIN.right, y + swatchH, { align: 'right' });
+    doc.text(
+        'Color matching is approximate. Verify against physical Pantone swatch before production.',
+        pw - MARGIN.right, y + swatchH, { align: 'right' }
+    );
 
-    return y + swatchH + 8;  // cursor Y after colorway block
+    return y + swatchH + 8;
 }
 
 // ─── POM TABLE ───────────────────────────────────────────────────────────────
 function drawPOMTable(doc, pomRows, y) {
     const head = [['Code', 'Description', 'Measure (cm)', 'Tolerance']];
-    const body = pomRows.map(r => [
-        r.code,
-        r.description,
-        String(r.value),
-        r.tolerance + ' cm'
-    ]);
+    const body = pomRows.map(r => [r.code, r.description, String(r.value), r.tolerance + ' cm']);
 
     doc.autoTable({
         startY: y,
@@ -347,6 +334,7 @@ function drawPOMTable(doc, pomRows, y) {
             textColor: COLORS.white,
             fontStyle: 'bold',
             fontSize: FONT.label,
+            lineColor: COLORS.black,
         },
         columnStyles: {
             0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.accent },
@@ -354,9 +342,7 @@ function drawPOMTable(doc, pomRows, y) {
             2: { cellWidth: 28, halign: 'center' },
             3: { cellWidth: 28, halign: 'center' },
         },
-        alternateRowStyles: {
-            fillColor: [250, 250, 252],
-        }
+        alternateRowStyles: { fillColor: COLORS.gray1 },
     });
 
     return doc.lastAutoTable.finalY + 8;
@@ -385,29 +371,29 @@ function drawBOMTable(doc, bomRows, y) {
             textColor: COLORS.white,
             fontStyle: 'bold',
             fontSize: FONT.label,
+            lineColor: COLORS.black,
         },
         columnStyles: {
-            0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.gray3 },
+            0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.accent },
             1: { cellWidth: 'auto' },
             2: { cellWidth: 18, halign: 'center' },
             3: { cellWidth: 14, halign: 'center' },
         },
-        alternateRowStyles: { fillColor: [250, 250, 252] }
+        alternateRowStyles: { fillColor: COLORS.gray1 },
     });
 
     return doc.lastAutoTable.finalY + 8;
 }
 
-// ─── CONSTRUCTION NOTES ───────────────────────────────────────────────────────
+// ─── CONSTRUCTION NOTES ──────────────────────────────────────────────────────
 function drawConstructionNotes(doc, notes, y) {
     const pw = pageWidth(doc);
     const colW = pw - MARGIN.left - MARGIN.right;
 
     notes.forEach(({ component, norm, note }) => {
-        if (y > pageHeight(doc) - 30) {
-            doc.addPage();
-            y = MARGIN.top;
-        }
+        if (y > pageHeight(doc) - 30) { doc.addPage(); y = MARGIN.top; }
+
+        // Pill with accent fill
         const pillText = component + '   ' + norm;
         const pillW = doc.getTextWidth(pillText) + 10;
         setColor(doc, COLORS.accent, 'fill');
@@ -415,11 +401,15 @@ function drawConstructionNotes(doc, notes, y) {
         setFont(doc, 'bold', FONT.small);
         setColor(doc, COLORS.accentText);
         doc.text(pillText, MARGIN.left + 5, y);
+
+        // Note text
         setFont(doc, 'normal', FONT.small);
         setColor(doc, COLORS.gray3);
         const lines = doc.splitTextToSize(note, colW - 4);
         doc.text(lines, MARGIN.left, y + 5);
         y += 5 + lines.length * 4 + 5;
+
+        // Separator
         doc.setDrawColor(...COLORS.gray2);
         doc.setLineWidth(0.2);
         doc.line(MARGIN.left, y - 3, pw - MARGIN.right, y - 3);
@@ -432,20 +422,14 @@ function drawConstructionNotes(doc, notes, y) {
 function drawGradingSection(doc, selections, y) {
     const sizes = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
     const sizeLabels = ['XS · EU34', 'S · EU36', 'M · EU38', 'L · EU40', 'XL · EU42', 'XXL · EU44'];
-
     const baseMeasures = collectMeasurements(selections, 'EU38', 'front');
 
-    // ── Table 1: Grading ──
     const head1 = [['Measurement', ...sizeLabels]];
     const body1 = baseMeasures.map(m => {
         const row = [m.description];
         sizes.forEach(size => {
             const grading = GRADING.getForSize(size, m.key, m.value);
-            if (grading.hasGradingRule) {
-                row.push(String(grading.value));
-            } else {
-                row.push(size === 'EU38' ? String(m.value) + ' *' : '—');
-            }
+            row.push(grading.hasGradingRule ? String(grading.value) : (size === 'EU38' ? String(m.value) + ' *' : '—'));
         });
         return row;
     });
@@ -468,26 +452,23 @@ function drawGradingSection(doc, selections, y) {
             textColor: COLORS.white,
             fontStyle: 'bold',
             fontSize: FONT.small,
+            lineColor: COLORS.black,
         },
-        columnStyles: {
-            0: { cellWidth: 52, fontStyle: 'bold', textColor: COLORS.gray3 },
-        },
-        alternateRowStyles: { fillColor: [250, 250, 252] },
+        columnStyles: { 0: { cellWidth: 52, fontStyle: 'bold', textColor: COLORS.accent } },
+        alternateRowStyles: { fillColor: COLORS.gray1 },
         willDrawCell: (data) => {
             if (data.column.index === 3 && data.row.section === 'body') {
                 data.cell.styles.fillColor = [240, 245, 255];
                 data.cell.styles.fontStyle = 'bold';
             }
-        }
+        },
     });
 
     y = doc.lastAutoTable.finalY + 6;
 
-    // ── Table 2: Size Equivalences ──
     const regions = ['EU', 'US', 'UK', 'IT', 'FR', 'JP', 'AU'];
     const sizeKeys = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
     const labelRow = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-
     const head2 = [['Region', ...labelRow]];
     const body2 = regions.map(region => {
         const row = [region];
@@ -516,39 +497,31 @@ function drawGradingSection(doc, selections, y) {
             textColor: COLORS.white,
             fontStyle: 'bold',
             fontSize: FONT.small,
+            lineColor: COLORS.black,
         },
-        columnStyles: {
-            0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.gray3 },
-        },
-        alternateRowStyles: { fillColor: [250, 250, 252] },
+        columnStyles: { 0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.accent } },
+        alternateRowStyles: { fillColor: COLORS.gray1 },
         willDrawCell: (data) => {
             if (data.column.index === 3 && data.row.section === 'body') {
                 data.cell.styles.fillColor = [240, 245, 255];
                 data.cell.styles.fontStyle = 'bold';
             }
-        }
+        },
     });
 
     y = doc.lastAutoTable.finalY + 4;
     setFont(doc, 'italic', FONT.small);
     setColor(doc, COLORS.gray3);
     doc.text('* Grading rule pending — base value applies until validated.', MARGIN.left, y);
-    y += 6;
 
-    return y + 2;
+    return y + 8;
 }
 
 // ─── STITCH & CONSTRUCTION TABLE ─────────────────────────────────────────────
 function drawStitchTable(doc, y) {
     const stitches = Object.values(STITCH_SPECS);
     const head = [['Stitch', 'ISO', 'SPI', 'Needle', 'Use']];
-    const body = stitches.map(s => [
-        s.label,
-        s.iso,
-        String(s.spi),
-        s.needle,
-        s.use
-    ]);
+    const body = stitches.map(s => [s.label, s.iso, String(s.spi), s.needle, s.use]);
 
     doc.autoTable({
         startY: y,
@@ -568,6 +541,7 @@ function drawStitchTable(doc, y) {
             textColor: COLORS.white,
             fontStyle: 'bold',
             fontSize: FONT.small,
+            lineColor: COLORS.black,
         },
         columnStyles: {
             0: { cellWidth: 38, fontStyle: 'bold' },
@@ -576,7 +550,7 @@ function drawStitchTable(doc, y) {
             3: { cellWidth: 40 },
             4: { cellWidth: 'auto' },
         },
-        alternateRowStyles: { fillColor: [250, 250, 252] }
+        alternateRowStyles: { fillColor: COLORS.gray1 },
     });
 
     return doc.lastAutoTable.finalY + 8;
@@ -584,18 +558,17 @@ function drawStitchTable(doc, y) {
 
 // ─── FABRIC SPECIFICATIONS TABLE ─────────────────────────────────────────────
 function drawFabricTable(doc, fabricKey, y) {
-    // Default to jersey_180 if key not found
     const fabric = FABRIC_SPECS[fabricKey] || FABRIC_SPECS['jersey_180'];
     const head = [['Property', 'Value']];
     const body = [
-        ['Fabric',        fabric.label],
-        ['Weight',        fabric.weight + ' g/m²'],
-        ['Composition',   fabric.composition],
-        ['Knit Type',     fabric.knit_type],
-        ['Roll Width',    fabric.width + ' cm'],
-        ['Shrinkage — Length', fabric.shrinkage.length + '% (after wash)'],
-        ['Shrinkage — Width',  fabric.shrinkage.width  + '% (after wash)'],
-        ['Recommended For', fabric.recommended_for.join(', ')],
+        ['Fabric',              fabric.label],
+        ['Weight',              fabric.weight + ' g/m²'],
+        ['Composition',         fabric.composition],
+        ['Knit Type',           fabric.knit_type],
+        ['Roll Width',          fabric.width + ' cm'],
+        ['Shrinkage — Length',  fabric.shrinkage.length + '% (after wash)'],
+        ['Shrinkage — Width',   fabric.shrinkage.width  + '% (after wash)'],
+        ['Recommended For',     fabric.recommended_for.join(', ')],
     ];
 
     doc.autoTable({
@@ -616,12 +589,13 @@ function drawFabricTable(doc, fabricKey, y) {
             textColor: COLORS.white,
             fontStyle: 'bold',
             fontSize: FONT.small,
+            lineColor: COLORS.black,
         },
         columnStyles: {
-            0: { cellWidth: 55, fontStyle: 'bold', textColor: COLORS.gray3 },
+            0: { cellWidth: 55, fontStyle: 'bold', textColor: COLORS.accent },
             1: { cellWidth: 'auto' },
         },
-        alternateRowStyles: { fillColor: [250, 250, 252] }
+        alternateRowStyles: { fillColor: COLORS.gray1 },
     });
 
     return doc.lastAutoTable.finalY + 8;
@@ -634,21 +608,20 @@ function drawPackingInstructions(doc, packingKey, y) {
     const colW = pw - MARGIN.left - MARGIN.right;
 
     const items = [
-        ['Method',  packing.method],
-        ['Carton',  packing.carton],
-        ['Labels',  packing.labels],
+        ['Method', packing.method],
+        ['Carton', packing.carton],
+        ['Labels', packing.labels],
     ];
 
     items.forEach(([key, val]) => {
         setFont(doc, 'bold', FONT.small);
-        setColor(doc, COLORS.gray3);
+        setColor(doc, COLORS.accent);
         doc.text(key.toUpperCase(), MARGIN.left, y);
 
         setFont(doc, 'normal', FONT.small);
         setColor(doc, COLORS.gray4);
         const lines = doc.splitTextToSize(val, colW - 25);
         doc.text(lines, MARGIN.left + 22, y);
-
         y += lines.length * 4.5 + 3;
     });
 
@@ -659,22 +632,20 @@ function drawPackingInstructions(doc, packingKey, y) {
 function drawFooter(doc, pageNum, totalPages, date) {
     const pw = pageWidth(doc);
     const ph = pageHeight(doc);
-    const y = ph - 10;
 
-    doc.setDrawColor(...COLORS.gray2);
-    doc.setLineWidth(0.3);
-    doc.line(MARGIN.left, y - 4, pw - MARGIN.right, y - 4);
+    // Orange accent footer band
+    setColor(doc, COLORS.accent, 'fill');
+    doc.rect(0, ph - 8, pw, 8, 'F');
 
-    setFont(doc, 'normal', FONT.small);
-    setColor(doc, COLORS.gray3);
-    doc.text('Generated by FlatLabs · flatsgenerator.com', MARGIN.left, y);
-    doc.text(`Page ${pageNum} of ${totalPages}`, pw - MARGIN.right, y, { align: 'right' });
-    doc.text(date, pw / 2, y, { align: 'center' });
+    setFont(doc, 'bold', FONT.small);
+    setColor(doc, COLORS.accentText);
+    doc.text('FlatLabs · flatsgenerator.com', MARGIN.left, ph - 3);
+    doc.text(`Page ${pageNum} of ${totalPages}`, pw - MARGIN.right, ph - 3, { align: 'right' });
+    doc.text(date, pw / 2, ph - 3, { align: 'center' });
 }
 
 // ─── MAIN EXPORT FUNCTION ─────────────────────────────────────────────────────
 export async function exportSpecSheet(state, projectMeta = {}) {
-    // Guard: jsPDF must be loaded
     if (typeof window.jspdf === 'undefined') {
         console.error('[FlatLabs] jsPDF not loaded. Add CDN scripts to app.html.');
         return;
@@ -687,20 +658,16 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // ── PAGE 1 ──────────────────────────────────────────────────────────────
     let y = drawHeader(doc, techPack.header);
 
-    // Flat visual
     y = await drawFlat(doc, y);
 
-    // 00 — Colorway
     if (state.colorHex) {
         y = drawSectionLabel(doc, '00 — Colorway', y);
         y = drawColorway(doc, state.colorHex, y);
     }
 
-    // 01 — POM Front
     y = drawSectionLabel(doc, '01 — Points of Measure (POM) · ISO 3635 · EU Size 38', y);
     y = drawPOMTable(doc, techPack.pom, y);
 
-    // 02 — POM Back
     const backPom = collectMeasurements(state.selections, 'EU38', 'back');
     if (backPom.length > 0) {
         if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
@@ -708,32 +675,26 @@ export async function exportSpecSheet(state, projectMeta = {}) {
         y = drawPOMTable(doc, backPom, y);
     }
 
-    // 03 — Grading
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '03 — Grading Table', y);
     y = drawGradingSection(doc, state.selections, y);
 
-    // 04 — BOM
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '04 — Bill of Materials (BOM)', y);
     y = drawBOMTable(doc, techPack.bom, y);
 
-    // 05 — Stitch
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '05 — Stitch & Construction Specifications', y);
     y = drawStitchTable(doc, y);
 
-    // 06 — Fabric
     doc.addPage(); y = MARGIN.top + 10;
     y = drawSectionLabel(doc, '06 — Fabric Specifications', y);
     y = drawFabricTable(doc, state.fabric || 'jersey_180', y);
 
-    // 07 — Packing
     if (y > pageHeight(doc) - 70) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '07 — Packing Instructions', y);
     y = drawPackingInstructions(doc, 'standard', y);
 
-    // 08 — Construction Notes
     if (y > pageHeight(doc) - 50) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '08 — Construction Notes & ISO Standards', y);
     y += 4;
@@ -746,7 +707,6 @@ export async function exportSpecSheet(state, projectMeta = {}) {
         drawFooter(doc, p, totalPages, techPack.header.date);
     }
 
-    // Save
     const filename = `FlatLabs_TechPack_${techPack.header.sku}_${new Date().toISOString().slice(0,10)}.pdf`;
     doc.save(filename);
     console.log(`[FlatLabs ✓] Tech Pack exported: ${filename}`);
