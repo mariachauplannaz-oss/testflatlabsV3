@@ -142,72 +142,107 @@ function drawSectionLabel(doc, label, y) {
 }
 
 // ─── SVG FLAT VISUAL ─────────────────────────────────────────────────────────
-// Serializes the live SVG DOM node to a PNG data URL, injects into PDF
 async function drawFlat(doc, y) {
     const pw = pageWidth(doc);
     const svgFront = document.querySelector('#svg-preview svg');
     const svgBack  = document.querySelector('#svg-preview-back svg');
 
+    // Convert SVG element to PNG respecting its real aspect ratio
     async function svgToPng(svgEl) {
+        // Read real viewBox to get correct aspect ratio
+        const vb = svgEl.getAttribute('viewBox');
+        let vbW = 240, vbH = 280; // fallback
+        if (vb) {
+            const parts = vb.trim().split(/[\s,]+/);
+            if (parts.length === 4) {
+                vbW = parseFloat(parts[2]);
+                vbH = parseFloat(parts[3]);
+            }
+        }
+        const ratio = vbW / vbH; // width / height
+
+        // Canvas size: scale up for quality, keep aspect ratio
+        const CANVAS_BASE = 600;
+        const canvasW = ratio >= 1 ? CANVAS_BASE : Math.round(CANVAS_BASE * ratio);
+        const canvasH = ratio >= 1 ? Math.round(CANVAS_BASE / ratio) : CANVAS_BASE;
+
         const serializer = new XMLSerializer();
         const svgStr = serializer.serializeToString(svgEl);
         const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
         const url = URL.createObjectURL(blob);
+
         return new Promise((resolve, reject) => {
             const img = new Image();
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                const scale = 3;
-                canvas.width  = 240 * scale;
-                canvas.height = 280 * scale;
+                canvas.width  = canvasW;
+                canvas.height = canvasH;
                 const ctx = canvas.getContext('2d');
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.scale(scale, scale);
-                ctx.drawImage(img, 0, 0, 240, 280);
+                ctx.fillRect(0, 0, canvasW, canvasH);
+                ctx.drawImage(img, 0, 0, canvasW, canvasH);
                 URL.revokeObjectURL(url);
-                resolve(canvas.toDataURL('image/png'));
+                resolve({ png: canvas.toDataURL('image/png'), ratio });
             };
             img.onerror = reject;
             img.src = url;
         });
     }
 
+    // Fit image into maxW × maxH box preserving aspect ratio, return {w, h}
+    function fitBox(ratio, maxW, maxH) {
+        let w = maxW;
+        let h = w / ratio;
+        if (h > maxH) {
+            h = maxH;
+            w = h * ratio;
+        }
+        return { w, h };
+    }
+
+    const MAX_W = 65, MAX_H = 75; // mm limits per image
+
     try {
         if (svgFront && svgBack) {
-            // Side by side: front left, back right
-            const imgW = 55, imgH = 65, gap = 6;
-            const totalW = imgW * 2 + gap;
+            const [front, back] = await Promise.all([svgToPng(svgFront), svgToPng(svgBack)]);
+            const fDim = fitBox(front.ratio, MAX_W, MAX_H);
+            const bDim = fitBox(back.ratio, MAX_W, MAX_H);
+
+            const gap = 6;
+            const totalW = fDim.w + gap + bDim.w;
             const startX = pw / 2 - totalW / 2;
+            const maxH   = Math.max(fDim.h, bDim.h);
 
-            const frontData = await svgToPng(svgFront);
-            const backData  = await svgToPng(svgBack);
+            // Center each image vertically in the row
+            const fY = y + (maxH - fDim.h) / 2;
+            const bY = y + (maxH - bDim.h) / 2;
 
-            doc.addImage(frontData, 'PNG', startX, y, imgW, imgH);
-            doc.addImage(backData,  'PNG', startX + imgW + gap, y, imgW, imgH);
+            doc.addImage(front.png, 'PNG', startX, fY, fDim.w, fDim.h);
+            doc.addImage(back.png,  'PNG', startX + fDim.w + gap, bY, bDim.w, bDim.h);
 
             doc.setDrawColor(...COLORS.gray2);
             doc.setLineWidth(0.3);
-            doc.rect(startX, y, imgW, imgH);
-            doc.rect(startX + imgW + gap, y, imgW, imgH);
+            doc.rect(startX, fY, fDim.w, fDim.h);
+            doc.rect(startX + fDim.w + gap, bY, bDim.w, bDim.h);
 
-            // Labels
             setFont(doc, 'normal', FONT.small);
             setColor(doc, COLORS.gray3);
-            doc.text('FRONT', startX + imgW / 2, y + imgH + 4, { align: 'center' });
-            doc.text('BACK',  startX + imgW + gap + imgW / 2, y + imgH + 4, { align: 'center' });
+            doc.text('FRONT', startX + fDim.w / 2, y + maxH + 5, { align: 'center' });
+            doc.text('BACK',  startX + fDim.w + gap + bDim.w / 2, y + maxH + 5, { align: 'center' });
 
-            return y + imgH + 10;
+            return y + maxH + 10;
+
         } else if (svgFront) {
-            // Single front view (original behavior)
-            const imgData = await svgToPng(svgFront);
-            const imgW = 60, imgH = 70;
-            const imgX = pw / 2 - imgW / 2;
-            doc.addImage(imgData, 'PNG', imgX, y, imgW, imgH);
+            const { png, ratio } = await svgToPng(svgFront);
+            const { w, h } = fitBox(ratio, MAX_W, MAX_H);
+            const imgX = pw / 2 - w / 2;
+
+            doc.addImage(png, 'PNG', imgX, y, w, h);
             doc.setDrawColor(...COLORS.gray2);
             doc.setLineWidth(0.3);
-            doc.rect(imgX, y, imgW, imgH);
-            return y + imgH + 6;
+            doc.rect(imgX, y, w, h);
+
+            return y + h + 6;
         }
     } catch (e) {
         console.warn('[FlatLabs] Could not render SVG to PDF:', e);
