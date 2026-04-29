@@ -746,9 +746,15 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     y += 4;
     y = drawConstructionNotes(doc, techPack.constructionNotes, y);
 
+    // Footers on all pages
+    const totalPages = doc.internal.getNumberOfPages();
+    for (let p = 1; p <= totalPages; p++) {
+        doc.setPage(p);
+        drawFooter(doc, p, totalPages, techPack.header.date);
+    }
+
     // Save
     const filename = `FlatLabs_TechPack_${techPack.header.sku}_${new Date().toISOString().slice(0,10)}.pdf`;
     doc.save(filename);
     console.log(`[FlatLabs ✓] Tech Pack exported: ${filename}`);
-
 }
