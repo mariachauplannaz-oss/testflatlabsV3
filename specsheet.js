@@ -450,9 +450,12 @@ function drawGradingSection(doc, selections, y) {
     const body1 = baseMeasures.map(m => {
         const row = [m.description];
         sizes.forEach(size => {
-            const val = GRADING.getForSize(size, m.key, m.value);
-            const isBase = size === 'EU38';
-            row.push(isBase ? String(val) : String(val));
+            const grading = GRADING.getForSize(size, m.key, m.value);
+            if (grading.hasGradingRule) {
+                row.push(String(grading.value));
+            } else {
+                row.push(size === 'EU38' ? String(m.value) + ' *' : '—');
+            }
         });
         return row;
     });
@@ -533,7 +536,13 @@ function drawGradingSection(doc, selections, y) {
         alternateRowStyles: { fillColor: [250, 250, 252] },
     });
 
-    return doc.lastAutoTable.finalY + 8;
+    y = doc.lastAutoTable.finalY + 4;
+    setFont(doc, 'italic', FONT.small);
+    setColor(doc, COLORS.gray3);
+    doc.text('* Grading rule pending — base value applies until validated.', MARGIN.left, y);
+    y += 6;
+
+    return y + 2;
 }
 
 // ─── STITCH & CONSTRUCTION TABLE ─────────────────────────────────────────────
