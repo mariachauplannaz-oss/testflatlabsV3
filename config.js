@@ -319,6 +319,7 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
                 results.push({
                     code:        `${prefix}-${String(results.length + 1).padStart(3, '0')}`,
                     description: m.label,
+                    key:         key,              
                     value:       value,
                     unit:        m.unit,
                     tolerance:   TOLERANCES.formatTolerance(value),
@@ -336,6 +337,7 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
                 results.push({
                     code:        `NCK-${String(results.length + 1).padStart(3, '0')}`,
                     description: m.label,
+                    key:         key,              
                     value:       value,
                     unit:        m.unit,
                     tolerance:   TOLERANCES.formatTolerance(value),
@@ -352,6 +354,7 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front') {
                 results.push({
                     code:        `SLV-${String(results.length + 1).padStart(3, '0')}`,
                     description: m.label,
+                    key:         key,              
                     value:       value,
                     unit:        m.unit,
                     tolerance:   TOLERANCES.formatTolerance(value),
