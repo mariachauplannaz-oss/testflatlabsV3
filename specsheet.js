@@ -148,12 +148,7 @@ function drawSectionLabel(doc, label, y) {
     setColor(doc, COLORS.accent);
     doc.text(label.toUpperCase(), MARGIN.left + 7, y + 5.5);
 
-    // Thin bottom line
-    doc.setDrawColor(...COLORS.gray2);
-    doc.setLineWidth(0.2);
-    doc.line(MARGIN.left, y + 8.5, pw - MARGIN.right, y + 8.5);
-
-    return y + 13;
+    return y + 11;
 }
 
 // ─── SVG FLAT VISUAL ─────────────────────────────────────────────────────────
@@ -416,13 +411,8 @@ function drawConstructionNotes(doc, notes, y) {
         const textY = y + (rowH - textH) / 2 + 4;
         doc.text(lines, textColX, textY);
 
-        y += rowH + 2;
-
-        // Separator
-        doc.setDrawColor(...COLORS.gray2);
-        doc.setLineWidth(0.2);
-        doc.line(MARGIN.left, y, pw - MARGIN.right, y);
-        y += 4;
+        y += rowH + 1;
+        y += 2;
     });
 
     return y;
