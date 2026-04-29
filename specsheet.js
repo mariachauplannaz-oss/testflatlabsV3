@@ -356,15 +356,6 @@ function drawPOMTable(doc, pomRows, y) {
         },
         alternateRowStyles: {
             fillColor: [250, 250, 252],
-        },
-        didParseCell: (data) => {
-            // Highlight tolerance column value in accent if tight (<20cm measure)
-            if (data.column.index === 3 && data.row.section === 'body') {
-                const measureVal = parseFloat(pomRows[data.row.index]?.value);
-                if (measureVal < 20) {
-                    data.cell.styles.textColor = [255, 149, 0]; // orange = tight tolerance
-                }
-            }
         }
     });
 
@@ -442,7 +433,6 @@ function drawGradingSection(doc, selections, y) {
     const sizes = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
     const sizeLabels = ['XS · EU34', 'S · EU36', 'M · EU38', 'L · EU40', 'XL · EU42', 'XXL · EU44'];
 
-    // Collect all measures from selections (front view, EU38 base)
     const baseMeasures = collectMeasurements(selections, 'EU38', 'front');
 
     // ── Table 1: Grading ──
@@ -481,14 +471,16 @@ function drawGradingSection(doc, selections, y) {
         },
         columnStyles: {
             0: { cellWidth: 52, fontStyle: 'bold', textColor: COLORS.gray3 },
-            3: { fontStyle: 'bold', textColor: COLORS.gray4 }, // EU38 base column
         },
         alternateRowStyles: { fillColor: [250, 250, 252] },
-        didParseCell: (data) => {
-            // Highlight EU38 column (index 3) in all rows
+        didDrawCell: (data) => {
             if (data.column.index === 3 && data.row.section === 'body') {
-                data.cell.styles.fillColor = [240, 245, 255];
-                data.cell.styles.fontStyle = 'bold';
+                doc.setFillColor(240, 245, 255);
+                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                doc.setTextColor(...COLORS.gray4);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(FONT.small);
+                doc.text(String(data.cell.text), data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2 + 1, { align: 'center', baseline: 'middle' });
             }
         }
     });
@@ -531,9 +523,18 @@ function drawGradingSection(doc, selections, y) {
         },
         columnStyles: {
             0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.gray3 },
-            3: { fillColor: [240, 245, 255], fontStyle: 'bold' }, // M = EU38
         },
         alternateRowStyles: { fillColor: [250, 250, 252] },
+        didDrawCell: (data) => {
+            if (data.column.index === 3 && data.row.section === 'body') {
+                doc.setFillColor(240, 245, 255);
+                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                doc.setTextColor(...COLORS.gray4);
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(FONT.small);
+                doc.text(String(data.cell.text), data.cell.x + data.cell.width / 2, data.cell.y + data.cell.height / 2 + 1, { align: 'center', baseline: 'middle' });
+            }
+        }
     });
 
     y = doc.lastAutoTable.finalY + 4;
