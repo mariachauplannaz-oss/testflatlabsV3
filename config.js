@@ -242,6 +242,24 @@ export const COMPONENT_META = {
             },
             construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: exposed raw edge or coverseam.',
             iso_norm: 'ISO 514'
+        },
+        slm: {
+            label: 'Slim Fit',
+            ease: 'slim',
+            measures: {
+                chest:      { label: 'Chest (1/2)',       value: 44,   unit: 'cm', pom: 'Measured flat, 2.5 cm below armhole seam, edge to edge' },
+                waist:      { label: 'Waist (1/2)',       value: 41,   unit: 'cm', pom: 'Measured flat at natural waist, edge to edge' },
+                length:     { label: 'Body Length (HPS)', value: 62,   unit: 'cm', pom: 'From HPS seam straight down to hem edge' },
+                shoulder:   { label: 'Shoulder Width',    value: 37.5, unit: 'cm', pom: 'Shoulder seam to shoulder seam, across back yoke' },
+                hem:        { label: 'Hem Width (1/2)',   value: 44,   unit: 'cm', pom: 'Measured flat at hem, edge to edge' },
+                armhole:    { label: 'Armhole Straight',  value: 20,   unit: 'cm', pom: 'Shoulder seam to underarm seam, straight' }
+            },
+            back_measures: {
+                across_back: { label: 'Across Back (1/2)', value: 36, unit: 'cm', pom: 'Armhole seam to armhole seam, 10 cm below CB neck, measured flat' },
+                back_length: { label: 'CB Length',         value: 64, unit: 'cm', pom: 'From CB neck seam straight down to hem edge' }
+            },
+            construction: 'Side seams: ISO 514 (overlock 4-thread). Hem: double-needle coverseam 2 cm.',
+            iso_norm: 'ISO 514'
         }
     },
 
