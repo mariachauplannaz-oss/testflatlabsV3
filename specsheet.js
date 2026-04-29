@@ -69,13 +69,9 @@ function contrastColor(r, g, b) {
 function drawHeader(doc, header) {
     const pw = pageWidth(doc);
 
-    // ── Top accent stripe (thin orange line) ──
-    setColor(doc, COLORS.accent, 'fill');
-    doc.rect(0, 0, pw, 3, 'F');
-
     // ── Dark header band ──
     setColor(doc, COLORS.black, 'fill');
-    doc.rect(0, 3, pw, 30, 'F');
+    doc.rect(0, 0, pw, 33, 'F');
 
     // FlatLabs wordmark
     setFont(doc, 'bold', 13);
@@ -143,20 +139,21 @@ function drawHeader(doc, header) {
 function drawSectionLabel(doc, label, y) {
     const pw = pageWidth(doc);
 
-    // Dark band
-    setColor(doc, COLORS.sectionBg, 'fill');
-    doc.rect(MARGIN.left, y, pw - MARGIN.left - MARGIN.right, 8, 'F');
-
-    // Orange left accent bar
+    // Orange left accent bar only (no background fill)
     setColor(doc, COLORS.accent, 'fill');
     doc.rect(MARGIN.left, y, 3, 8, 'F');
 
-    // Label text
+    // Label text — orange bold
     setFont(doc, 'bold', FONT.small);
     setColor(doc, COLORS.accent);
     doc.text(label.toUpperCase(), MARGIN.left + 7, y + 5.5);
 
-    return y + 12;
+    // Thin bottom line
+    doc.setDrawColor(...COLORS.gray2);
+    doc.setLineWidth(0.2);
+    doc.line(MARGIN.left, y + 8.5, pw - MARGIN.right, y + 8.5);
+
+    return y + 13;
 }
 
 // ─── SVG FLAT VISUAL ─────────────────────────────────────────────────────────
@@ -388,31 +385,44 @@ function drawBOMTable(doc, bomRows, y) {
 // ─── CONSTRUCTION NOTES ──────────────────────────────────────────────────────
 function drawConstructionNotes(doc, notes, y) {
     const pw = pageWidth(doc);
-    const colW = pw - MARGIN.left - MARGIN.right;
+    const badgeColW = 62; // fixed width for badge column
+    const gap = 8;
+    const textColX = MARGIN.left + badgeColW + gap;
+    const textColW = pw - textColX - MARGIN.right;
+    const rowMinH = 12;
 
     notes.forEach(({ component, norm, note }) => {
         if (y > pageHeight(doc) - 30) { doc.addPage(); y = MARGIN.top; }
 
-        // Pill with accent fill
-        const pillText = component + '   ' + norm;
-        const pillW = doc.getTextWidth(pillText) + 10;
-        setColor(doc, COLORS.accent, 'fill');
-        doc.roundedRect(MARGIN.left, y - 4.5, pillW, 7, 1.5, 1.5, 'F');
-        setFont(doc, 'bold', FONT.small);
-        setColor(doc, COLORS.accentText);
-        doc.text(pillText, MARGIN.left + 5, y);
+        // Calculate text height to know row height
+        setFont(doc, 'normal', FONT.small);
+        const lines = doc.splitTextToSize(note, textColW);
+        const textH = lines.length * 4;
+        const rowH = Math.max(rowMinH, textH + 4);
 
-        // Note text
+        // Badge (left column) — centered vertically in row
+        const pillText = component + '  ' + norm;
+        setFont(doc, 'bold', FONT.small);
+        const pillW = Math.min(doc.getTextWidth(pillText) + 10, badgeColW);
+        const pillY = y + (rowH - 7) / 2;
+        setColor(doc, COLORS.accent, 'fill');
+        doc.roundedRect(MARGIN.left, pillY, pillW, 7, 1.5, 1.5, 'F');
+        setColor(doc, COLORS.accentText);
+        doc.text(pillText, MARGIN.left + 5, pillY + 5);
+
+        // Note text (right column) — vertically centered
         setFont(doc, 'normal', FONT.small);
         setColor(doc, COLORS.gray3);
-        const lines = doc.splitTextToSize(note, colW - 4);
-        doc.text(lines, MARGIN.left, y + 5);
-        y += 5 + lines.length * 4 + 5;
+        const textY = y + (rowH - textH) / 2 + 4;
+        doc.text(lines, textColX, textY);
+
+        y += rowH + 2;
 
         // Separator
         doc.setDrawColor(...COLORS.gray2);
         doc.setLineWidth(0.2);
-        doc.line(MARGIN.left, y - 3, pw - MARGIN.right, y - 3);
+        doc.line(MARGIN.left, y, pw - MARGIN.right, y);
+        y += 4;
     });
 
     return y;
@@ -633,15 +643,16 @@ function drawFooter(doc, pageNum, totalPages, date) {
     const pw = pageWidth(doc);
     const ph = pageHeight(doc);
 
-    // Orange accent footer band
-    setColor(doc, COLORS.accent, 'fill');
-    doc.rect(0, ph - 8, pw, 8, 'F');
+    // Thin separator line
+    doc.setDrawColor(...COLORS.gray2);
+    doc.setLineWidth(0.2);
+    doc.line(MARGIN.left, ph - 9, pw - MARGIN.right, ph - 9);
 
-    setFont(doc, 'bold', FONT.small);
-    setColor(doc, COLORS.accentText);
-    doc.text('FlatLabs · flatsgenerator.com', MARGIN.left, ph - 3);
-    doc.text(`Page ${pageNum} of ${totalPages}`, pw - MARGIN.right, ph - 3, { align: 'right' });
-    doc.text(date, pw / 2, ph - 3, { align: 'center' });
+    setFont(doc, 'normal', FONT.small);
+    setColor(doc, COLORS.gray3);
+    doc.text('FlatLabs · flatsgenerator.com', MARGIN.left, ph - 4);
+    doc.text(`Page ${pageNum} of ${totalPages}`, pw - MARGIN.right, ph - 4, { align: 'right' });
+    doc.text(date, pw / 2, ph - 4, { align: 'center' });
 }
 
 // ─── MAIN EXPORT FUNCTION ─────────────────────────────────────────────────────
