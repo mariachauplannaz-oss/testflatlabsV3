@@ -5,12 +5,6 @@ import { MANNEQUIN_CFG } from './config.js';
 export function downloadSVG(state, log) {
     const cfg = MANNEQUIN_CFG[state.currentMannequin];
     
-    // If Pro mannequin, show Pro modal instead
-// if (!cfg.free) {
-//     document.getElementById('proModal').classList.add('show');
-//     return;
-// }
-    
     // Check if email already captured
     if (state.emailCaptured || localStorage.getItem('fl_email_captured')) {
         triggerDownload(state, log);
@@ -33,10 +27,6 @@ export function triggerDownload(state, log) {
     // Clone and prepare for export
     const clone = svgEl.cloneNode(true);
     clone.setAttribute('viewBox', cfg.exportViewBox);
-    
-    // Remove watermark if present
-    const watermark = clone.querySelector('#layer-watermark');
-    if (watermark) watermark.remove();
     
     // Serialize
     const serializer = new XMLSerializer();
