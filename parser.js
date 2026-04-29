@@ -157,6 +157,8 @@ function parseView(viewPrefix, root, store) {
 
         const [view, cat, type, component, variant] = parts;
         if (view !== viewPrefix) return;
+        // Skip nested subgroups (rib, line, etc.) — only process top-level component groups
+        if (parts.length > 5) return;
 
         const extracted = extractFromGroup(g, cleanId);
 
