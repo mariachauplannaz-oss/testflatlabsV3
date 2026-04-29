@@ -4,7 +4,7 @@
 //   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
 import { buildTechPackState } from './techpack.js';
-import { findClosestPantone, collectMeasurements, STITCH_SPECS, FABRIC_SPECS, PACKING_SPECS } from './config.js';
+import { findClosestPantone, collectMeasurements, STITCH_SPECS, FABRIC_SPECS, PACKING_SPECS, GRADING, SIZE_EQUIV } from './config.js';
 
 // ─── DESIGN TOKENS ───────────────────────────────────────────────────────────
 const COLORS = {
@@ -374,6 +374,104 @@ function drawBOMTable(doc, bomRows, y) {
     return doc.lastAutoTable.finalY + 8;
 }
 
+// ─── GRADING SECTION ─────────────────────────────────────────────────────────
+function drawGradingSection(doc, selections, y) {
+    const sizes = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const sizeLabels = ['XS · EU34', 'S · EU36', 'M · EU38', 'L · EU40', 'XL · EU42', 'XXL · EU44'];
+
+    // Collect all measures from selections (front view, EU38 base)
+    const baseMeasures = collectMeasurements(selections, 'EU38', 'front');
+
+    // ── Table 1: Grading ──
+    const head1 = [['Measurement', ...sizeLabels]];
+    const body1 = baseMeasures.map(m => {
+        const row = [m.description];
+        sizes.forEach(size => {
+            const val = GRADING.getForSize(size, m.description.toLowerCase().replace(/\s+/g, '_'), m.value);
+            const isBase = size === 'EU38';
+            row.push(isBase ? String(val) : String(val));
+        });
+        return row;
+    });
+
+    doc.autoTable({
+        startY: y,
+        head: head1,
+        body: body1,
+        margin: { left: MARGIN.left, right: MARGIN.right },
+        styles: {
+            font: 'helvetica',
+            fontSize: FONT.small,
+            cellPadding: 2.5,
+            textColor: COLORS.gray4,
+            lineColor: COLORS.gray2,
+            lineWidth: 0.2,
+        },
+        headStyles: {
+            fillColor: COLORS.black,
+            textColor: COLORS.white,
+            fontStyle: 'bold',
+            fontSize: FONT.small,
+        },
+        columnStyles: {
+            0: { cellWidth: 52, fontStyle: 'bold', textColor: COLORS.gray3 },
+            3: { fontStyle: 'bold', textColor: COLORS.gray4 }, // EU38 base column
+        },
+        alternateRowStyles: { fillColor: [250, 250, 252] },
+        didParseCell: (data) => {
+            // Highlight EU38 column (index 3) in all rows
+            if (data.column.index === 3 && data.row.section === 'body') {
+                data.cell.styles.fillColor = [240, 245, 255];
+                data.cell.styles.fontStyle = 'bold';
+            }
+        }
+    });
+
+    y = doc.lastAutoTable.finalY + 6;
+
+    // ── Table 2: Size Equivalences ──
+    const regions = ['EU', 'US', 'UK', 'IT', 'FR', 'JP', 'AU'];
+    const sizeKeys = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const labelRow = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+    const head2 = [['Region', ...labelRow]];
+    const body2 = regions.map(region => {
+        const row = [region];
+        sizeKeys.forEach(size => {
+            const equiv = SIZE_EQUIV[size];
+            row.push(region === 'EU' ? size.replace('EU', '') : (equiv?.[region.toLowerCase()] || '—'));
+        });
+        return row;
+    });
+
+    doc.autoTable({
+        startY: y,
+        head: head2,
+        body: body2,
+        margin: { left: MARGIN.left, right: MARGIN.right },
+        styles: {
+            font: 'helvetica',
+            fontSize: FONT.small,
+            cellPadding: 2.5,
+            textColor: COLORS.gray4,
+            lineColor: COLORS.gray2,
+            lineWidth: 0.2,
+        },
+        headStyles: {
+            fillColor: COLORS.black,
+            textColor: COLORS.white,
+            fontStyle: 'bold',
+            fontSize: FONT.small,
+        },
+        columnStyles: {
+            0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.gray3 },
+            3: { fillColor: [240, 245, 255], fontStyle: 'bold' }, // M = EU38
+        },
+        alternateRowStyles: { fillColor: [250, 250, 252] },
+    });
+
+    return doc.lastAutoTable.finalY + 8;
+
 // ─── CONSTRUCTION NOTES ───────────────────────────────────────────────────────
 function drawConstructionNotes(doc, notes, y) {
     const pw = pageWidth(doc);
@@ -573,6 +671,12 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // POM section
     y = drawSectionLabel(doc, '01 — Points of Measure (POM) · ISO 3635 · EU Size 38', y);
     y = drawPOMTable(doc, techPack.pom, y);
+
+    // Grading section
+    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '07 — Grading Table', y);
+    y = drawGradingSection(doc, state.selections, y);
+        
     // Back POM section
     const backPom = collectMeasurements(state.selections, 'EU38', 'back');
     if (backPom.length > 0) {
