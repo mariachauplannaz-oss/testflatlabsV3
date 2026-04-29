@@ -1,16 +1,8 @@
 // ═══ techpack.js — POM engine, tolerance logic, construction notes ═══
 
-import { COMPONENT_META } from './config.js';
+import { COMPONENT_META, TOLERANCES } from './config.js';
 
-// ─── 1. TOLERANCE FUNCTION ────────────────────────────────────────────────────
-// Rules: >50cm → ±1.0 | 20–50cm → ±0.7 | <20cm → ±0.5
-export function getTolerance(value) {
-    if (value > 50)  return '± 1.0';
-    if (value >= 20) return '± 0.7';
-    return '± 0.5';
-}
-
-// ─── 2. POM CODE GENERATOR ───────────────────────────────────────────────────
+// ─── 1. POM CODE GENERATOR ───────────────────────────────────────────────────
 // Generates a short reference code for each measure row (e.g. TRS-001)
 function generatePOMCode(category, index) {
     const prefixes = {
@@ -22,7 +14,7 @@ function generatePOMCode(category, index) {
     return `${prefix}-${String(index + 1).padStart(3, '0')}`;
 }
 
-// ─── 3. BUILD POM TABLE ───────────────────────────────────────────────────────
+// ─── 2. BUILD POM TABLE ───────────────────────────────────────────────────────
 // Takes state.selections, returns array of POM rows ready for PDF table
 export function buildPOM(selections) {
     const rows = [];
@@ -47,7 +39,7 @@ export function buildPOM(selections) {
                 description: measure.label,
                 value:       measure.value,
                 unit:        measure.unit || 'cm',
-                tolerance:   getTolerance(measure.value),
+                tolerance:   TOLERANCES.formatTolerance(measure.value),
                 source:      meta.label   // e.g. "Regular Fit", "Long Sleeve"
             });
             globalIndex++;
@@ -57,7 +49,7 @@ export function buildPOM(selections) {
     return rows;
 }
 
-// ─── 4. BUILD CONSTRUCTION NOTES ─────────────────────────────────────────────
+// ─── 3. BUILD CONSTRUCTION NOTES ─────────────────────────────────────────────
 // Returns an array of { component, norm, note } objects
 export function buildConstructionNotes(selections, garmentType = 'tshirt') {
     const notes = [];
@@ -107,7 +99,7 @@ export function buildConstructionNotes(selections, garmentType = 'tshirt') {
     return notes;
 }
 
-// ─── 5. BUILD FULL TECH PACK STATE ───────────────────────────────────────────
+// ─── 4. BUILD FULL TECH PACK STATE ───────────────────────────────────────────
 // Master function: call this before generating the PDF
 // Returns everything specsheet.js needs
 export function buildTechPackState(state, projectMeta = {}) {
