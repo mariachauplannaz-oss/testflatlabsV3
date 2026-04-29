@@ -11,6 +11,19 @@ function mkEl(tag, attrs) {
     return el;
 }
 
+// Calculate viewBox from the actual rendered content's bounding box
+function fitViewBoxToContent(svgEl, paddingRatio = 0.1) {
+    // svgEl needs to be in the DOM for getBBox to work
+    const bbox = svgEl.getBBox();
+    const padX = bbox.width  * paddingRatio;
+    const padY = bbox.height * paddingRatio;
+    const x = bbox.x - padX;
+    const y = bbox.y - padY;
+    const w = bbox.width  + padX * 2;
+    const h = bbox.height + padY * 2;
+    svgEl.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+}
+
 function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
     const fill = document.getElementById('cFill').value;
     const showSeams = document.getElementById('togSeams').classList.contains('on');
@@ -110,25 +123,6 @@ function renderGarment(svgEl, components, selections, cfg, log, ghostMarkup) {
     }
 }
 
-function addWatermark(svgEl, viewBox) {
-    const vb = viewBox.split(' ').map(Number);
-    const cx = vb[0] + vb[2]/2, cy = vb[1] + vb[3]/2;
-    const wm = mkEl('g', { opacity:'0.12', 'pointer-events':'none', id:'layer-watermark' });
-    for (let i = -2; i <= 2; i++) {
-        const yOff = cy + i * (vb[3]*0.12);
-        const t = mkEl('text', {
-            x: String(cx), y: String(yOff),
-            'text-anchor':'middle', 'font-size': String(vb[2]*0.09),
-            'font-family':'-apple-system,sans-serif', 'font-weight':'800',
-            fill:'#007AFF', transform: `rotate(-35 ${cx} ${yOff})`,
-            'letter-spacing':'8'
-        });
-        t.textContent = 'FLATLABS PRO';
-        wm.appendChild(t);
-    }
-    svgEl.appendChild(wm);
-}
-
 export function generate(state, log) {
     const { svgData, selections, currentMannequin } = state;
     const cfg = MANNEQUIN_CFG[currentMannequin];
@@ -153,9 +147,8 @@ export function generate(state, log) {
     svgFront.setAttribute('height', '100%');
 
     renderGarment(svgFront, svgData.front, selections, cfg, log, svgData.mannequin);
-    if (!cfg.free) addWatermark(svgFront, cfg.previewViewBox);
-
     previewFront.appendChild(svgFront);
+    fitViewBoxToContent(svgFront);
 
     // === BACK (ISO only) ===
     if (cfg.hasBack && previewBack && svgData.back) {
@@ -168,9 +161,8 @@ export function generate(state, log) {
             svgBack.setAttribute('height', '100%');
 
             renderGarment(svgBack, svgData.back, selections, cfg, log, svgData.mannequinBack);
-            if (!cfg.free) addWatermark(svgBack, cfg.backViewBox);
-
             previewBack.appendChild(svgBack);
+            fitViewBoxToContent(svgBack);
             log('Back view rendered', 'ok');
         }
     }
