@@ -631,11 +631,11 @@ function drawConstructionNotes(doc, notes, y) {
         setFont(doc, 'bold', FONT.small);
         const pillW = Math.min(doc.getTextWidth(pillText) + 10, badgeColW);
         const pillY = y + (rowH - 7) / 2;
+        const pillX = MARGIN.left + badgeColW - pillW;
         setColor(doc, COLORS.accent, 'fill');
-        doc.roundedRect(MARGIN.left, pillY, pillW, 7, 1.5, 1.5, 'F');
+        doc.roundedRect(pillX, pillY, pillW, 7, 1.5, 1.5, 'F');
         setColor(doc, COLORS.accentText);
-        doc.text(pillText, MARGIN.left + 5, pillY + 5);
-
+        doc.text(pillText, pillX + 5, pillY + 5);
         setFont(doc, 'normal', FONT.small);
         setColor(doc, COLORS.gray3);
         const textY = y + (rowH - textH) / 2 + 4;
