@@ -31,21 +31,36 @@ const FONT = {
 const MARGIN = { left: 14, right: 14, top: 14 };
 // ─── POM ARROW MAPPING — letter → pair of measurement points ─────────────────
 // Points fm_*/bm_* are <g> elements in mannequin_iso.svg.
+// Some points depend on what the user selected (torso fit, neck type), so this
+// is built dynamically from state.selections instead of being a fixed object.
 // If a point doesn't exist in the SVG, the arrow is silently skipped.
-const POM_ARROWS = {
-    front: {
-        'A': { from: 'fm_chest_l',    to: 'fm_chest_r',       orient: 'horizontal' },
-        'B': { from: 'fm_waist_l',    to: 'fm_waist_r',       orient: 'horizontal' },
-        'C': { from: 'fm_hps_l',      to: 'fm_hem_reg_l',     orient: 'vertical'   },
-        'D': { from: 'fm_shoulder_l', to: 'fm_shoulder_r',    orient: 'horizontal' },
-        'E': { from: 'fm_hem_reg_l',  to: 'fm_hem_reg_r',     orient: 'horizontal' },
-        'H': { from: 'fm_hps_l',      to: 'fm_front_neck_drop_v', orient: 'vertical'}
-    },
-    back: {
-        'N': { from: 'bm_chest_l',    to: 'bm_chest_r',       orient: 'horizontal' },
-        'O': { from: 'bm_hps_l',      to: 'bm_hem_reg_center', orient: 'vertical'  }
-    }
-};
+function getPOMArrows(selections) {
+    // Torso decides which hem points to use.
+    // Slim fit reuses regular hem points (slim only changes width, not length).
+    const torsoKey = selections.torso === 'crp' ? 'crp' : 'reg';
+
+    // Neck type decides which neck-drop points to use.
+    const neckKey = selections.neck || 'rnd';
+
+    return {
+        front: {
+            'A': { from: 'fm_chest_l',         to: 'fm_chest_r' },
+            'B': { from: 'fm_waist_l',         to: 'fm_waist_r' },
+            'C': { from: 'fm_hps_l',           to: `fm_hem_${torsoKey}_l` },
+            'D': { from: 'fm_shoulder_l',      to: 'fm_shoulder_r' },
+            'E': { from: `fm_hem_${torsoKey}_l`, to: `fm_hem_${torsoKey}_r` },
+            'F': { from: 'fm_armhole_top_l',   to: 'fm_armhole_bot_l' },
+            'G': { from: 'fm_neck_width_l',    to: 'fm_neck_width_r' },
+            'H': { from: 'fm_hps_l',           to: `fm_front_neck_drop_${neckKey}` }
+        },
+        back: {
+            // V-neck has no back drop point — arrow silently skipped if neck = v
+            'I': { from: 'bm_hps_l',      to: `bm_back_neck_drop_${neckKey}` },
+            'N': { from: 'bm_shoulder_l', to: 'bm_shoulder_r' },
+            'O': { from: 'bm_hps_l',      to: `bm_hem_${torsoKey}_center` }
+        }
+    };
+}
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function setColor(doc, rgb, type = 'text') {
@@ -319,6 +334,7 @@ async function drawFlat(doc, y, state) {
 
     try {
         if (svgFront && svgBack) {
+            const arrows = getPOMArrows(state.selections);
             const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front, state.svgData?.measurementsFront);
             const svgBackWithArrows  = injectPOMArrows(svgBack,  POM_ARROWS.back,  state.svgData?.measurementsBack);
             const [front, back] = await Promise.all([svgToPng(svgFrontWithArrows), svgToPng(svgBackWithArrows)]);
@@ -347,6 +363,7 @@ async function drawFlat(doc, y, state) {
             return y + maxH + 10;
 
         } else if (svgFront) {
+            const arrows = getPOMArrows(state.selections);
             const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front, state.svgData?.measurementsFront);
             const { png, ratio } = await svgToPng(svgFrontWithArrows);
             const { w, h } = fitBox(ratio, MAX_W, MAX_H);
