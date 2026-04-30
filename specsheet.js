@@ -352,6 +352,66 @@ function drawMeasurementSpecs(doc, selections, y) {
     return noteY + 8;
 }
 
+// ─── SIZE EQUIVALENCES TABLE ──────────────────────────────────────────────────
+function drawSizeEquivalences(doc, y) {
+    const regions  = ['EU', 'US', 'UK', 'IT', 'FR', 'JP', 'AU'];
+    const sizeKeys = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const labels   = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+    const head = [['Region', ...labels]];
+    const body = regions.map(region => {
+        const row = [region];
+        sizeKeys.forEach(size => {
+            if (region === 'EU') {
+                row.push(size.replace('EU', ''));
+            } else {
+                row.push(SIZE_EQUIV[size]?.[region.toLowerCase()] || '—');
+            }
+        });
+        return row;
+    });
+
+    doc.autoTable({
+        startY: y,
+        head,
+        body,
+        margin: { left: MARGIN.left, right: MARGIN.right },
+        styles: {
+            font: 'helvetica',
+            fontSize: FONT.small,
+            cellPadding: 2.5,
+            textColor: COLORS.gray4,
+            lineColor: COLORS.gray2,
+            lineWidth: 0.2,
+        },
+        headStyles: {
+            fillColor: COLORS.black,
+            textColor: COLORS.white,
+            fontStyle: 'bold',
+            fontSize: FONT.small,
+            lineColor: COLORS.black,
+        },
+        columnStyles: {
+            0: { cellWidth: 22, fontStyle: 'bold', textColor: COLORS.accent },
+            1: { cellWidth: 'auto', halign: 'center' },
+            2: { cellWidth: 'auto', halign: 'center' },
+            3: { cellWidth: 'auto', halign: 'center' },
+            4: { cellWidth: 'auto', halign: 'center' },
+            5: { cellWidth: 'auto', halign: 'center' },
+            6: { cellWidth: 'auto', halign: 'center' },
+        },
+        alternateRowStyles: { fillColor: COLORS.gray1 },
+        willDrawCell: (data) => {
+            if (data.column.index === 3 && data.row.section === 'body') {
+                data.cell.styles.fillColor = [240, 245, 255];
+                data.cell.styles.fontStyle = 'bold';
+            }
+        },
+    });
+
+    return doc.lastAutoTable.finalY + 8;
+}
+
 // ─── BOM TABLE ───────────────────────────────────────────────────────────────
 function drawBOMTable(doc, bomRows, y) {
     const head = [['Ref', 'Description', 'Unit', 'Qty']];
@@ -579,6 +639,10 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     y = drawSectionLabel(doc, '01 — Measurement Specifications · ISO 3635 · Base EU38', y);
     y = drawMeasurementSpecs(doc, state.selections, y);
 
+    if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
+    y = drawSectionLabel(doc, '01B — Size Equivalences', y);
+    y = drawSizeEquivalences(doc, y);
+    
     // ── 02 — Bill of Materials ──────────────────────────────────────────────
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '02 — Bill of Materials (BOM)', y);
