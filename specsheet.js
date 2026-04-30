@@ -335,8 +335,8 @@ async function drawFlat(doc, y, state) {
     try {
         if (svgFront && svgBack) {
             const arrows = getPOMArrows(state.selections);
-            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front, state.svgData?.measurementsFront);
-            const svgBackWithArrows  = injectPOMArrows(svgBack,  POM_ARROWS.back,  state.svgData?.measurementsBack);
+            const svgFrontWithArrows = injectPOMArrows(svgFront, arrows.front, state.svgData?.measurementsFront);
+            const svgBackWithArrows  = injectPOMArrows(svgBack,  arrows.back,  state.svgData?.measurementsBack);
             const [front, back] = await Promise.all([svgToPng(svgFrontWithArrows), svgToPng(svgBackWithArrows)]);
             const fDim = fitBox(front.ratio, MAX_W, MAX_H);
             const bDim = fitBox(back.ratio,  MAX_W, MAX_H);
@@ -364,7 +364,7 @@ async function drawFlat(doc, y, state) {
 
         } else if (svgFront) {
             const arrows = getPOMArrows(state.selections);
-            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front, state.svgData?.measurementsFront);
+            const svgFrontWithArrows = injectPOMArrows(svgFront, arrows.front, state.svgData?.measurementsFront);
             const { png, ratio } = await svgToPng(svgFrontWithArrows);
             const { w, h } = fitBox(ratio, MAX_W, MAX_H);
             const imgX = pw / 2 - w / 2;
