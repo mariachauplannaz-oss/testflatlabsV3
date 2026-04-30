@@ -25,10 +25,14 @@ export function parseSVG(svgText) {
         data.mannequin = new XMLSerializer().serializeToString(clone);
     }
 
-    // Front measurement points (fm_*) — kept separate, injected only into PDF clone
-    const frontMeasurementsEl = root.querySelector('[id="front_measurements"]');
-    if (frontMeasurementsEl) {
-        data.measurementsFront = new XMLSerializer().serializeToString(frontMeasurementsEl);
+    // Front measurement points (fm_*) — collect ALL fm_* groups wherever they live
+    // in the SVG hierarchy, wrap them in a single group, and serialize.
+    const fmGroups = root.querySelectorAll('g[id^="fm_"]');
+    if (fmGroups.length) {
+        const wrapper = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
+        wrapper.setAttribute('id', 'front_measurements_collected');
+        fmGroups.forEach(g => wrapper.appendChild(g.cloneNode(true)));
+        data.measurementsFront = new XMLSerializer().serializeToString(wrapper);
     }
 
     // Back body ghost (preview only) — clone body_back_grp WITHOUT measurements
@@ -40,10 +44,13 @@ export function parseSVG(svgText) {
         data.mannequinBack = new XMLSerializer().serializeToString(clone);
     }
 
-    // Back measurement points (bm_*) — kept separate, injected only into PDF clone
-    const backMeasurementsEl = root.querySelector('[id="back_measurements"]');
-    if (backMeasurementsEl) {
-        data.measurementsBack = new XMLSerializer().serializeToString(backMeasurementsEl);
+    // Back measurement points (bm_*) — collect ALL bm_* groups wherever they live
+    const bmGroups = root.querySelectorAll('g[id^="bm_"]');
+    if (bmGroups.length) {
+        const wrapper = doc.createElementNS('http://www.w3.org/2000/svg', 'g');
+        wrapper.setAttribute('id', 'back_measurements_collected');
+        bmGroups.forEach(g => wrapper.appendChild(g.cloneNode(true)));
+        data.measurementsBack = new XMLSerializer().serializeToString(wrapper);
     }
 
     // Parse garments for both views
