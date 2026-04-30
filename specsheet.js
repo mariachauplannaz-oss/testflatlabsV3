@@ -29,6 +29,23 @@ const FONT = {
 };
 
 const MARGIN = { left: 14, right: 14, top: 14 };
+// ─── POM ARROW MAPPING — letter → pair of measurement points ─────────────────
+// Points fm_*/bm_* are <g> elements in mannequin_iso.svg.
+// If a point doesn't exist in the SVG, the arrow is silently skipped.
+const POM_ARROWS = {
+    front: {
+        'A': { from: 'fm_chest_l',    to: 'fm_chest_r',    orient: 'horizontal' },
+        'B': { from: 'fm_waist_l',    to: 'fm_waist_r',    orient: 'horizontal' },
+        'C': { from: 'fm_hps_l',      to: 'fm_hem_l',      orient: 'vertical'   },
+        'D': { from: 'fm_shoulder_l', to: 'fm_shoulder_r', orient: 'horizontal' },
+        'E': { from: 'fm_hem_l',      to: 'fm_hem_r',      orient: 'horizontal' },
+        'H': { from: 'fm_hps_c',      to: 'fm_neck_drop',  orient: 'vertical'   }
+    },
+    back: {
+        'N': { from: 'bm_back_l',  to: 'bm_back_r',  orient: 'horizontal' },
+        'O': { from: 'bm_hps_c',   to: 'bm_hem_c',   orient: 'vertical'   }
+    }
+};
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 function setColor(doc, rgb, type = 'text') {
@@ -52,6 +69,112 @@ function hexToRgb(hex) {
 function contrastColor(r, g, b) {
     const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
     return lum > 140 ? COLORS.black : COLORS.white;
+}
+
+// ─── HELPER: get center coordinates of a fm_*/bm_* cross marker ──────────────
+// Each marker is a <g id="fm_xxx"> containing 2 <line> forming a cross.
+// Returns { x, y } in SVG units, or null if the element isn't found.
+function getPointCenter(svgEl, pointId) {
+    const g = svgEl.querySelector(`g[id="${pointId}"]`);
+    if (!g) return null;
+    const lines = g.querySelectorAll('line');
+    if (lines.length < 2) return null;
+    let xs = [], ys = [];
+    lines.forEach(line => {
+        xs.push(parseFloat(line.getAttribute('x1')), parseFloat(line.getAttribute('x2')));
+        ys.push(parseFloat(line.getAttribute('y1')), parseFloat(line.getAttribute('y2')));
+    });
+    const xMin = Math.min(...xs), xMax = Math.max(...xs);
+    const yMin = Math.min(...ys), yMax = Math.max(...ys);
+    return { x: (xMin + xMax) / 2, y: (yMin + yMax) / 2 };
+}
+
+// ─── INJECT POM ARROWS into a cloned SVG element ─────────────────────────────
+// Works on a deep clone — never mutates the live DOM SVG.
+// Stroke/radius values are large because the SVG viewBox is ~7000×4700 units.
+function injectPOMArrows(svgEl, arrowMap) {
+    const clone = svgEl.cloneNode(true);
+    const NS    = 'http://www.w3.org/2000/svg';
+
+    const STROKE_W  = 14;
+    const TICK_LEN  = 60;
+    const CIRCLE_R  = 90;
+    const FONT_SIZE = 110;
+    const COLOR     = '#222B31';
+    const LABEL_BG  = '#FFFFFF';
+
+    const layer = document.createElementNS(NS, 'g');
+    layer.setAttribute('id', 'pom_arrows_layer');
+
+    Object.entries(arrowMap).forEach(([letter, def]) => {
+        const p1 = getPointCenter(clone, def.from);
+        const p2 = getPointCenter(clone, def.to);
+        if (!p1 || !p2) {
+            console.warn(`[FlatLabs] POM arrow "${letter}" skipped: point not found (${def.from} → ${def.to})`);
+            return;
+        }
+
+        const g = document.createElementNS(NS, 'g');
+
+        // Main line
+        const mainLine = document.createElementNS(NS, 'line');
+        mainLine.setAttribute('x1', p1.x);
+        mainLine.setAttribute('y1', p1.y);
+        mainLine.setAttribute('x2', p2.x);
+        mainLine.setAttribute('y2', p2.y);
+        mainLine.setAttribute('stroke', COLOR);
+        mainLine.setAttribute('stroke-width', STROKE_W);
+        g.appendChild(mainLine);
+
+        // Perpendicular tick marks at each end  ├──┤
+        const dx  = p2.x - p1.x;
+        const dy  = p2.y - p1.y;
+        const len = Math.sqrt(dx * dx + dy * dy);
+        if (len === 0) return;
+        const px = -dy / len;
+        const py =  dx / len;
+
+        [p1, p2].forEach(p => {
+            const tick = document.createElementNS(NS, 'line');
+            tick.setAttribute('x1', p.x - px * TICK_LEN / 2);
+            tick.setAttribute('y1', p.y - py * TICK_LEN / 2);
+            tick.setAttribute('x2', p.x + px * TICK_LEN / 2);
+            tick.setAttribute('y2', p.y + py * TICK_LEN / 2);
+            tick.setAttribute('stroke', COLOR);
+            tick.setAttribute('stroke-width', STROKE_W);
+            g.appendChild(tick);
+        });
+
+        // Label circle at midpoint
+        const midX = (p1.x + p2.x) / 2;
+        const midY = (p1.y + p2.y) / 2;
+
+        const circle = document.createElementNS(NS, 'circle');
+        circle.setAttribute('cx', midX);
+        circle.setAttribute('cy', midY);
+        circle.setAttribute('r',  CIRCLE_R);
+        circle.setAttribute('fill',         LABEL_BG);
+        circle.setAttribute('stroke',       COLOR);
+        circle.setAttribute('stroke-width', STROKE_W);
+        g.appendChild(circle);
+
+        const text = document.createElementNS(NS, 'text');
+        text.setAttribute('x',                  midX);
+        text.setAttribute('y',                  midY);
+        text.setAttribute('text-anchor',         'middle');
+        text.setAttribute('dominant-baseline',   'central');
+        text.setAttribute('font-family',         'Helvetica, Arial, sans-serif');
+        text.setAttribute('font-weight',         'bold');
+        text.setAttribute('font-size',           FONT_SIZE);
+        text.setAttribute('fill',                COLOR);
+        text.textContent = letter;
+        g.appendChild(text);
+
+        layer.appendChild(g);
+    });
+
+    clone.appendChild(layer);
+    return clone;
 }
 
 // ─── HEADER BAND ─────────────────────────────────────────────────────────────
@@ -178,6 +301,8 @@ async function drawFlat(doc, y) {
 
     try {
         if (svgFront && svgBack) {
+            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front);
+            const svgBackWithArrows  = injectPOMArrows(svgBack,  POM_ARROWS.back);
             const [front, back] = await Promise.all([svgToPng(svgFront), svgToPng(svgBack)]);
             const fDim = fitBox(front.ratio, MAX_W, MAX_H);
             const bDim = fitBox(back.ratio,  MAX_W, MAX_H);
@@ -204,6 +329,7 @@ async function drawFlat(doc, y) {
             return y + maxH + 10;
 
         } else if (svgFront) {
+            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front);
             const { png, ratio } = await svgToPng(svgFront);
             const { w, h } = fitBox(ratio, MAX_W, MAX_H);
             const imgX = pw / 2 - w / 2;
