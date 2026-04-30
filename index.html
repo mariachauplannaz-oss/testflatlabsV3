@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FlatLabs — Simple fashion flats generator</title>
-<meta name="description" content="FlatLabs is a modular fashion flat generator. Pick a garment, choose components, get a clean SVG.">
+<title>FlatLabs — Modular fashion flats for tech packs</title>
+<meta name="description" content="Generate clean technical fashion flats and tech pack PDFs in minutes. Built for designers, freelancers, and small brands — no Illustrator gymnastics.">
 <link rel="canonical" href="https://flatsgenerator.com/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="FlatLabs — Simple fashion flats generator">
-<meta property="og:description" content="FlatLabs is a modular fashion flat generator. Pick a garment, choose components, get a clean SVG.">
+<meta property="og:title" content="FlatLabs — Modular fashion flats for tech packs">
+<meta property="og:description" content="Generate clean technical fashion flats and tech pack PDFs in minutes. Built for designers, freelancers, and small brands — no Illustrator gymnastics.">
 <meta property="og:url" content="https://flatsgenerator.com/">
 <meta property="og:site_name" content="FlatLabs">
 <meta name="twitter:card" content="summary_large_image">
@@ -106,7 +106,7 @@ nav {
 }
 .hero h1 {
   font-family: var(--serif);
-  font-size: clamp(40px, 4.5vw, 62px);
+  font-size: clamp(36px, 4.5vw, 62px);
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: -1.5px;
@@ -126,7 +126,7 @@ nav {
   font-size: 16px;
   color: var(--ink-soft);
   line-height: 1.75;
-  max-width: 440px;
+  max-width: 460px;
   margin-bottom: 40px;
 }
 .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -155,15 +155,17 @@ nav {
   display: flex; align-items: center; justify-content: center;
   padding: 60px 20px;
 }
-.hero-bg-block {
-  display: none;
-}
+.hero-bg-block { display: none; }
 .hero-flat-wrap {
   position: relative; z-index: 1;
   display: flex; align-items: center; justify-content: center;
+  width: 100%;
 }
-.hero-flat-wrap svg {
-  width: 260px;
+.hero-flat-wrap img {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  display: block;
   filter: drop-shadow(0 16px 40px rgba(33,43,49,.1));
 }
 
@@ -192,13 +194,15 @@ nav {
   position: absolute;
   top: -20px; left: -10px;
   font-family: var(--serif);
-  font-size: clamp(200px, 22vw, 320px);
+  font-size: clamp(140px, 22vw, 320px);
   font-weight: 900;
   color: rgba(255,255,255,.03);
   line-height: 1;
   pointer-events: none;
   user-select: none;
   letter-spacing: -8px;
+  max-width: 100%;
+  overflow: hidden;
 }
 .problem-inner {
   max-width: 1100px;
@@ -208,8 +212,9 @@ nav {
   grid-template-columns: 300px 1fr;
   gap: 80px;
   align-items: start;
+  position: relative;
+  z-index: 1;
 }
-.problem-left {}
 .section-label {
   font-size: 11px; letter-spacing: 2px;
   text-transform: uppercase; font-weight: 600;
@@ -235,7 +240,6 @@ nav {
   font-style: italic; font-weight: 400;
   color: rgba(255,255,255,.5);
 }
-.problem-right {}
 .problem-narrative p {
   font-size: 16px; color: rgba(255,255,255,.7);
   line-height: 1.8; margin-bottom: 20px;
@@ -255,7 +259,6 @@ nav {
 }
 .price-callout p:last-child { margin-bottom: 0; color: rgba(255,255,255,.9); font-weight: 500; }
 
-/* Decorative sleeve bottom-right */
 .problem-deco {
   position: absolute;
   bottom: -60px; right: -40px;
@@ -274,21 +277,25 @@ nav {
   position: absolute;
   top: -30px; right: -20px;
   font-family: var(--serif);
-  font-size: clamp(200px, 22vw, 320px);
+  font-size: clamp(140px, 22vw, 320px);
   font-weight: 900;
   color: rgba(33,43,49,.04);
   line-height: 1;
   pointer-events: none;
   user-select: none;
   letter-spacing: -8px;
+  max-width: 100%;
+  overflow: hidden;
 }
 .how-inner {
   max-width: 1100px;
   margin: 0 auto;
   padding: 0 60px;
+  position: relative;
+  z-index: 1;
 }
 .how-header {
-  max-width: 560px;
+  max-width: 620px;
   margin-bottom: 72px;
 }
 .how .section-label { color: var(--ink-soft); margin-bottom: 20px; }
@@ -311,15 +318,20 @@ nav {
   padding: 44px 40px 44px 0;
   border-right: 1px solid rgba(33,43,49,.12);
   position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
 }
 .step-item:last-child { border-right: none; padding-right: 0; padding-left: 40px; }
 .step-item:nth-child(2) { padding: 44px 40px; }
 .step-illustration {
-  height: 80px;
-  display: flex; align-items: flex-end;
-  margin-bottom: 28px;
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  display: flex; align-items: flex-start; justify-content: flex-start;
 }
-.step-illustration svg { height: 100%; width: auto; }
+.step-illustration svg { height: 72px; width: auto; }
+.step-content { flex: 1; min-width: 0; }
 .step-num-label {
   font-size: 11px; font-weight: 700;
   letter-spacing: 2px; text-transform: uppercase;
@@ -334,6 +346,18 @@ nav {
 .step-item p {
   font-size: 14px; color: var(--ink-soft);
   line-height: 1.7;
+}
+.step-pro-tag {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  padding: 3px 8px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
 }
 
 /* ── DISCLAIMER ── */
@@ -379,12 +403,8 @@ nav {
   display: flex; align-items: center; justify-content: center;
   position: relative;
 }
-.disclaimer-pocket-wrap {
-  position: relative;
-}
-.disclaimer-pocket-wrap svg {
-  width: 320px;
-}
+.disclaimer-pocket-wrap { position: relative; }
+.disclaimer-pocket-wrap svg { width: 320px; max-width: 100%; }
 
 /* ── VALIDATION ── */
 .validation {
@@ -464,12 +484,6 @@ nav {
 }
 .email-success.show { display: block; }
 .validation-count { font-size: 12px; color: var(--ink-soft); margin-top: 16px; }
-.support-link {
-  display: inline-block; margin-top: 32px;
-  font-size: 13px; color: var(--ink-soft); text-decoration: none;
-  transition: color .2s;
-}
-.support-link:hover { color: var(--ink); }
 
 /* ── FOOTER ── */
 footer {
@@ -496,48 +510,80 @@ footer a:hover { color: var(--ink); }
 
 /* ── MOBILE ── */
 @media (max-width: 900px) {
-  nav { padding: 0 24px; }
+  nav { padding: 0 20px; }
+  .nav-links { gap: 18px; }
   .nav-links a:not(.nav-cta) { display: none; }
 
   .hero {
     grid-template-columns: 1fr;
-    padding: 100px 24px 60px;
-    gap: 48px;
-    text-align: left;
+    padding: 96px 20px 60px;
+    gap: 32px;
+    min-height: auto;
   }
   .hero-text { padding: 0; }
-  .hero-visual { justify-content: flex-start; }
-  .hero-bg-block { right: -24px; width: calc(100% + 24px); border-radius: 4px 0 0 4px; }
-  .hero-flat-wrap svg { width: 200px; }
+  .hero-visual { justify-content: center; padding: 20px 0; }
+  .hero-flat-wrap img { max-width: 280px; }
+  .scroll-hint { margin-top: 32px; }
 
+  .problem { padding: 80px 0; }
   .problem-inner {
     grid-template-columns: 1fr;
-    padding: 0 24px; gap: 40px;
+    padding: 0 20px; gap: 32px;
   }
-  .problem { padding: 80px 0; }
-  .how-inner { padding: 0 24px; }
+  .problem-bg-num { font-size: clamp(120px, 30vw, 200px); top: -10px; left: -8px; }
+
   .how { padding: 80px 0; }
+  .how-inner { padding: 0 20px; }
+  .how-header { margin-bottom: 48px; }
+  .how-bg-num { font-size: clamp(120px, 30vw, 200px); }
   .steps-grid { grid-template-columns: 1fr; border-top: none; }
-  .step-item { border-right: none; border-top: 1px solid rgba(33,43,49,.12); padding: 36px 0 !important; }
+  .step-item,
+  .step-item:last-child,
+  .step-item:nth-child(2) {
+    border-right: none;
+    border-top: 1px solid rgba(33,43,49,.12);
+    padding: 32px 0 !important;
+    gap: 18px;
+  }
+  .step-illustration { width: 60px; height: 60px; }
+  .step-illustration svg { height: 60px; }
 
-  .disclaimer-inner { grid-template-columns: 1fr; padding: 0 24px; gap: 40px; }
-  .disclaimer-visual { display: none; }
   .disclaimer { padding: 80px 0; }
+  .disclaimer-inner {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+    gap: 40px;
+  }
+  .disclaimer-visual { display: none; }
 
-  .validation { padding: 80px 0 60px; }
-  footer { padding: 20px 24px; flex-direction: column; gap: 12px; text-align: center; }
+  .validation { padding: 72px 0 56px; }
+  .validation-inner { padding: 0 20px; }
+  footer { padding: 20px 20px; flex-direction: column; gap: 12px; text-align: center; }
 }
 
 @media (max-width: 600px) {
-  .hero h1 { font-size: 34px; letter-spacing: -.8px; }
+  .hero h1 {
+    font-size: clamp(30px, 8vw, 38px);
+    letter-spacing: -.6px;
+    line-height: 1.12;
+  }
+  .hero-body { font-size: 15px; }
+  .hero-actions { gap: 10px; }
+  .btn-primary, .btn-ghost { width: 100%; justify-content: center; }
+  .hero-flat-wrap img { max-width: 240px; }
+
+  .price-callout { padding: 20px 22px; }
+  .disclaimer-quote { font-size: 19px; padding-left: 18px; margin: 28px 0; }
+
   .email-row { flex-direction: column; }
-  .validation-buttons { flex-direction: column; align-items: center; }
-  .btn-validate { width: 100%; max-width: 260px; justify-content: center; }
+  .validation-buttons { flex-direction: column; align-items: stretch; }
+  .btn-validate { width: 100%; justify-content: center; }
 }
 </style>
 </head>
 <body>
 
+<!-- Hidden form for Netlify form detection (validation button) -->
 <form name="validation" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input name="form-name" value="validation">
   <input name="action" value="this-makes-sense">
@@ -557,19 +603,16 @@ footer a:hover { color: var(--ink); }
 <!-- HERO -->
 <section class="hero">
   <div class="hero-text">
-    <div class="hero-kicker reveal">Fashion Flat Generator</div>
+    <div class="hero-kicker reveal">For people who actually make clothes</div>
     <h1 class="reveal reveal-delay-1">
-      You shouldn't need<br>
-      to be an <em>Illustrator</em><br>
-      expert to show<br>
-      <span class="accent-word">what a shirt looks like.</span>
+      Your tech pack <em>shouldn't take</em> a whole afternoon <span class="accent-word">to draw.</span>
     </h1>
     <p class="hero-body reveal reveal-delay-2">
-      Whether you're designing a collection, pitching an idea, or sending specs to a factory — at some point you need a flat. A clean technical drawing of a garment. And right now, getting one is harder than it should be.
+      FlatLabs builds the technical flat for you. Pick the garment, choose the components, export a clean SVG and a tech pack PDF with real ISO measurements. No pen tool, no template hunting, no AI guessing.
     </p>
     <div class="hero-actions reveal reveal-delay-3">
       <a href="app.html" class="btn-primary">
-        Try it — it's free
+        Try it — first download is free
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
       <a href="#problem" class="btn-ghost">See why this exists</a>
@@ -578,50 +621,8 @@ footer a:hover { color: var(--ink); }
   </div>
 
   <div class="hero-visual">
-    <div class="hero-bg-block"></div>
     <div class="hero-flat-wrap reveal reveal-delay-2">
-      <img src="assets/img/T-shirt_example.png" alt="Technical flat — T-shirt" style="width:420px; display:block; position:relative; z-index:1;">
-      <!-- T-shirt flat placeholder while img loads -->
-      <svg viewBox="0 0 340 400" xmlns="http://www.w3.org/2000/svg" style="display:none">
-        <!-- Left sleeve shape -->
-        <path fill="#212B31" d="M 88 96 L 42 116 L 64 156 L 90 142 L 88 96 Z"/>
-        <!-- Right sleeve shape -->
-        <path fill="#212B31" d="M 252 96 L 298 116 L 276 156 L 250 142 L 252 96 Z"/>
-        <!-- Main body -->
-        <path fill="#212B31" d="
-          M 128 78
-          C 142 72 158 68 170 68
-          C 182 68 198 72 212 78
-          L 252 96 L 250 142
-          L 248 390 C 248 396 243 400 237 400
-          L 103 400 C 97 400 92 396 92 390
-          L 90 142 L 88 96 Z
-        "/>
-        <!-- Neck opening — punched out white -->
-        <path fill="white" d="M 148 80 C 153 100 165 116 170 118 C 175 116 187 100 192 80 C 182 74 158 74 148 80 Z"/>
-        <!-- Neck inner rib accent -->
-        <path fill="#ff9a6e" d="M 151 82 C 155 100 165 114 170 116 C 175 114 185 100 189 82 C 180 77 160 77 151 82 Z"/>
-        <!-- Neck rib cut back to white center -->
-        <path fill="white" d="M 154 84 C 158 100 166 113 170 115 C 174 113 182 100 186 84 C 178 80 162 80 154 84 Z"/>
-
-        <!-- Left shoulder accent line -->
-        <path fill="#ff9a6e" d="M 128 78 L 90 142 L 95 144 L 133 80 Z"/>
-        <!-- Right shoulder accent line -->
-        <path fill="#ff9a6e" d="M 212 78 L 250 142 L 245 144 L 207 80 Z"/>
-
-        <!-- Left sleeve cuff accent -->
-        <path fill="#ff9a6e" d="M 42 116 L 64 156 L 69 153 L 47 113 Z"/>
-        <!-- Right sleeve cuff accent -->
-        <path fill="#ff9a6e" d="M 298 116 L 276 156 L 271 153 L 293 113 Z"/>
-
-        <!-- Hem accent -->
-        <rect fill="#ff9a6e" x="92" y="388" width="156" height="8" rx="1"/>
-
-        <!-- Chest pocket -->
-        <rect fill="white" x="150" y="170" width="58" height="50" rx="2"/>
-        <rect fill="#ff9a6e" x="150" y="170" width="58" height="10" rx="1"/>
-        <rect fill="white" x="150" y="176" width="58" height="4"/>
-      </svg>
+      <img src="assets/img/T-shirt_example.png" alt="Technical flat — T-shirt">
     </div>
   </div>
 </section>
@@ -632,22 +633,21 @@ footer a:hover { color: var(--ink); }
   <div class="problem-inner">
     <div class="problem-left">
       <div class="section-label reveal">The problem</div>
-      <h2 class="reveal reveal-delay-1">I just needed<br>a <em>flat.</em><br>Here's what<br>I found instead.</h2>
+      <h2 class="reveal reveal-delay-1">Drawing a flat is the <em>least creative</em> part of designing clothes.</h2>
     </div>
     <div class="problem-right">
       <div class="problem-narrative reveal">
-        <p>You'd think in 2026 there would be a simple way to get a clean technical drawing of a t-shirt. There isn't.</p>
-        <p>You Google "fashion flat template." You scroll through dozens of results — different proportions, different styles, different quality. Nothing matches what you have in your head. You find something close, maybe on a marketplace. You pay for it. You open the file: <strong>ungrouped layers, weird anchor points, no logical structure.</strong></p>
-        <p>You try to edit it. Change the neckline, adjust the sleeves. Thirty minutes later you're still fighting with the pen tool. And none of it is made for production.</p>
+        <p>You designed the collection. You sourced the fabric. You're ready to send it to production. And now you have to spend three hours dragging anchor points in Illustrator to draw a t-shirt that already exists in a thousand variations on the internet.</p>
+        <p>The free templates online? <strong>Ungrouped layers, weird proportions, no logical structure.</strong> You change the neckline and the whole thing breaks. You add a sleeve and suddenly the side seam is off by 4cm. None of it is built for production.</p>
+        <p>So you redraw it. Every season. Every style. <strong>Hours that should go into the actual design</strong> go into pushing curves around instead.</p>
       </div>
       <div class="price-callout reveal reveal-delay-1">
-        <p>Or you find a tool that actually works. Real professional software with accurate measurements and proper construction. That'll be <strong>€5,000. Maybe more.</strong></p>
-        <p style="margin-top:12px;color:rgba(255,255,255,.85);font-weight:500;">Spend hours on repetitive manual work, or spend thousands on something that should be accessible to anyone who works with garments. <strong>There's something broken about that.</strong></p>
+        <p>Or you skip the manual work and pay for the professional software. Real measurements, proper construction, full kit. <strong>Three thousand euros — minimum.</strong> More if you want the whole suite.</p>
+        <p style="margin-top:12px;color:rgba(255,255,255,.85);font-weight:500;">There's a missing tool between "free templates that don't work" and "enterprise software priced for factories." <strong>That's the gap FlatLabs fills.</strong></p>
       </div>
     </div>
   </div>
 
-  <!-- Decorative sleeve -->
   <div class="problem-deco">
     <svg width="420" height="340" viewBox="0 0 420 340" fill="none">
       <path d="M 60 30 L 380 60 L 420 300 L 30 340 Z" stroke="white" stroke-width="2" fill="none" opacity=".6"/>
@@ -664,14 +664,31 @@ footer a:hover { color: var(--ink); }
   <div class="how-inner">
     <div class="how-header">
       <div class="section-label reveal">How it works</div>
-      <h2 class="reveal reveal-delay-1">What if you could just<br><em>pick a shirt and go?</em></h2>
+      <h2 class="reveal reveal-delay-1">Pick. Snap. <em>Export.</em></h2>
     </div>
 
     <div class="steps-grid">
       <!-- Step 1 -->
       <div class="step-item reveal">
         <div class="step-illustration">
-          <svg id="Layer_6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:80px;width:auto">
+          <svg id="Layer_5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
+            <path fill="none" stroke="#fb8f6c" stroke-width="9" stroke-miterlimit="10" d="M192.51,57.41s-.92,41.73-42.4,41.73-42.26-42.29-42.26-42.29"/>
+            <path fill="none" stroke="#231f20" stroke-width="4" stroke-linejoin="round" d="M221.98,246.14c7.83-.18,9.42-6.1,9.42-10.01s.09-153.59.09-159.19-2.67-8.01-6.48-9.25-41.02-12.96-41.02-12.96c0,0-6.65,10.12-33.78,10.12s-33.98-10.12-33.98-10.12c0,0-37.21,11.72-41.02,12.96s-6.48,3.65-6.48,9.25.09,155.27.09,159.19,1.59,9.84,9.42,10.01c3.88.09,139.85.09,143.73,0Z"/>
+            <path fill="none" stroke="#231f20" stroke-width="4" stroke-miterlimit="10" d="M198.77,59.4s-4.44,46.19-48.51,46.19h-.3c-44.08,0-48.51-46.19-48.51-46.19"/>
+            <path fill="none" stroke="#231f20" stroke-width="4" stroke-miterlimit="10" d="M186.28,55.45s.68,37.51-36.33,37.51h.32c-37.01,0-36.33-37.51-36.33-37.51"/>
+          </svg>
+        </div>
+        <div class="step-content">
+          <div class="step-num-label">Step 01</div>
+          <h3>Pick a garment</h3>
+          <p>T-shirt now. Pants and hoodies coming next. Start with a base built on real ISO 8559 measurements, not approximations.</p>
+        </div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="step-item reveal reveal-delay-1">
+        <div class="step-illustration">
+          <svg id="Layer_6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
             <path fill="none" stroke="#fb8f6c" stroke-width="11" stroke-linejoin="round" d="M185.81,62.56s47.8,16.51,76.06,7.85"/>
             <path fill="none" stroke="#fb8f6c" stroke-width="11" stroke-linejoin="round" d="M179.74,57.44c5.2,47.38,56.15,89.11,56.15,89.11l27.19-16.96"/>
             <path fill="none" stroke="#231f20" stroke-width="4" stroke-linecap="square" stroke-linejoin="round" d="M109.75,245.48v-47.11s26.1-53.78-4.12-115.56l81.78-28s32.61,21.04,70.82,9.67"/>
@@ -683,61 +700,51 @@ footer a:hover { color: var(--ink); }
             <line fill="none" stroke="#231f20" stroke-width="4" stroke-linejoin="round" x1="174.96" y1="72.3" x2="110.69" y2="94.37"/>
           </svg>
         </div>
-        <div class="step-num-label">Step 01</div>
-        <h3>Pick a garment</h3>
-        <p>T-shirt, pants, jacket. Start with a base shape that makes sense for your project.</p>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="step-item reveal reveal-delay-1">
-        <div class="step-illustration">
-          <svg id="Layer_5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:80px;width:auto">
-            <path fill="none" stroke="#fb8f6c" stroke-width="9" stroke-miterlimit="10" d="M192.51,57.41s-.92,41.73-42.4,41.73-42.26-42.29-42.26-42.29"/>
-            <path fill="none" stroke="#231f20" stroke-width="4" stroke-linejoin="round" d="M221.98,246.14c7.83-.18,9.42-6.1,9.42-10.01s.09-153.59.09-159.19-2.67-8.01-6.48-9.25-41.02-12.96-41.02-12.96c0,0-6.65,10.12-33.78,10.12s-33.98-10.12-33.98-10.12c0,0-37.21,11.72-41.02,12.96s-6.48,3.65-6.48,9.25.09,155.27.09,159.19,1.59,9.84,9.42,10.01c3.88.09,139.85.09,143.73,0Z"/>
-            <path fill="none" stroke="#231f20" stroke-width="4" stroke-miterlimit="10" d="M198.77,59.4s-4.44,46.19-48.51,46.19h-.3c-44.08,0-48.51-46.19-48.51-46.19"/>
-            <path fill="none" stroke="#231f20" stroke-width="4" stroke-miterlimit="10" d="M186.28,55.45s.68,37.51-36.33,37.51h.32c-37.01,0-36.33-37.51-36.33-37.51"/>
-          </svg>
+        <div class="step-content">
+          <div class="step-num-label">Step 02</div>
+          <h3>Choose your components</h3>
+          <p>Round neck or V-neck. Set-in or long sleeves. Cropped or regular fit. Add a pocket. Toggle ribbing. Components snap together — no broken seams.</p>
         </div>
-        <div class="step-num-label">Step 02</div>
-        <h3>Choose your components</h3>
-        <p>Mix and match: round neck or V-neck, set-in sleeves or long, add a pocket, change the seam style.</p>
       </div>
 
       <!-- Step 3 -->
       <div class="step-item reveal reveal-delay-2">
         <div class="step-illustration">
-          <svg id="Layer_7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:80px;width:auto">
+          <svg id="Layer_7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
             <line fill="none" stroke="#fb8f6c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round" x1="66.99" y1="239.75" x2="233.01" y2="239.65"/>
             <polygon fill="none" stroke="#231f20" stroke-width="4" stroke-linecap="square" stroke-linejoin="round" points="93.56 150 150.1 212.37 205.11 150 174.89 150 174.3 55.33 123.33 55.33 123.93 150 93.56 150"/>
           </svg>
         </div>
-        <div class="step-num-label">Step 03</div>
-        <h3>Export</h3>
-        <p>Download a clean, layered SVG. Open it in Illustrator, drop it in a tech pack, or send it to a factory.</p>
+        <div class="step-content">
+          <div class="step-num-label">Step 03</div>
+          <h3>Export</h3>
+          <p>Download a clean, layered SVG. Or export the full tech pack PDF — points of measure, tolerances, BOM, construction notes.</p>
+          <span class="step-pro-tag">Tech Pack PDF available</span>
+        </div>
       </div>
     </div>
 
     <!-- Garment icons row -->
-    <div style="margin-top: 64px; padding-top: 40px; border-top: 1px solid rgba(33,43,49,.1); display: flex; gap: 48px; align-items: center;" class="reveal">
+    <div style="margin-top: 64px; padding-top: 40px; border-top: 1px solid rgba(33,43,49,.1); display: flex; gap: 32px; align-items: center; flex-wrap: wrap;" class="reveal">
       <span style="font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--ink-soft); font-weight:600;">Available now</span>
-      <div style="display:flex; gap:32px; align-items:center;">
+      <div style="display:flex; gap:32px; align-items:center; flex-wrap: wrap;">
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="opacity:.5">
+          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="opacity:.7">
             <path d="M32.5894 41.9812H12.2318C11.3024 41.9803 10.424 41.8895 9.96697 40.8777L9.94967 40.8385C9.57552 40.0081 9.95347 39.4707 10.2095 38.7151C10.889 36.7098 11.1382 34.5185 11.3283 32.4223L11.4789 29.9422C11.4929 29.6738 11.5369 29.4083 11.5451 29.1395L11.5438 23.1286C11.4935 22.068 11.2869 21.0138 11.2436 19.9546C9.22086 19.862 9.46986 22.2818 7.81175 21.9943C5.1695 21.5363 3.30809 18.9185 1.77831 16.9334C1.43204 16.484 0.92864 15.98 0.784673 15.4207C0.32562 13.6374 2.79601 12.712 4.00676 12.0412L8.13809 9.71224C8.6082 9.43525 9.07827 9.16089 9.52686 8.84946C10.5791 8.11891 11.5957 7.25875 12.927 7.14044L13.7573 7.10655C15.255 6.99044 16.6423 6.42967 18.0818 6.05083C18.6583 5.99505 18.9269 6.54175 19.2718 6.90508C20.5876 8.29127 22.2906 8.65356 24.1229 8.64283C25.9008 8.63238 27.8 8.19208 28.9716 6.75663C29.6863 5.88105 29.4636 5.94377 30.6301 6.27414L33.0581 6.92524C33.4586 7.01247 33.8553 7.07317 34.2651 7.10125C35.853 7.2101 36.4692 7.40927 37.842 8.39027L39.125 9.25708L45.4384 12.8368C46.0444 13.1912 47.1305 13.7534 47.2425 14.5516L47.2603 14.6496C47.4394 15.3698 46.9317 15.9498 46.5134 16.4606L44.9036 18.5623C43.8075 19.9259 42.0232 21.8012 40.2482 21.9885L40.2065 21.9927C39.4198 22.0762 39.1632 21.8225 38.7942 21.2212C38.341 20.4827 37.6409 19.6242 36.71 20.129C36.6543 20.3867 36.6555 20.6584 36.6348 20.9208L36.4944 22.3123C36.448 22.6531 36.4554 23.0058 36.4505 23.3494L36.4578 29.4632C36.4667 29.7263 36.5255 29.975 36.5355 30.2364L36.5647 31.5362C36.5712 31.6265 36.6025 31.7076 36.6093 31.7958L36.6571 32.5779L37.1772 36.2147C37.2759 36.7998 37.3663 37.4034 37.5469 37.9685C37.6908 38.4186 38.084 39.343 38.1447 39.694C38.1503 39.7263 38.1543 39.7563 38.1654 39.7876C38.5007 40.7285 37.5651 41.7612 36.6814 41.9361L36.641 41.9439C36.2045 42.0311 35.6843 41.9809 35.2362 41.9811L32.5894 41.9812Z" fill="#212B31"/>
           </svg>
-          <span style="font-size:10px;color:var(--ink-soft);font-weight:500;letter-spacing:.3px;">T-SHIRT</span>
+          <span style="font-size:10px;color:var(--ink);font-weight:600;letter-spacing:.3px;">T-SHIRT</span>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="opacity:.5">
+          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="opacity:.35">
             <path d="M25.8 30.5809L24.0272 22.0138C23.8861 22.3255 23.8519 22.6787 23.778 23.0111L22.2237 30.4218L21.466 34.5598L20.4073 41.302C20.2097 42.4318 19.0706 42.3686 18.2404 42.3691L12.4416 42.3701C12.2562 42.37 12.0524 42.381 11.8708 42.3402L11.8361 42.3319C10.6125 42.0537 10.6719 41.1105 10.6725 40.1356L10.6831 31.5095L10.7899 27.5976C10.7997 27.231 10.8622 26.8642 10.8792 26.4966L10.8914 24.6537C10.9009 24.2719 10.9698 23.8956 10.982 23.5162L11.0015 21.5742C11.01 21.3021 11.0602 21.0346 11.0704 20.7622L11.1881 17.6689L11.3765 14.8799C11.4661 13.8102 11.6452 12.7353 11.8594 11.684L12.2532 9.71786C12.3126 9.42405 12.2936 9.10338 12.2935 8.80403L12.2924 7.47705C12.2923 7.18844 12.2506 6.79896 12.3836 6.53678C12.7005 5.91185 13.1171 5.63331 13.8406 5.58799L33.5629 5.58203C35.1583 5.58105 35.7035 5.91011 35.7073 7.50372L35.7098 8.68028C35.7111 9.07417 35.7576 9.45592 35.8191 9.8455L35.995 10.8356C36.0053 10.8972 36.0326 10.9547 36.0463 11.0156L36.2448 11.948C36.3884 12.6854 36.4822 13.434 36.5453 14.1828L36.6881 16.2233C36.7042 16.4748 36.6846 16.7786 36.7402 17.0215L36.7701 17.1562C36.8792 17.6553 36.8283 18.2263 36.8519 18.7383C36.8611 18.9374 36.9061 19.1353 36.9126 19.3323L36.9328 20.8307C36.9448 21.0554 36.9905 21.2787 36.9978 21.504L37.0144 23.0844C37.0256 23.3708 37.0909 23.6529 37.1037 23.9414L37.1323 25.8809C37.1383 26.0432 37.171 26.2033 37.1758 26.3654L37.2283 28.654C37.2349 28.8338 37.2792 29.0088 37.2842 29.1888L37.2908 30.7932C37.2966 30.9853 37.3404 31.1733 37.3453 31.3645L37.3522 39.6626C37.3526 40.7783 37.6006 41.9018 36.2228 42.3199L36.155 42.3401C36.0127 42.3733 35.8587 42.3656 35.7136 42.3667L30.2397 42.3695C28.2167 42.3686 27.7933 42.5797 27.4682 40.2539L25.8 30.5809Z" fill="#212B31"/>
           </svg>
-          <span style="font-size:10px;color:var(--ink-soft);font-weight:500;letter-spacing:.3px;">PANTS</span>
+          <span style="font-size:10px;color:var(--ink-soft);font-weight:500;letter-spacing:.3px;">PANTS · SOON</span>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="opacity:.5">
+          <svg width="32" height="32" viewBox="0 0 48 48" fill="none" style="opacity:.35">
             <path d="M24.4577 42.0266L24.0868 41.6265C22.6719 43.081 21.8215 43.1016 19.8489 43.1026L16.2541 43.1028C14.125 43.1014 12.1325 41.96 11.5668 39.8001C11.4874 39.4969 11.4669 39.186 11.4 38.881L10.9561 39.111C9.15933 39.9526 6.85589 39.3165 6.04059 37.433C5.86031 37.0165 5.4562 35.4373 5.45428 35.0085L5.34961 33.3292L5.35027 28.4307C5.35866 28.2157 5.40905 28.0065 5.42259 27.7912C5.64741 24.2085 6.25945 20.4827 7.58128 17.1279C8.81217 14.0038 10.549 11.7122 13.8047 10.444L15.6684 9.80206C16.084 9.67953 16.5033 9.58222 16.9022 9.40855L16.8542 9.19428C16.3033 7.48447 18.0863 5.51005 19.7463 5.17503C20.1068 5.10228 20.4659 5.08287 20.8291 5.03633L21.7501 4.95083C21.9107 4.9363 22.0686 4.90236 22.2301 4.89495L23.2507 4.88867L26.3159 4.96395C28.1066 5.08452 30.4005 5.555 31.046 7.5222L31.1252 7.76975C31.2723 8.24206 31.2434 8.9668 31.0569 9.43756L33.4228 10.191C35.8927 10.9957 38.1141 12.6057 39.3746 14.9065L40.605 17.6701C40.8233 18.1244 40.9078 18.6473 41.0777 19.1182L42.0097 23.15C42.0558 23.3015 42.0648 23.4519 42.0894 23.6073L42.5068 26.7353L42.5745 27.869C42.6537 28.6648 42.6578 29.2462 42.6584 30.0476L42.6331 33.5665C42.6236 33.7575 42.573 33.941 42.5621 34.132C42.5408 34.5048 42.5765 34.9085 42.5183 35.275C42.4475 35.7209 42.1541 36.9104 42.0046 37.3093C41.5813 38.4384 40.5204 39.2975 39.3213 39.4515C38.4672 39.5612 37.3152 39.399 36.624 38.8611L36.6015 38.8432C36.5689 39.0441 36.5549 39.251 36.5103 39.4494C36.0231 41.617 34.2799 43.0109 32.0513 43.0975L27.7875 43.1027C26.5206 43.1018 25.576 43.0715 24.5611 42.1253L24.4577 42.0266Z" fill="#212B31"/>
           </svg>
-          <span style="font-size:10px;color:var(--ink-soft);font-weight:500;letter-spacing:.3px;">JACKET</span>
+          <span style="font-size:10px;color:var(--ink-soft);font-weight:500;letter-spacing:.3px;">HOODIE · SOON</span>
         </div>
       </div>
     </div>
@@ -748,59 +755,38 @@ footer a:hover { color: var(--ink); }
 <section class="disclaimer" id="disclaimer">
   <div class="disclaimer-inner">
     <div>
-      <div class="section-label reveal">Honest disclaimer</div>
-      <h2 class="reveal reveal-delay-1">This is a<br><em>proof of concept.</em></h2>
-      <p class="reveal reveal-delay-2">What you see here is the beginning — not the finished product. The mannequin isn't using real production measurements yet. The garment options are limited.</p>
-      <div class="disclaimer-quote reveal reveal-delay-2">Does this make sense to you?</div>
-      <p class="reveal reveal-delay-3">Because honestly — I'm not sure if I'm the only person who thinks this should have existed years ago. If you've ever wasted time searching for a flat, fighting with a template, or paying too much for something that should be simple — then maybe this resonates.</p>
+      <div class="section-label reveal">Early access</div>
+      <h2 class="reveal reveal-delay-1">You're <em>early.</em><br>That's the point.</h2>
+      <p class="reveal reveal-delay-2">FlatLabs launches publicly in July 2026 — right before SS27 tech pack season. Right now you're seeing the foundation: t-shirt module fully working, ISO measurements built in, tech pack export live. Pants and hoodies land before launch.</p>
+      <div class="disclaimer-quote reveal reveal-delay-2">If you've ever lost a Sunday redrawing the same flat, this is for you.</div>
+      <p class="reveal reveal-delay-3">Try it now while it's free. Tell me what's missing for your workflow. The people who give feedback now shape what FlatLabs becomes — and get the launch features built around their actual problems, not assumptions.</p>
     </div>
 
     <div class="disclaimer-visual reveal reveal-delay-2">
       <div class="disclaimer-pocket-wrap">
-        <!-- Large decorative pocket + seam detail -->
         <svg viewBox="0 0 320 380" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Background seam lines (fabric texture) -->
           <line x1="0" y1="60" x2="320" y2="60" stroke="#e8e0d0" stroke-width="1" stroke-dasharray="6 4"/>
           <line x1="0" y1="64" x2="320" y2="64" stroke="#e8e0d0" stroke-width=".7" stroke-dasharray="6 4"/>
           <line x1="0" y1="300" x2="320" y2="300" stroke="#e8e0d0" stroke-width="1" stroke-dasharray="6 4"/>
           <line x1="0" y1="304" x2="320" y2="304" stroke="#e8e0d0" stroke-width=".7" stroke-dasharray="6 4"/>
-
-          <!-- Big chest pocket, centered -->
           <rect x="60" y="90" width="200" height="170" rx="3" stroke="#212B31" stroke-width="2.5" fill="white"/>
-
-          <!-- Pocket top stitch (double) -->
           <line x1="63" y1="104" x2="257" y2="104" stroke="#212B31" stroke-width="1.2" stroke-dasharray="5 3.5"/>
           <line x1="63" y1="110" x2="257" y2="110" stroke="#212B31" stroke-width=".8" stroke-dasharray="5 3.5" opacity=".6"/>
-
-          <!-- Pocket side stitches -->
           <line x1="71" y1="104" x2="71" y2="255" stroke="#212B31" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
           <line x1="249" y1="104" x2="249" y2="255" stroke="#212B31" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
-
-          <!-- Pocket bottom stitches -->
           <line x1="63" y1="249" x2="257" y2="249" stroke="#212B31" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
-
-          <!-- Side seam left of pocket area -->
           <line x1="20" y1="0" x2="20" y2="380" stroke="#212B31" stroke-width="1.5" stroke-dasharray="7 5" opacity=".2"/>
           <line x1="14" y1="0" x2="14" y2="380" stroke="#212B31" stroke-width=".8" stroke-dasharray="7 5" opacity=".12"/>
-
-          <!-- Side seam right -->
           <line x1="300" y1="0" x2="300" y2="380" stroke="#212B31" stroke-width="1.5" stroke-dasharray="7 5" opacity=".2"/>
           <line x1="306" y1="0" x2="306" y2="380" stroke="#212B31" stroke-width=".8" stroke-dasharray="7 5" opacity=".12"/>
-
-          <!-- Measurement callout -->
           <line x1="60" y1="78" x2="260" y2="78" stroke="#ff9a6e" stroke-width="1" opacity=".6"/>
           <line x1="60" y1="74" x2="60" y2="82" stroke="#ff9a6e" stroke-width="1" opacity=".6"/>
           <line x1="260" y1="74" x2="260" y2="82" stroke="#ff9a6e" stroke-width="1" opacity=".6"/>
           <text x="160" y="73" font-family="'DM Sans', sans-serif" font-size="10" fill="#ff9a6e" text-anchor="middle" opacity=".8">12 cm</text>
-
-          <!-- Label inside pocket -->
           <text x="160" y="188" font-family="'DM Sans', sans-serif" font-size="11" fill="#5F7385" text-anchor="middle" opacity=".6" font-weight="600" letter-spacing="1">CHEST POCKET</text>
           <text x="160" y="202" font-family="'DM Sans', sans-serif" font-size="9" fill="#5F7385" text-anchor="middle" opacity=".5">patch · double topstitch</text>
-
-          <!-- Corner detail zoom indicator -->
           <rect x="58" y="88" width="20" height="20" stroke="#ff9a6e" stroke-width="1" fill="none" opacity=".5" rx="1"/>
           <line x1="78" y1="98" x2="98" y2="78" stroke="#ff9a6e" stroke-width=".8" opacity=".4"/>
-          <!-- Zoomed corner -->
           <rect x="96" y="54" width="50" height="50" stroke="#ff9a6e" stroke-width="1" fill="rgba(255,239,212,.4)" rx="2"/>
           <path d="M 100 100 C 100 96 102 94 106 94" stroke="#212B31" stroke-width="2.5" fill="none" stroke-linecap="round"/>
           <path d="M 101 100 C 101 96.5 103 95 106 95" stroke="#212B31" stroke-width=".8" stroke-dasharray="3 2" fill="none" opacity=".6"/>
@@ -813,9 +799,9 @@ footer a:hover { color: var(--ink); }
 <!-- VALIDATION -->
 <section class="validation" id="validate">
   <div class="validation-inner">
-    <div class="section-label reveal" style="justify-content:center">Make your voice heard</div>
-    <h2 class="reveal reveal-delay-1">This makes <em>sense</em><br>to me.</h2>
-    <p class="validation-sub reveal reveal-delay-2">If you've ever needed a flat and couldn't find one, let me know. It takes two seconds.</p>
+    <div class="section-label reveal" style="justify-content:center">Get on the list</div>
+    <h2 class="reveal reveal-delay-1">If this <em>resonates</em>,<br>let me know.</h2>
+    <p class="validation-sub reveal reveal-delay-2">Two seconds. Tap the button if you've ever needed a flat and couldn't find one. Drop your email if you want updates as new garments and features ship.</p>
 
     <div class="validation-buttons reveal reveal-delay-2">
       <button class="btn-validate btn-yes" id="btnYes" type="button" onclick="handleYes()">
@@ -835,22 +821,18 @@ footer a:hover { color: var(--ink); }
         <input type="email" name="email" class="email-input" id="emailInput" placeholder="your@email.com" required>
         <button type="submit" class="email-submit">Send</button>
       </div>
-      <div class="email-note">No spam. Just updates when the real version is ready.</div>
+      <div class="email-note">No spam. Updates only when something real ships.</div>
     </form>
 
-    <div class="email-success" id="emailSuccess">Got it — you'll be the first to know. Thank you.</div>
+    <div class="email-success" id="emailSuccess">Got it — you'll be the first to know when the launch version drops.</div>
     <div class="validation-count" id="validationCount"></div>
 
     <div style="margin-top: 36px;" class="reveal">
       <a href="app.html" class="btn-primary" style="display:inline-flex">
-        Try it — it's free
+        Try it — first download is free
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
     </div>
-
-    <a href="https://buymeacoffee.com/flatlabs" target="_blank" rel="noopener" class="support-link">
-      ☕ Building this takes time. Coffee helps.
-    </a>
   </div>
 </section>
 
@@ -858,12 +840,13 @@ footer a:hover { color: var(--ink); }
 <footer>
   <span>&copy; 2026 FlatLabs</span>
   <div class="footer-links">
-    <a href="https://buymeacoffee.com/flatlabs" target="_blank" rel="noopener">Buy me a coffee</a>
-    <a href="/cdn-cgi/l/email-protection#f3959f92878094969d968192879c81b3949e929a9fdd909c9e">Contact</a>
+    <a href="#problem">Why</a>
+    <a href="#how">How it works</a>
+    <a href="mailto:flatsgenerator@gmail.com">Contact</a>
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
