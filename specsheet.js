@@ -737,6 +737,9 @@ function drawPackingInstructions(doc, packingKey, y) {
     const pw   = pageWidth(doc);
     const colW = pw - MARGIN.left - MARGIN.right;
 
+    // Spacing after the section label
+    y += 4;
+
     const items = [
         ['Method', packing.method],
         ['Carton', packing.carton],
