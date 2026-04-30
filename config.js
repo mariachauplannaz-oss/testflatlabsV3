@@ -136,13 +136,14 @@ export const GRADING = {
     // Keys here are the technical keys used in COMPONENT_META measures
     keyMap: {
         // Tops — torso
-        chest:        'circumference_full',
-        bust:         'circumference_full',
-        waist:        'circumference_full',
-        hip:          'circumference_full',
-        hem:          'circumference_full',
+        chest:        'circumference_half',
+        bust:         'circumference_half',
+        waist:        'circumference_half',
+        hip:          'circumference_half',
+        hem:          'circumference_half',
         length:       'length_short',         // Body Length (HPS)
         body_length:  'length_short',
+        back_length:  'length_short',
         across_back:  'length_short',
         shoulder:     'width_shoulder',
         armhole:      'armhole',
