@@ -13,10 +13,9 @@ export function parseSVG(svgText) {
         back:  { torsos:{}, necks:{}, sleeves:{}, pockets:{} }
     };
 
-    // Mannequin ghost — clone the full FRONT_GRP (includes body + front_measurements)
-    // Fallback to body_front_grp for older SVG files that don't have the wrapper group
-    const frontGrp = root.querySelector('[id="Mannequin_ISO_EU38_FRONT_GRP"]')
-                  || root.querySelector('[id="body_front_grp"]')
+    // Mannequin ghost (preview only) — clone body_front_grp WITHOUT measurements
+    // The fm_*/bm_* cross markers are stored separately so they only render in the PDF
+    const frontGrp = root.querySelector('[id="body_front_grp"]')
                   || root.querySelector('[id^="Mannequin_GRP"], [id^="Mannequin_x5F_GRP"], [id^="Mannequin_STY"]');
 
     if (frontGrp) {
@@ -26,14 +25,25 @@ export function parseSVG(svgText) {
         data.mannequin = new XMLSerializer().serializeToString(clone);
     }
 
-    // Back body ghost (for ISO dual canvas) — clone full BACK_GRP to include back_measurements
-    const backGrp = root.querySelector('[id="Mannequin_ISO_EU38_BACK_GRP"]')
-                 || root.querySelector('[id="body_back_grp"]');
+    // Front measurement points (fm_*) — kept separate, injected only into PDF clone
+    const frontMeasurementsEl = root.querySelector('[id="front_measurements"]');
+    if (frontMeasurementsEl) {
+        data.measurementsFront = new XMLSerializer().serializeToString(frontMeasurementsEl);
+    }
+
+    // Back body ghost (preview only) — clone body_back_grp WITHOUT measurements
+    const backGrp = root.querySelector('[id="body_back_grp"]');
     if (backGrp) {
         const clone = backGrp.cloneNode(true);
         const cp = clone.querySelector('[id^="construction_points"], [id*="construction_x5F_points"]');
         if (cp) cp.remove();
         data.mannequinBack = new XMLSerializer().serializeToString(clone);
+    }
+
+    // Back measurement points (bm_*) — kept separate, injected only into PDF clone
+    const backMeasurementsEl = root.querySelector('[id="back_measurements"]');
+    if (backMeasurementsEl) {
+        data.measurementsBack = new XMLSerializer().serializeToString(backMeasurementsEl);
     }
 
     // Parse garments for both views
