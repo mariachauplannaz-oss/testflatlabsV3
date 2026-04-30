@@ -266,9 +266,18 @@ function getPathD(el) {
         const x2 = el.getAttribute('x2'), y2 = el.getAttribute('y2');
         if (x1 && y1 && x2 && y2) return `M${x1},${y1}L${x2},${y2}`;
     }
-    if (el.tagName === 'polyline') {
+    if (el.tagName === 'polyline' || el.tagName === 'polygon') {
         const pts = el.getAttribute('points');
-        if (pts) return 'M' + pts.trim().replace(/\s+/g, 'L');
+        if (!pts) return null;
+        // points="x1 y1 x2 y2 x3 y3 ..." → "Mx1,y1 Lx2,y2 Lx3,y3 ..."
+        const nums = pts.trim().split(/[\s,]+/).map(parseFloat).filter(n => !isNaN(n));
+        if (nums.length < 4 || nums.length % 2 !== 0) return null;
+        let out = `M${nums[0]},${nums[1]}`;
+        for (let i = 2; i < nums.length; i += 2) {
+            out += ` L${nums[i]},${nums[i+1]}`;
+        }
+        if (el.tagName === 'polygon') out += ' Z';
+        return out;
     }
     return null;
 }
