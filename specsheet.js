@@ -92,9 +92,27 @@ function getPointCenter(svgEl, pointId) {
 // ─── INJECT POM ARROWS into a cloned SVG element ─────────────────────────────
 // Works on a deep clone — never mutates the live DOM SVG.
 // Stroke/radius values are large because the SVG viewBox is ~7000×4700 units.
-function injectPOMArrows(svgEl, arrowMap) {
+// `measurementsMarkup` is the serialized <g id="*_measurements"> from the source
+// SVG (parser stores it in state.svgData.measurementsFront / measurementsBack).
+// We inject it into the clone so the fm_*/bm_* points exist when we look them up.
+function injectPOMArrows(svgEl, arrowMap, measurementsMarkup) {
     const clone = svgEl.cloneNode(true);
     const NS    = 'http://www.w3.org/2000/svg';
+
+    // Inject measurement points into the clone (invisible in PDF — only the
+    // arrows we draw on top are visible)
+    if (measurementsMarkup) {
+        const parsed = new DOMParser().parseFromString(
+            '<svg xmlns="http://www.w3.org/2000/svg">' + measurementsMarkup + '</svg>',
+            'image/svg+xml'
+        );
+        const measurementsGroup = parsed.documentElement.firstElementChild;
+        if (measurementsGroup) {
+            // Hide the cross markers themselves — only POM arrows should show
+            measurementsGroup.setAttribute('style', 'display:none');
+            clone.appendChild(document.importNode(measurementsGroup, true));
+        }
+    }
 
     const STROKE_W  = 14;
     const TICK_LEN  = 60;
@@ -252,7 +270,7 @@ function drawSectionLabel(doc, label, y) {
 }
 
 // ─── SVG FLAT VISUAL ─────────────────────────────────────────────────────────
-async function drawFlat(doc, y) {
+async function drawFlat(doc, y, state) {
     const pw = pageWidth(doc);
     const svgFront = document.querySelector('#svg-preview svg');
     const svgBack  = document.querySelector('#svg-preview-back svg');
@@ -301,8 +319,8 @@ async function drawFlat(doc, y) {
 
     try {
         if (svgFront && svgBack) {
-            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front);
-            const svgBackWithArrows  = injectPOMArrows(svgBack,  POM_ARROWS.back);
+            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front, state.svgData?.measurementsFront);
+            const svgBackWithArrows  = injectPOMArrows(svgBack,  POM_ARROWS.back,  state.svgData?.measurementsBack);
             const [front, back] = await Promise.all([svgToPng(svgFrontWithArrows), svgToPng(svgBackWithArrows)]);
             const fDim = fitBox(front.ratio, MAX_W, MAX_H);
             const bDim = fitBox(back.ratio,  MAX_W, MAX_H);
@@ -329,7 +347,7 @@ async function drawFlat(doc, y) {
             return y + maxH + 10;
 
         } else if (svgFront) {
-            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front);
+            const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front, state.svgData?.measurementsFront);
             const { png, ratio } = await svgToPng(svgFrontWithArrows);
             const { w, h } = fitBox(ratio, MAX_W, MAX_H);
             const imgX = pw / 2 - w / 2;
@@ -753,7 +771,7 @@ export async function exportSpecSheet(state, projectMeta = {}) {
     // ── PAGE 1 ──────────────────────────────────────────────────────────────
     let y = drawHeader(doc, techPack.header);
 
-    y = await drawFlat(doc, y);
+    y = await drawFlat(doc, y, state);
 
     if (state.colorHex) {
         y = drawSectionLabel(doc, '00 — Colorway', y);
