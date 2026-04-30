@@ -13,23 +13,24 @@ export function parseSVG(svgText) {
         back:  { torsos:{}, necks:{}, sleeves:{}, pockets:{} }
     };
 
-    // Mannequin ghost — prefer body_front_grp (skip back body + construction points)
-    const bodyFront = root.querySelector('[id="body_front_grp"]');
-    const manGrp = root.querySelector('[id^="Mannequin_GRP"], [id^="Mannequin_x5F_GRP"], [id^="Mannequin_ISO"], [id^="Mannequin_STY"]');
+    // Mannequin ghost — clone the full FRONT_GRP (includes body + front_measurements)
+    // Fallback to body_front_grp for older SVG files that don't have the wrapper group
+    const frontGrp = root.querySelector('[id="Mannequin_ISO_EU38_FRONT_GRP"]')
+                  || root.querySelector('[id="body_front_grp"]')
+                  || root.querySelector('[id^="Mannequin_GRP"], [id^="Mannequin_x5F_GRP"], [id^="Mannequin_STY"]');
 
-    if (bodyFront || manGrp) {
-        const src = bodyFront || manGrp;
-        // Clone and remove construction_points before serializing
-        const clone = src.cloneNode(true);
+    if (frontGrp) {
+        const clone = frontGrp.cloneNode(true);
         const cp = clone.querySelector('[id^="construction_points"], [id*="construction_x5F_points"]');
         if (cp) cp.remove();
         data.mannequin = new XMLSerializer().serializeToString(clone);
     }
 
-    // Back body ghost (for ISO dual canvas)
-    const bodyBack = root.querySelector('[id="body_back_grp"]');
-    if (bodyBack) {
-        const clone = bodyBack.cloneNode(true);
+    // Back body ghost (for ISO dual canvas) — clone full BACK_GRP to include back_measurements
+    const backGrp = root.querySelector('[id="Mannequin_ISO_EU38_BACK_GRP"]')
+                 || root.querySelector('[id="body_back_grp"]');
+    if (backGrp) {
+        const clone = backGrp.cloneNode(true);
         const cp = clone.querySelector('[id^="construction_points"], [id*="construction_x5F_points"]');
         if (cp) cp.remove();
         data.mannequinBack = new XMLSerializer().serializeToString(clone);
