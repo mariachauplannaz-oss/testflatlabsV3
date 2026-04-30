@@ -34,16 +34,16 @@ const MARGIN = { left: 14, right: 14, top: 14 };
 // If a point doesn't exist in the SVG, the arrow is silently skipped.
 const POM_ARROWS = {
     front: {
-        'A': { from: 'fm_chest_l',    to: 'fm_chest_r',    orient: 'horizontal' },
-        'B': { from: 'fm_waist_l',    to: 'fm_waist_r',    orient: 'horizontal' },
-        'C': { from: 'fm_hps_l',      to: 'fm_hem_l',      orient: 'vertical'   },
-        'D': { from: 'fm_shoulder_l', to: 'fm_shoulder_r', orient: 'horizontal' },
-        'E': { from: 'fm_hem_l',      to: 'fm_hem_r',      orient: 'horizontal' },
-        'H': { from: 'fm_hps_c',      to: 'fm_neck_drop',  orient: 'vertical'   }
+        'A': { from: 'fm_chest_l',    to: 'fm_chest_r',       orient: 'horizontal' },
+        'B': { from: 'fm_waist_l',    to: 'fm_waist_r',       orient: 'horizontal' },
+        'C': { from: 'fm_hps_l',      to: 'fm_hem_reg_l',     orient: 'vertical'   },
+        'D': { from: 'fm_shoulder_l', to: 'fm_shoulder_r',    orient: 'horizontal' },
+        'E': { from: 'fm_hem_reg_l',  to: 'fm_hem_reg_r',     orient: 'horizontal' },
+        'H': { from: 'fm_hps_l',      to: 'fm_front_neck_drop_v', orient: 'vertical'}
     },
     back: {
-        'N': { from: 'bm_back_l',  to: 'bm_back_r',  orient: 'horizontal' },
-        'O': { from: 'bm_hps_c',   to: 'bm_hem_c',   orient: 'vertical'   }
+        'N': { from: 'bm_chest_l',    to: 'bm_chest_r',       orient: 'horizontal' },
+        'O': { from: 'bm_hps_l',      to: 'bm_hem_reg_center', orient: 'vertical'  }
     }
 };
 
