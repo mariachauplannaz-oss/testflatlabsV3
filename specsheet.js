@@ -129,12 +129,12 @@ function injectPOMArrows(svgEl, arrowMap, measurementsMarkup) {
         }
     }
 
-    const STROKE_W  = 14;
-    const TICK_LEN  = 60;
-    const CIRCLE_R  = 90;
-    const FONT_SIZE = 110;
+    const STROKE_W  = 10;
+    const TICK_LEN  = 45;
+    const CIRCLE_R  = 55;
+    const FONT_SIZE = 75;
     const COLOR     = '#222B31';
-    const LABEL_BG  = '#FFFFFF';
+    const LABEL_BG  = '#FF9A6E';
 
     const layer = document.createElementNS(NS, 'g');
     layer.setAttribute('id', 'pom_arrows_layer');
