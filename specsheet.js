@@ -303,7 +303,7 @@ async function drawFlat(doc, y) {
         if (svgFront && svgBack) {
             const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front);
             const svgBackWithArrows  = injectPOMArrows(svgBack,  POM_ARROWS.back);
-            const [front, back] = await Promise.all([svgToPng(svgFront), svgToPng(svgBack)]);
+            const [front, back] = await Promise.all([svgToPng(svgFrontWithArrows), svgToPng(svgBackWithArrows)]);
             const fDim = fitBox(front.ratio, MAX_W, MAX_H);
             const bDim = fitBox(back.ratio,  MAX_W, MAX_H);
             const gap  = 6;
@@ -330,7 +330,7 @@ async function drawFlat(doc, y) {
 
         } else if (svgFront) {
             const svgFrontWithArrows = injectPOMArrows(svgFront, POM_ARROWS.front);
-            const { png, ratio } = await svgToPng(svgFront);
+            const { png, ratio } = await svgToPng(svgFrontWithArrows);
             const { w, h } = fitBox(ratio, MAX_W, MAX_H);
             const imgX = pw / 2 - w / 2;
 
