@@ -163,7 +163,9 @@ export const COMPONENT_META = {
 // ─── collectMeasurements ──────────────────────────────────────
 export function collectMeasurements(selections, size = 'EU38', view = 'front', includeAllSizes = false, gender = 'female') {
     const results = [];
-    const ALL_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const FEMALE_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const MALE_SIZES   = ['EU46', 'EU48', 'EU50', 'EU52', 'EU54', 'EU56'];
+    const ALL_SIZES    = gender === 'male' ? MALE_SIZES : FEMALE_SIZES;
 
     if (selections.torso && COMPONENT_META.torsos[selections.torso]) {
         const torso = COMPONENT_META.torsos[selections.torso];
