@@ -26,16 +26,61 @@ export const ISO_BODY = {
     }
 };
 
-// ─── Size equivalences ────────────────────────────────────────
 export const SIZE_EQUIV = {
-    EU34: { us: '2',  uk: '6',  it: '38', fr: '34', jp: '7',  au: '6'  },
-    EU36: { us: '4',  uk: '8',  it: '40', fr: '36', jp: '9',  au: '8'  },
-    EU38: { us: '6',  uk: '10', it: '42', fr: '38', jp: '11', au: '10' },
-    EU40: { us: '8',  uk: '12', it: '44', fr: '40', jp: '13', au: '12' },
-    EU42: { us: '10', uk: '14', it: '46', fr: '42', jp: '15', au: '14' },
-    EU44: { us: '12', uk: '16', it: '48', fr: '44', jp: '17', au: '16' },
-    EU46: { us: '14', uk: '18', it: '50', fr: '46', jp: '19', au: '18' },
-    EU48: { us: '16', uk: '20', it: '52', fr: '48', jp: '21', au: '20' }
+    female: {
+        EU34: { us: '2',  uk: '6',  it: '38', fr: '34', jp: '7',  au: '6'  },
+        EU36: { us: '4',  uk: '8',  it: '40', fr: '36', jp: '9',  au: '8'  },
+        EU38: { us: '6',  uk: '10', it: '42', fr: '38', jp: '11', au: '10' },
+        EU40: { us: '8',  uk: '12', it: '44', fr: '40', jp: '13', au: '12' },
+        EU42: { us: '10', uk: '14', it: '46', fr: '42', jp: '15', au: '14' },
+        EU44: { us: '12', uk: '16', it: '48', fr: '44', jp: '17', au: '16' }
+    },
+    male: {
+        // Male EU sizing uses chest girth: EU = chest_cm / 2
+        // EU 50 = chest 100cm = "M" international
+        EU46: { us: 'XS', uk: 'XS', it: '46', fr: '46', jp: 'S',  au: 'XS', label: 'XS' },
+        EU48: { us: 'S',  uk: 'S',  it: '48', fr: '48', jp: 'M',  au: 'S',  label: 'S'  },
+        EU50: { us: 'M',  uk: 'M',  it: '50', fr: '50', jp: 'L',  au: 'M',  label: 'M'  },
+        EU52: { us: 'L',  uk: 'L',  it: '52', fr: '52', jp: 'LL', au: 'L',  label: 'L'  },
+        EU54: { us: 'XL', uk: 'XL', it: '54', fr: '54', jp: '3L', au: 'XL', label: 'XL' },
+        EU56: { us: 'XXL',uk: 'XXL',it: '56', fr: '56', jp: '4L', au: '2XL',label: 'XXL'}
+    }
+};
+
+// ─── GENDER OFFSETS ─────────────────────────────────────────────
+// Applied to female base measurements to derive male values.
+// Source: industry-standard grading rules for menswear vs womenswear.
+// Female is baseline (offset = 0). Male values come from female base + offset.
+// Some measurements (neck details, ease) barely change between genders.
+
+export const GENDER_OFFSETS = {
+    female: {
+        // Baseline — no offsets, just for symmetry in the code
+    },
+    male: {
+        // Torso
+        chest:         8,    // half: 46 → 54 cm
+        waist:        10,    // straight silhouette: waist ≈ chest
+        hem:           6,    // 48 → 54
+        length:        9,    // 62 → 71 cm body length
+        shoulder:      7.5,  // 38.5 → 46
+        armhole:       3,    // 21 → 24
+        across_back:   8,    // 37 → 45
+        back_length:   9,    // 64 → 73
+
+        // Sleeves
+        sleeve_length: 5,    // long: 60 → 65; cap: 20 → 25 (capped at +5 max for short)
+        bicep:         4,    // 16-17 → 20-21
+        cuff_opening:  1.5,  // 10.5 → 12
+        sleeve_opening: 3,   // 15.5 → 18.5
+
+        // Necks — minimal changes between genders
+        neck_width:    0.5,
+        front_drop:    0,
+        back_drop:     0,
+        binding_width: 0,
+        collar_height: 0
+    }
 };
 
 // ─── Tolerances ───────────────────────────────────────────────
