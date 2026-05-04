@@ -190,8 +190,8 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front', i
                 if (includeAllSizes) {
                     entry.sizes = {};
                     ALL_SIZES.forEach(s => {
-                        const g = GRADING.getForSize(s, key, m.value);
-                        entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
+                        const g = GRADING.getForSize(s, key, adjustedBase);
+                        entry.sizes[s] = grading.hasGradingRule ? g.value : adjustedBase;
                     });
                 }
                 results.push(entry);
@@ -220,9 +220,9 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front', i
             if (includeAllSizes) {
                 entry.sizes = {};
                 ALL_SIZES.forEach(s => {
-                    const g = GRADING.getForSize(s, key, m.value);
-                    entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
-                });
+                        const g = GRADING.getForSize(s, key, adjustedBase);
+                        entry.sizes[s] = grading.hasGradingRule ? g.value : adjustedBase;
+                    });
             }
             results.push(entry);
         }
@@ -249,9 +249,9 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front', i
             if (includeAllSizes) {
                 entry.sizes = {};
                 ALL_SIZES.forEach(s => {
-                    const g = GRADING.getForSize(s, key, m.value);
-                    entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
-                });
+                        const g = GRADING.getForSize(s, key, adjustedBase);
+                        entry.sizes[s] = grading.hasGradingRule ? g.value : adjustedBase;
+                    });
             }
             results.push(entry);
         }
