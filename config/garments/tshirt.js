@@ -1,6 +1,6 @@
 // ═══ tshirt.js — T-shirt component metadata, measurements, construction ═══
 
-import { GRADING, TOLERANCES } from '../measurements.js';
+import { GRADING, TOLERANCES, GENDER_OFFSETS } from '../measurements.js';
 
 export const COMPONENT_META = {
 
@@ -161,7 +161,7 @@ export const COMPONENT_META = {
 };
 
 // ─── collectMeasurements ──────────────────────────────────────
-export function collectMeasurements(selections, size = 'EU38', view = 'front', includeAllSizes = false) {
+export function collectMeasurements(selections, size = 'EU38', view = 'front', includeAllSizes = false, gender = 'female') {
     const results = [];
     const ALL_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
 
@@ -170,7 +170,10 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front', i
         const measureSource = view === 'back' ? torso.back_measures : torso.measures;
         if (measureSource) {
             for (const [key, m] of Object.entries(measureSource)) {
-                const grading = GRADING.getForSize(size, key, m.value);
+                // Apply gender offset before grading
+                const genderOffset = (GENDER_OFFSETS[gender] && GENDER_OFFSETS[gender][key]) || 0;
+                const adjustedBase = m.value + genderOffset;
+                const grading = GRADING.getForSize(size, key, adjustedBase);
                 const gradedValue = grading.value;
                 const entry = {
                     letter:         m.letter,
@@ -197,8 +200,11 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front', i
     if (view === 'front' && selections.neck && COMPONENT_META.necks[selections.neck]) {
         const neck = COMPONENT_META.necks[selections.neck];
         for (const [key, m] of Object.entries(neck.measures)) {
-            const grading = GRADING.getForSize(size, key, m.value);
-            const gradedValue = grading.value;
+            // Apply gender offset before grading
+                const genderOffset = (GENDER_OFFSETS[gender] && GENDER_OFFSETS[gender][key]) || 0;
+                const adjustedBase = m.value + genderOffset;
+                const grading = GRADING.getForSize(size, key, adjustedBase);
+                const gradedValue = grading.value;
             const entry = {
                 letter:         m.letter,
                 description:    m.label,
@@ -223,8 +229,11 @@ export function collectMeasurements(selections, size = 'EU38', view = 'front', i
     if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
         const sleeve = COMPONENT_META.sleeves[selections.sleeve];
         for (const [key, m] of Object.entries(sleeve.measures)) {
-            const grading = GRADING.getForSize(size, key, m.value);
-            const gradedValue = grading.value;
+            // Apply gender offset before grading
+                const genderOffset = (GENDER_OFFSETS[gender] && GENDER_OFFSETS[gender][key]) || 0;
+                const adjustedBase = m.value + genderOffset;
+                const grading = GRADING.getForSize(size, key, adjustedBase);
+                const gradedValue = grading.value;
             const entry = {
                 letter:         m.letter,
                 description:    m.label,
