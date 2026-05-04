@@ -446,9 +446,10 @@ function drawColorway(doc, fillColorHex, y) {
 // Unified table replacing old drawPOMTable + drawGradingSection.
 // Front measures first, then back measures (Across Back, CB Length).
 // Columns: Letter | POM | Description | EU34 | EU36 | EU38 | EU40 | EU42 | EU44 | Tol.
-function drawMeasurementSpecs(doc, selections, y) {
-    const frontRows = collectMeasurements(selections, 'EU38', 'front', true);
-    const backRows  = collectMeasurements(selections, 'EU38', 'back',  true);
+function drawMeasurementSpecs(doc, selections, y, gender = 'female') {
+    const baseSize  = gender === 'male' ? 'EU50' : 'EU38';
+    const frontRows = collectMeasurements(selections, baseSize, 'front', true, gender);
+    const backRows  = collectMeasurements(selections, baseSize, 'back',  true, gender);
     const allRows   = [...frontRows, ...backRows];
 
     const SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
@@ -520,9 +521,11 @@ function drawMeasurementSpecs(doc, selections, y) {
 }
 
 // ─── SIZE EQUIVALENCES TABLE ──────────────────────────────────────────────────
-function drawSizeEquivalences(doc, y) {
+function drawSizeEquivalences(doc, y, gender = 'female') {
     const regions  = ['EU', 'US', 'UK', 'IT', 'FR', 'JP', 'AU'];
-    const sizeKeys = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const sizeKeys = gender === 'male'
+        ? ['EU46', 'EU48', 'EU50', 'EU52', 'EU54', 'EU56']
+        : ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
     const labels   = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
     const head = [['Region', ...labels]];
@@ -532,7 +535,7 @@ function drawSizeEquivalences(doc, y) {
             if (region === 'EU') {
                 row.push(size.replace('EU', ''));
             } else {
-                row.push(SIZE_EQUIV[size]?.[region.toLowerCase()] || '—');
+                row.push(SIZE_EQUIV[gender]?.[size]?.[region.toLowerCase()] || '—');
             }
         });
         return row;
@@ -806,12 +809,13 @@ export async function exportSpecSheet(state, projectMeta = {}) {
 
     // ── 01 — Unified measurement table (front + back + all sizes) ──────────
     if (y > pageHeight(doc) - 80) { doc.addPage(); y = MARGIN.top + 10; }
-    y = drawSectionLabel(doc, '01 — Measurement Specifications · ISO 3635 · Base EU38', y);
-    y = drawMeasurementSpecs(doc, state.selections, y);
+    const baseSizeLabel = state.gender === 'male' ? 'EU50 (M)' : 'EU38';
+    y = drawSectionLabel(doc, `01 — Measurement Specifications · Base ${baseSizeLabel} · ${state.gender === 'male' ? 'Male' : 'Female'}`, y);
+    y = drawMeasurementSpecs(doc, state.selections, y, state.gender);
 
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
     y = drawSectionLabel(doc, '01B — Size Equivalences', y);
-    y = drawSizeEquivalences(doc, y);
+    y = drawSizeEquivalences(doc, y, state.gender);
     
     // ── 02 — Bill of Materials ──────────────────────────────────────────────
     if (y > pageHeight(doc) - 60) { doc.addPage(); y = MARGIN.top + 10; }
