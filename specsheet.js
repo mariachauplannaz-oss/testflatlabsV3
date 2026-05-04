@@ -452,9 +452,11 @@ function drawMeasurementSpecs(doc, selections, y, gender = 'female') {
     const backRows  = collectMeasurements(selections, baseSize, 'back',  true, gender);
     const allRows   = [...frontRows, ...backRows];
 
-    const SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+    const SIZES = gender === 'male'
+        ? ['EU46', 'EU48', 'EU50', 'EU52', 'EU54', 'EU56']
+        : ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
 
-    const head = [['Letter', 'POM', 'Description', 'EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44', 'Tol.']];
+    const head = [['Letter', 'POM', 'Description', ...SIZES, 'Tol.']];
 
     const body = allRows.map(m => {
         // Short letter: 'A' from 'TS-A'
