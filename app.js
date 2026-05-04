@@ -153,6 +153,16 @@ async function init() {
     const btnSkip = document.getElementById('btnSkipEmail');
     btnSkip?.addEventListener('mouseover', function() { this.style.opacity = '1'; });
     btnSkip?.addEventListener('mouseout', function() { this.style.opacity = '.6'; });
+
+    // Gender toggle wiring
+    document.querySelectorAll('[data-gender]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('[data-gender]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            state.gender = btn.dataset.gender;
+            log(`Sizing standard: ${state.gender}`, 'info');
+        });
+    });
 }
 
 init();
