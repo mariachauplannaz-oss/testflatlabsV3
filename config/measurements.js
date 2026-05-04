@@ -110,7 +110,10 @@ export const GRADING = {
         armhole:            0.5,
     },
     sizeSteps: {
-        EU34: -2, EU36: -1, EU38: 0, EU40: 1, EU42: 2, EU44: 3
+        // Female sizes — base EU38
+        EU34: -2, EU36: -1, EU38: 0, EU40: 1, EU42: 2, EU44: 3,
+        // Male sizes — base EU50 (M)
+        EU46: -2, EU48: -1, EU50: 0, EU52: 1, EU54: 2, EU56: 3
     },
     keyMap: {
         chest:         'circumference_half',
