@@ -268,6 +268,12 @@ function drawHeader(doc, header) {
         setColor(doc, COLORS.gray3);
         doc.text('Components: ' + header.components, MARGIN.left, metaY + 6);
     }
+    if (header.fabric) {
+        const fabricLabel = FABRIC_SPECS[header.fabric]?.label || header.fabric;
+        setFont(doc, 'italic', FONT.small);
+        setColor(doc, COLORS.gray3);
+        doc.text('Fabric: ' + fabricLabel, MARGIN.left, metaY + 11);
+    }
 
     return metaY + 14;
 }
