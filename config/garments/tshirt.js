@@ -275,3 +275,38 @@ export function collectConstruction(selections) {
     }
     return notes;
 }
+
+// ─── TSHIRT_CONFIG ────────────────────────────────────────────
+// Declares allowed materials and defaults for t-shirt construction.
+// Keys reference their respective libraries in /config/universal/.
+// Wired to UI in Phase 5.
+
+export const TSHIRT_CONFIG = {
+
+    allowedFabrics:     ['jersey_150', 'jersey_180', 'jersey_200', 'rib_1x1'],
+    allowedNeedles:     ['ballpoint_70_10', 'ballpoint_80_12', 'ballpoint_90_14'],
+    allowedThreads:     ['poly_tex_27', 'poly_tex_18', 'poly_tex_40', 'cotton_tex_30'],
+    allowedStitches:    ['overlock_4t', 'coverseam_3n', 'flatlock'],
+    allowedCareLabels:  ['woven', 'printed', 'heat_transfer', 'satin'],
+    allowedBrandLabels: ['woven', 'heat_transfer', 'embroidered', 'printed'],
+
+    defaults: {
+        fabric:     'jersey_180',
+        needle:     'ballpoint_80_12',
+        thread:     'poly_tex_27',
+        stitch:     'overlock_4t',
+        careLabel:  'woven',
+        brandLabel: 'woven'
+    },
+
+    defaultBOM: {
+        fabric_main:  { value: 1.2,  unit: 'm',    editable: false, description: 'Main fabric for body and sleeves' },
+        fabric_rib:   { value: 0.15, unit: 'm',    editable: false, description: 'Rib fabric for neck binding' },
+        thread_main:  { value: 1,    unit: 'cone', editable: false, description: 'Main sewing thread' },
+        thread_cover: { value: 1,    unit: 'cone', editable: false, description: 'Coverseam thread for hems' },
+        care_label:   { value: 1,    unit: 'pc',   editable: false, description: 'Care label per garment' },
+        brand_label:  { value: 1,    unit: 'pc',   editable: true,  description: 'Brand label per garment' },
+        size_label:   { value: 1,    unit: 'pc',   editable: false, description: 'Size label per garment' },
+        polybag:      { value: 1,    unit: 'pc',   editable: false, description: 'Polybag for individual packing' }
+    }
+};
