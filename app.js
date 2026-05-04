@@ -21,8 +21,13 @@ const state = {
     svgData: null,
     selections: { torso: null, neck: null, sleeve: null },
     emailCaptured: false,
-    fabric: 'jersey_180',
-    stitchType: 'overlock_4t'
+    fabric:        'jersey_180',
+    stitchType:    'overlock_4t',
+    needle:        'ballpoint_80_12',
+    thread:        'poly_tex_27',
+    careLabel:     'woven',
+    brandLabel:    'woven',
+    brandLabelQty: 1
 };
 const svgCache = {};
 
