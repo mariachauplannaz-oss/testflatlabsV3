@@ -129,14 +129,39 @@ export function buildTechPackState(state, projectMeta = {}) {
             date:        dateStr,
             size:        'EU 38 (ISO 3635)',
             brand:  projectMeta.brand  || 'FlatLabs',
-            fabric: 'Jersey 180g/m²',
+            fabric: state.fabric || 'jersey_180',
             components:  activeComponents.join(' · ')
         },
         // POM table rows
         pom: buildPOM(selections),
         // Construction notes
         constructionNotes: buildConstructionNotes(selections, garmentType),
-        // Bill of Materials
-        bom: COMPONENT_META.bom[garmentType] || COMPONENT_META.bom.tshirt
+        // Bill of Materials — built dynamically from state selections
+        bom: buildBOM(state)
     };
+}
+
+// ─── 5. BUILD BOM DYNAMICALLY FROM USER SELECTIONS ────────────────────────────
+import { TSHIRT_CONFIG } from './config/index.js';
+import { FABRIC_SPECS, NEEDLES, THREADS, CARE_LABELS, BRAND_LABELS, STITCH_SPECS } from './config/index.js';
+
+function buildBOM(state) {
+    const fabric     = FABRIC_SPECS[state.fabric]      || FABRIC_SPECS.jersey_180;
+    const needle     = NEEDLES[state.needle]           || NEEDLES.ballpoint_80_12;
+    const thread     = THREADS[state.thread]           || THREADS.poly_tex_27;
+    const careLabel  = CARE_LABELS[state.careLabel]    || CARE_LABELS.woven;
+    const brandLabel = BRAND_LABELS[state.brandLabel]  || BRAND_LABELS.woven;
+    const brandQty   = state.brandLabelQty || 1;
+
+    return [
+        { ref: 'FAB-001', description: `Main fabric — ${fabric.label} (${fabric.composition})`, unit: 'm', qty: '1.2' },
+        { ref: 'FAB-002', description: 'Rib fabric — 1×1 rib (95% Cotton, 5% Elastane)',         unit: 'm', qty: '0.15' },
+        { ref: 'THR-001', description: `Sewing thread — ${thread.label} (${thread.use})`,        unit: 'cone', qty: '1' },
+        { ref: 'THR-002', description: 'Coverseam thread — Polyester Tex 18',                    unit: 'cone', qty: '1' },
+        { ref: 'NDL-001', description: `Needle — ${needle.label} (${needle.use})`,               unit: 'pc',   qty: '—' },
+        { ref: 'LAB-001', description: `Care label — ${careLabel.label}. ${careLabel.construction}`, unit: 'pc', qty: '1' },
+        { ref: 'LAB-002', description: `Brand label — ${brandLabel.label}. ${brandLabel.construction}`, unit: 'pc', qty: String(brandQty) },
+        { ref: 'LAB-003', description: 'Size label — woven',                                     unit: 'pc', qty: '1' },
+        { ref: 'PKG-001', description: 'Polybag 35×45 cm, recycled PE',                          unit: 'pc', qty: '1' }
+    ];
 }
