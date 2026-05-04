@@ -31,7 +31,8 @@ const state = {
     thread:        'poly_tex_27',
     careLabel:     'woven',
     brandLabel:    'woven',
-    brandLabelQty: 1
+    brandLabelQty: 1,
+    gender: 'female'
 };
 const svgCache = {};
 
