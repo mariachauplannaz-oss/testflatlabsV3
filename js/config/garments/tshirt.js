@@ -115,4 +115,163 @@ export const COMPONENT_META = {
             measures: {
                 neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 8.5,  unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
                 collar_height:  { letter: 'TS-J', label: 'Collar Height',       value: 4.5,  unit: 'cm', pom: 'From neckline seam to top of collar, straight' },
-                front_drop:     { letter: 'TS-H', label: 'Front Nec
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 1.5,  unit: 'cm', pom: 'From HPS to neckline seam at CF' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 1.5,  unit: 'cm', pom: 'From HPS to neckline seam at CB' }
+            },
+            construction: 'Self-fabric mock collar. ISO 301 flatlock stitch on collar seam. Fold at 4.5 cm.',
+            iso_norm: 'ISO 301'
+        },
+        scp: {
+            label: 'Scoop Neck',
+            measures: {
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 10,   unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 14,   unit: 'cm', pom: 'From HPS to lowest point of scoop, straight' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 2.5,  unit: 'cm', pom: 'From HPS to lowest point of back neckline, straight' },
+                binding_width:  { letter: 'TS-J', label: 'Rib Binding Width',   value: 1.2,  unit: 'cm', pom: 'Finished width of neck binding' }
+            },
+            construction: 'Rib binding 2×1 (cotton/elastane). ISO 301 flatlock stitch 0.1 cm from edge.',
+            iso_norm: 'ISO 301'
+        },
+        bot: {
+            label: 'Boat Neck',
+            measures: {
+                neck_width:     { letter: 'TS-G', label: 'Neck Width (1/2)',    value: 12,   unit: 'cm', pom: 'Measured flat at HPS, half of neck opening' },
+                front_drop:     { letter: 'TS-H', label: 'Front Neck Drop',     value: 5,    unit: 'cm', pom: 'From HPS to lowest point of neckline at CF, straight' },
+                back_drop:      { letter: 'TS-I', label: 'Back Neck Drop',      value: 5,    unit: 'cm', pom: 'Same as front — symmetric neckline' },
+                binding_width:  { letter: 'TS-J', label: 'Self-Finish Width',   value: 1.5,  unit: 'cm', pom: 'Folded self-fabric edge finish' }
+            },
+            construction: 'Self-fabric fold finish. ISO 301 stitch at edge. No separate binding.',
+            iso_norm: 'ISO 301'
+        }
+    },
+
+    // ─── BOM ──────────────────────────────────────────────────
+    bom: {
+        tshirt: [
+            { ref: 'FAB-001', description: 'Main fabric — Jersey 180g/m² (95% Cotton, 5% Elastane)', unit: 'm',    qty: '1.2'  },
+            { ref: 'FAB-002', description: 'Rib fabric — 1×1 rib (95% Cotton, 5% Elastane)',         unit: 'm',    qty: '0.15' },
+            { ref: 'THR-001', description: 'Polyester sewing thread — Tex 27 (ISO 180/2)',            unit: 'cone', qty: '1'    },
+            { ref: 'THR-002', description: 'Coverseam thread — Tex 18',                              unit: 'cone', qty: '1'    },
+            { ref: 'LAB-001', description: 'Care label — woven (symbols per EN ISO 3758)',            unit: 'pc',   qty: '1'    },
+            { ref: 'LAB-002', description: 'Brand label — woven or heat transfer',                   unit: 'pc',   qty: '1'    },
+            { ref: 'LAB-003', description: 'Size label — woven',                                     unit: 'pc',   qty: '1'    },
+            { ref: 'PKG-001', description: 'Polybag 35×45 cm, recycled PE',                          unit: 'pc',   qty: '1'    }
+        ]
+    }
+};
+
+// ─── collectMeasurements ──────────────────────────────────────
+export function collectMeasurements(selections, size = 'EU38', view = 'front', includeAllSizes = false) {
+    const results = [];
+    const ALL_SIZES = ['EU34', 'EU36', 'EU38', 'EU40', 'EU42', 'EU44'];
+
+    if (selections.torso && COMPONENT_META.torsos[selections.torso]) {
+        const torso = COMPONENT_META.torsos[selections.torso];
+        const measureSource = view === 'back' ? torso.back_measures : torso.measures;
+        if (measureSource) {
+            for (const [key, m] of Object.entries(measureSource)) {
+                const grading = GRADING.getForSize(size, key, m.value);
+                const gradedValue = grading.value;
+                const entry = {
+                    letter:         m.letter,
+                    description:    m.label,
+                    key,
+                    pom:            m.pom || '',
+                    unit:           m.unit,
+                    value:          gradedValue,
+                    tolerance:      TOLERANCES.formatTolerance(gradedValue),
+                    hasGradingRule: grading.hasGradingRule,
+                };
+                if (includeAllSizes) {
+                    entry.sizes = {};
+                    ALL_SIZES.forEach(s => {
+                        const g = GRADING.getForSize(s, key, m.value);
+                        entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
+                    });
+                }
+                results.push(entry);
+            }
+        }
+    }
+
+    if (view === 'front' && selections.neck && COMPONENT_META.necks[selections.neck]) {
+        const neck = COMPONENT_META.necks[selections.neck];
+        for (const [key, m] of Object.entries(neck.measures)) {
+            const grading = GRADING.getForSize(size, key, m.value);
+            const gradedValue = grading.value;
+            const entry = {
+                letter:         m.letter,
+                description:    m.label,
+                key,
+                pom:            m.pom || '',
+                unit:           m.unit,
+                value:          gradedValue,
+                tolerance:      TOLERANCES.formatTolerance(gradedValue),
+                hasGradingRule: grading.hasGradingRule,
+            };
+            if (includeAllSizes) {
+                entry.sizes = {};
+                ALL_SIZES.forEach(s => {
+                    const g = GRADING.getForSize(s, key, m.value);
+                    entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
+                });
+            }
+            results.push(entry);
+        }
+    }
+
+    if (view === 'front' && selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
+        const sleeve = COMPONENT_META.sleeves[selections.sleeve];
+        for (const [key, m] of Object.entries(sleeve.measures)) {
+            const grading = GRADING.getForSize(size, key, m.value);
+            const gradedValue = grading.value;
+            const entry = {
+                letter:         m.letter,
+                description:    m.label,
+                key,
+                pom:            m.pom || '',
+                unit:           m.unit,
+                value:          gradedValue,
+                tolerance:      TOLERANCES.formatTolerance(gradedValue),
+                hasGradingRule: grading.hasGradingRule,
+            };
+            if (includeAllSizes) {
+                entry.sizes = {};
+                ALL_SIZES.forEach(s => {
+                    const g = GRADING.getForSize(s, key, m.value);
+                    entry.sizes[s] = grading.hasGradingRule ? g.value : m.value;
+                });
+            }
+            results.push(entry);
+        }
+    }
+
+    return results;
+}
+
+// ─── collectConstruction ──────────────────────────────────────
+export function collectConstruction(selections) {
+    const notes = [];
+    if (selections.torso && COMPONENT_META.torsos[selections.torso]) {
+        notes.push({
+            component: COMPONENT_META.torsos[selections.torso].label,
+            note:      COMPONENT_META.torsos[selections.torso].construction,
+            norm:      COMPONENT_META.torsos[selections.torso].iso_norm
+        });
+    }
+    if (selections.neck && COMPONENT_META.necks[selections.neck]) {
+        notes.push({
+            component: COMPONENT_META.necks[selections.neck].label,
+            note:      COMPONENT_META.necks[selections.neck].construction,
+            norm:      COMPONENT_META.necks[selections.neck].iso_norm
+        });
+    }
+    if (selections.sleeve && COMPONENT_META.sleeves[selections.sleeve]) {
+        notes.push({
+            component: COMPONENT_META.sleeves[selections.sleeve].label,
+            note:      COMPONENT_META.sleeves[selections.sleeve].construction,
+            norm:      COMPONENT_META.sleeves[selections.sleeve].iso_norm
+        });
+    }
+    return notes;
+}
