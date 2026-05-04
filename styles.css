@@ -506,3 +506,64 @@ body.iso-mode .man-btn.active {
         flex-shrink: 0;
     }
 }
+/* ═══ STEP 3 — Collapsible sections ═══════════════════════════ */
+.step3-section { margin-bottom: 20px; }
+.step3-section-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--gray1);
+    padding: 8px 0;
+    user-select: none;
+}
+.step3-section-header .chevron { font-size: 11px; transition: transform 0.2s; }
+.step3-section.collapsed .step3-section-content { display: none; }
+
+/* ═══ STEP 3 — Warning icon on opt-card ═══════════════════════ */
+.opt-card { position: relative; }
+.opt-card .warn-icon {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 16px;
+    height: 16px;
+    background: #FF9500;
+    color: white;
+    border-radius: 50%;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+    z-index: 2;
+}
+
+/* ═══ STEP 3 — Brand label quantity input ═════════════════════ */
+.qty-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: var(--gray4);
+    border-radius: 8px;
+}
+.qty-input-row label {
+    font-size: 12px;
+    color: var(--gray2);
+    flex: 1;
+}
+.qty-input-row input {
+    width: 50px;
+    padding: 4px 8px;
+    border: 1px solid var(--gray3);
+    border-radius: 6px;
+    font-size: 13px;
+    text-align: center;
+}
