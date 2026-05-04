@@ -1,6 +1,7 @@
 // ═══ ui.js — Navigation, steps, dynamic toggles, component builder ═══
 
 import { DICT, GARMENT_ICONS, CATEGORIES, FABRIC_SPECS, STITCH_SPECS } from './config.js';
+import { NEEDLES, THREADS, CARE_LABELS, BRAND_LABELS, checkCompatibility, TSHIRT_CONFIG } from './config/index.js';
 import { showTooltip, hideTooltip, openInfoPanel, closeInfoPanel } from './infoPanel.js';
 
 export function initCategories(state, updateButton) {
@@ -126,102 +127,169 @@ export function buildStep2(state) {
     const container = document.getElementById('manufContainer');
     container.innerHTML = '';
 
-    // ── Fabric Weight selector ──
-    const fabricSec = document.createElement('div');
-    fabricSec.innerHTML = '<div class="sec-label">Fabric Weight</div>';
-    const fabricScroll = document.createElement('div');
-    fabricScroll.className = 'opt-scroll';
-    fabricScroll.setAttribute('role', 'radiogroup');
-    fabricScroll.setAttribute('aria-label', 'Fabric Weight');
-
-    const fabricTermMap = {
-    jersey_150: 'ft_tex_001',
-    jersey_180: 'ft_tex_002',
-    jersey_200: 'ft_tex_003',
-    rib_1x1:    'ft_tex_004',
+    // Compute compatibility warnings once
+    const ctx = {
+        fabric:     FABRIC_SPECS[state.fabric],
+        needle:     NEEDLES[state.needle],
+        thread:     THREADS[state.thread],
+        stitch:     STITCH_SPECS[state.stitchType],
+        careLabel:  CARE_LABELS[state.careLabel],
+        brandLabel: BRAND_LABELS[state.brandLabel]
     };
+    const warnings = checkCompatibility(ctx);
 
-        Object.entries(FABRIC_SPECS).forEach(([key, fab]) => {
+    // Map warning IDs to which selectors they affect
+    const warnMap = {};
+    warnings.forEach(w => {
+        if (w.id === 'needle_too_fine_for_fabric' || w.id === 'sharp_needle_on_knit') {
+            warnMap.needle  = warnMap.needle  || w.message;
+            warnMap.fabric  = warnMap.fabric  || w.message;
+        }
+        if (w.id === 'thread_too_thick_for_needle') {
+            warnMap.thread  = warnMap.thread  || w.message;
+            warnMap.needle  = warnMap.needle  || w.message;
+        }
+    });
+
+    // ── Helper: build a horizontal opt-card selector ──
+    function buildSelector(label, entries, activeKey, stateField, previewFn) {
+        const sec = document.createElement('div');
+        sec.innerHTML = '<div class="sec-label">' + label + '</div>';
+        const scroll = document.createElement('div');
+        scroll.className = 'opt-scroll';
+        scroll.setAttribute('role', 'radiogroup');
+        scroll.setAttribute('aria-label', label);
+
+        entries.forEach(([key, item]) => {
             const opt = document.createElement('div');
-            const isSelected = state.fabric === key;
+            const isSelected = activeKey === key;
+            const hasWarn = isSelected && warnMap[stateField];
             opt.className = 'opt-card' + (isSelected ? ' selected' : '');
             opt.setAttribute('role', 'radio');
-            opt.setAttribute('aria-label', fab.label);
-        
-            const fabricTerm = fabricTermMap[key];
+            opt.setAttribute('aria-label', item.label || key);
+
             opt.innerHTML = `
                 <div class="opt-preview" style="font-size:10px;font-weight:700;line-height:1.2">
-                    ${fab.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>
+                    ${previewFn(key, item)}
                 </div>
-                <div class="opt-name">
-                    ${fab.label}
-                    ${fabricTerm ? `<span class="info-icon" data-term="${fabricTerm}">?</span>` : ''}
-                </div>
+                <div class="opt-name">${item.label || key}</div>
+                ${hasWarn ? `<div class="warn-icon" title="${hasWarn}">⚠</div>` : ''}
             `;
-            if (fabricTerm) {
-                const icon = opt.querySelector('.info-icon');
-                icon.addEventListener('mouseenter', () => showTooltip(fabricTerm, icon));
-                icon.addEventListener('mouseleave', hideTooltip);
-                icon.addEventListener('click', (e) => { e.stopPropagation(); openInfoPanel(fabricTerm); });
-            }
+
             opt.onclick = () => {
-                state.fabric = key;
-                fabricScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
+                state[stateField] = key;
+                buildStep2(state); // re-render to refresh warnings
             };
-            fabricScroll.appendChild(opt);
+            scroll.appendChild(opt);
         });
 
-    fabricSec.appendChild(fabricScroll);
-    container.appendChild(fabricSec);
+        sec.appendChild(scroll);
+        return sec;
+    }
 
-    // ── Main Seam Type selector ──
-    const stitchSec = document.createElement('div');
-    stitchSec.innerHTML = '<div class="sec-label">Main Seam Type</div>';
-    const stitchScroll = document.createElement('div');
-    stitchScroll.className = 'opt-scroll';
-    stitchScroll.setAttribute('role', 'radiogroup');
-    stitchScroll.setAttribute('aria-label', 'Main Seam Type');
+    // ── Helper: build a collapsible section ──
+    function buildSection(title, collapsed, buildFn) {
+        const section = document.createElement('div');
+        section.className = 'step3-section' + (collapsed ? ' collapsed' : '');
 
-const stitchTermMap = {
-    overlock_4t:  'iso_514',
-    coverseam_3n: 'iso_406',
-    flatlock:     null,
-};
+        const header = document.createElement('div');
+        header.className = 'step3-section-header';
+        header.innerHTML = `<span class="chevron">${collapsed ? '▸' : '▾'}</span> ${title}`;
+        header.onclick = () => {
+            section.classList.toggle('collapsed');
+            header.querySelector('.chevron').textContent =
+                section.classList.contains('collapsed') ? '▸' : '▾';
+        };
 
-        Object.entries(STITCH_SPECS).forEach(([key, stitch]) => {
-            const opt = document.createElement('div');
-            const isSelected = state.stitchType === key;
-            opt.className = 'opt-card' + (isSelected ? ' selected' : '');
-            opt.setAttribute('role', 'radio');
-            opt.setAttribute('aria-label', stitch.label);
-        
-            const stitchTerm = stitchTermMap[key];
-            opt.innerHTML = `
-                <div class="opt-preview" style="font-size:9px;font-weight:700;line-height:1.2">
-                    ${stitch.iso}
-                </div>
-                <div class="opt-name">
-                    ${stitch.label}
-                    ${stitchTerm ? `<span class="info-icon" data-term="${stitchTerm}">?</span>` : ''}
-                </div>
-            `;
-            if (stitchTerm) {
-                const icon = opt.querySelector('.info-icon');
-                icon.addEventListener('mouseenter', () => showTooltip(stitchTerm, icon));
-                icon.addEventListener('mouseleave', hideTooltip);
-                icon.addEventListener('click', (e) => { e.stopPropagation(); openInfoPanel(stitchTerm); });
-            }
-            opt.onclick = () => {
-                state.stitchType = key;
-                stitchScroll.querySelectorAll('.opt-card').forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
+        const content = document.createElement('div');
+        content.className = 'step3-section-content';
+        buildFn(content);
+
+        section.appendChild(header);
+        section.appendChild(content);
+        return section;
+    }
+
+    // ── Filter entries by allowed list ──
+    function allowed(dict, allowedKeys) {
+        return Object.entries(dict).filter(([k]) => allowedKeys.includes(k));
+    }
+
+    // ══ BASIC SECTION ══
+    const basicSection = buildSection('Basic', false, (content) => {
+
+        // Fabric
+        content.appendChild(buildSelector(
+            'Fabric Weight',
+            allowed(FABRIC_SPECS, TSHIRT_CONFIG.allowedFabrics),
+            state.fabric, 'fabric',
+            (key, item) => `${item.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>`
+        ));
+
+        // Stitch
+        content.appendChild(buildSelector(
+            'Main Seam Type',
+            allowed(STITCH_SPECS, TSHIRT_CONFIG.allowedStitches),
+            state.stitchType, 'stitchType',
+            (key, item) => item.iso || key.slice(0,4).toUpperCase()
+        ));
+
+        // Care Label
+        content.appendChild(buildSelector(
+            'Care Label',
+            allowed(CARE_LABELS, TSHIRT_CONFIG.allowedCareLabels),
+            state.careLabel, 'careLabel',
+            (key, item) => key.slice(0,3).toUpperCase()
+        ));
+
+        // Brand Label + quantity
+        const brandSec = buildSelector(
+            'Brand Label',
+            allowed(BRAND_LABELS, TSHIRT_CONFIG.allowedBrandLabels),
+            state.brandLabel, 'brandLabel',
+            (key, item) => key.slice(0,3).toUpperCase()
+        );
+
+        const qtyRow = document.createElement('div');
+        qtyRow.className = 'qty-input-row';
+        qtyRow.innerHTML = `
+            <label>Quantity per garment</label>
+            <input type="number" min="1" max="10" value="${state.brandLabelQty}" id="brandLabelQty">
+        `;
+        brandSec.appendChild(qtyRow);
+        content.appendChild(brandSec);
+
+        // Wire qty input (after appending so the element exists)
+        setTimeout(() => {
+            const qtyInput = document.getElementById('brandLabelQty');
+            if (qtyInput) qtyInput.onchange = (e) => {
+                state.brandLabelQty = parseInt(e.target.value) || 1;
             };
-            stitchScroll.appendChild(opt);
-        });
+        }, 0);
+    });
 
-    stitchSec.appendChild(stitchScroll);
-    container.appendChild(stitchSec);
+    // ══ ADVANCED SECTION ══
+    const advancedSection = buildSection('Advanced', true, (content) => {
+
+        // Needle
+        content.appendChild(buildSelector(
+            'Needle',
+            allowed(NEEDLES, TSHIRT_CONFIG.allowedNeedles),
+            state.needle, 'needle',
+            (key, item) => key.slice(0,4).toUpperCase()
+        ));
+
+        // Thread
+        content.appendChild(buildSelector(
+            'Thread',
+            allowed(THREADS, TSHIRT_CONFIG.allowedThreads),
+            state.thread, 'thread',
+            (key, item) => key.slice(0,4).toUpperCase()
+        ));
+    });
+
+    container.appendChild(basicSection);
+    container.appendChild(advancedSection);
 }
 
 export function initToggles() {
