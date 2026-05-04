@@ -40,3 +40,15 @@ export { FABRIC_SPECS }                                              from './con
 export { STITCH_SPECS }                                              from './config/universal/stitches.js';
 export { COMPONENT_META, collectMeasurements, collectConstruction }  from './config/garments/tshirt.js';
 export { ISO_BODY, SIZE_EQUIV, TOLERANCES, GRADING, PANTONE_APPROX, findClosestPantone } from './config/measurements.js';
+
+// ═══════════════════════════════════════════════════════════════
+// PACKING_SPECS
+// ═══════════════════════════════════════════════════════════════
+export const PACKING_SPECS = {
+    standard: {
+        label: 'Standard Fold Pack',
+        method: 'Garment folded with tissue paper insert. Placed in individual polybag (recycled PE, 35×45 cm). Size sticker on bag.',
+        carton: '60×40×30 cm export carton. Max 24 pcs per carton.',
+        labels: 'Individual polybag + carton label with PO#, style, size, color, qty'
+    }
+};
