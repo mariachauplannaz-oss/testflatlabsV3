@@ -21,6 +21,10 @@ const state = {
     svgData: null,
     selections: { torso: null, neck: null, sleeve: null },
     emailCaptured: false,
+    ui: {
+        step3BasicCollapsed:    false,
+        step3AdvancedCollapsed: true
+    },
     fabric:        'jersey_180',
     stitchType:    'overlock_4t',
     needle:        'ballpoint_80_12',
