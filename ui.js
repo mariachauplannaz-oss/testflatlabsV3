@@ -123,6 +123,19 @@ export function buildStep1(state) {
     }
 }
 
+const FABRIC_TERM_MAP = {
+    jersey_150: 'ft_tex_001',
+    jersey_180: 'ft_tex_002',
+    jersey_200: 'ft_tex_003',
+    rib_1x1:    'ft_tex_004',
+};
+
+const STITCH_TERM_MAP = {
+    overlock_4t:  'iso_514',
+    coverseam_3n: 'iso_406',
+    flatlock:     null,
+};
+
 export function buildStep2(state) {
     const container = document.getElementById('manufContainer');
     container.innerHTML = '';
@@ -152,7 +165,7 @@ export function buildStep2(state) {
     });
 
     // ── Helper: build a horizontal opt-card selector ──
-    function buildSelector(label, entries, activeKey, stateField, previewFn) {
+   function buildSelector(label, entries, activeKey, stateField, previewFn, termMap) {
         const sec = document.createElement('div');
         sec.innerHTML = '<div class="sec-label">' + label + '</div>';
         const scroll = document.createElement('div');
@@ -176,6 +189,21 @@ export function buildStep2(state) {
                 ${hasWarn ? `<div class="warn-icon" title="${hasWarn}">⚠</div>` : ''}
             `;
 
+// Add "?" info icon if this selector has a term map
+            if (termMap && termMap[key]) {
+                const icon = document.createElement('span');
+                icon.className = 'info-icon';
+                icon.dataset.term = termMap[key];
+                icon.textContent = '?';
+                icon.addEventListener('mouseenter', () => showTooltip(termMap[key], icon));
+                icon.addEventListener('mouseleave', hideTooltip);
+                icon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openInfoPanel(termMap[key]);
+                });
+                opt.querySelector('.opt-name').appendChild(icon);
+            }
+            
             opt.onclick = () => {
                 state[stateField] = key;
                 buildStep2(state); // re-render to refresh warnings
@@ -188,7 +216,8 @@ export function buildStep2(state) {
     }
 
     // ── Helper: build a collapsible section ──
-    function buildSection(title, collapsed, buildFn) {
+        function buildSection(title, stateKey, buildFn) {
+        const collapsed = state.ui[stateKey];
         const section = document.createElement('div');
         section.className = 'step3-section' + (collapsed ? ' collapsed' : '');
 
@@ -196,6 +225,7 @@ export function buildStep2(state) {
         header.className = 'step3-section-header';
         header.innerHTML = `<span class="chevron">${collapsed ? '▸' : '▾'}</span> ${title}`;
         header.onclick = () => {
+            state.ui[stateKey] = !state.ui[stateKey];
             section.classList.toggle('collapsed');
             header.querySelector('.chevron').textContent =
                 section.classList.contains('collapsed') ? '▸' : '▾';
@@ -216,14 +246,15 @@ export function buildStep2(state) {
     }
 
     // ══ BASIC SECTION ══
-    const basicSection = buildSection('Basic', false, (content) => {
+    const basicSection = buildSection('Basic', 'step3BasicCollapsed', (content) => {
 
         // Fabric
         content.appendChild(buildSelector(
             'Fabric Weight',
             allowed(FABRIC_SPECS, TSHIRT_CONFIG.allowedFabrics),
             state.fabric, 'fabric',
-            (key, item) => `${item.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>`
+            (key, item) => `${item.weight}<br><span style="font-size:8px;font-weight:400">g/m²</span>`,
+            FABRIC_TERM_MAP
         ));
 
         // Stitch
@@ -231,7 +262,8 @@ export function buildStep2(state) {
             'Main Seam Type',
             allowed(STITCH_SPECS, TSHIRT_CONFIG.allowedStitches),
             state.stitchType, 'stitchType',
-            (key, item) => item.iso || key.slice(0,4).toUpperCase()
+            (key, item) => item.iso || key.slice(0,4).toUpperCase(),
+            STITCH_TERM_MAP
         ));
 
         // Care Label
@@ -269,7 +301,7 @@ export function buildStep2(state) {
     });
 
     // ══ ADVANCED SECTION ══
-    const advancedSection = buildSection('Advanced', true, (content) => {
+    const advancedSection = buildSection('Advanced', 'step3AdvancedCollapsed', (content) => {
 
         // Needle
         content.appendChild(buildSelector(
