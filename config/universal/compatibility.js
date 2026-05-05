@@ -55,3 +55,23 @@ export function checkCompatibility(ctx) {
     }
     return triggered;
 }
+
+/**
+ * Checks if a specific option is compatible given the current selection context.
+ * Used to decide which options should be disabled in the UI.
+ * 
+ * @param {string} targetField - 'fabric' | 'needle' | 'thread' | 'stitch' | 'careLabel' | 'brandLabel'
+ * @param {Object} candidateItem - the full object of the option being tested
+ * @param {Object} ctx - current selection context (other fields filled, target field empty/replaced)
+ * @returns {Object} { compatible: boolean, reason: string }
+ */
+export function isOptionCompatible(targetField, candidateItem, ctx) {
+    // Build a hypothetical context where the target field has the candidate
+    const testCtx = { ...ctx, [targetField]: candidateItem };
+    const issues = checkCompatibility(testCtx);
+    if (issues.length === 0) {
+        return { compatible: true, reason: '' };
+    }
+    // Return the first issue's message
+    return { compatible: false, reason: issues[0].message };
+}
