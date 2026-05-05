@@ -1,7 +1,7 @@
 // ═══ ui.js — Navigation, steps, dynamic toggles, component builder ═══
 
 import { DICT, GARMENT_ICONS, CATEGORIES, FABRIC_SPECS, STITCH_SPECS } from './config.js';
-import { NEEDLES, THREADS, CARE_LABELS, BRAND_LABELS, checkCompatibility, TSHIRT_CONFIG } from './config/index.js';
+import { NEEDLES, THREADS, CARE_LABELS, BRAND_LABELS, checkCompatibility, isOptionCompatible, TSHIRT_CONFIG } from './config/index.js';
 import { showTooltip, hideTooltip, openInfoPanel, closeInfoPanel } from './infoPanel.js';
 
 export function initCategories(state, updateButton) {
@@ -176,8 +176,14 @@ export function buildStep2(state) {
         entries.forEach(([key, item]) => {
             const opt = document.createElement('div');
             const isSelected = activeKey === key;
-            const hasWarn = isSelected && warnMap[stateField];
-            opt.className = 'opt-card' + (isSelected ? ' selected' : '');
+
+            // Check if this option is compatible with current context
+            const compat = isOptionCompatible(stateField, item, ctx);
+            const isDisabled = !isSelected && !compat.compatible;
+
+            opt.className = 'opt-card'
+                + (isSelected ? ' selected' : '')
+                + (isDisabled ? ' disabled' : '');
             opt.setAttribute('role', 'radio');
             opt.setAttribute('aria-label', item.label || key);
 
@@ -186,7 +192,7 @@ export function buildStep2(state) {
                     ${previewFn(key, item)}
                 </div>
                 <div class="opt-name">${item.label || key}</div>
-                ${hasWarn ? `<div class="warn-icon" title="${hasWarn}">⚠</div>` : ''}
+                ${isDisabled ? `<div class="lock-icon" title="Incompatible — change the fabric first">🔒</div>` : ''}
             `;
 
 // Add "?" info icon if this selector has a term map
@@ -205,8 +211,11 @@ export function buildStep2(state) {
             }
             
             opt.onclick = () => {
+                if (isDisabled) return;  // ignore clicks on disabled options
                 state[stateField] = key;
-                buildStep2(state); // re-render to refresh warnings
+                // After change, validate other selections and auto-fix if needed
+                autoFixIncompatibleSelections(state);
+                buildStep2(state);
             };
             scroll.appendChild(opt);
         });
@@ -322,6 +331,45 @@ export function buildStep2(state) {
 
     container.appendChild(basicSection);
     container.appendChild(advancedSection);
+
+    // Auto-fix: after a state change, check if other selections became incompatible.
+    // If so, switch them to the first compatible option from their allowed list.
+    function autoFixIncompatibleSelections(state) {
+        const fields = [
+            { field: 'fabric',     dict: FABRIC_SPECS,  allowed: TSHIRT_CONFIG.allowedFabrics    },
+            { field: 'stitchType', dict: STITCH_SPECS,  allowed: TSHIRT_CONFIG.allowedStitches   },
+            { field: 'needle',     dict: NEEDLES,       allowed: TSHIRT_CONFIG.allowedNeedles    },
+            { field: 'thread',     dict: THREADS,       allowed: TSHIRT_CONFIG.allowedThreads    },
+            { field: 'careLabel',  dict: CARE_LABELS,   allowed: TSHIRT_CONFIG.allowedCareLabels },
+            { field: 'brandLabel', dict: BRAND_LABELS,  allowed: TSHIRT_CONFIG.allowedBrandLabels}
+        ];
+    
+        for (const { field, dict, allowed } of fields) {
+            const ctx = {
+                fabric:     FABRIC_SPECS[state.fabric],
+                needle:     NEEDLES[state.needle],
+                thread:     THREADS[state.thread],
+                stitch:     STITCH_SPECS[state.stitchType],
+                careLabel:  CARE_LABELS[state.careLabel],
+                brandLabel: BRAND_LABELS[state.brandLabel]
+            };
+            const currentItem = dict[state[field]];
+            if (!currentItem) continue;
+            const compat = isOptionCompatible(field, currentItem, ctx);
+            if (!compat.compatible) {
+                // Find first compatible option from allowed list
+                for (const candidateKey of allowed) {
+                    const candidate = dict[candidateKey];
+                    if (!candidate) continue;
+                    const candidateCompat = isOptionCompatible(field, candidate, ctx);
+                    if (candidateCompat.compatible) {
+                        state[field] = candidateKey;
+                        break;
+                    }
+                }
+            }
+        }
+    }
 }
 
 export function initToggles() {
