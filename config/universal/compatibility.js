@@ -34,6 +34,17 @@ export const COMPATIBILITY_RULES = [
         message: (ctx) =>
             `Thread ${ctx.thread.label} requires a needle size of at least ` +
             `${ctx.thread.for_needle_min_size}. Selected needle is ${ctx.needle.size}.`
+    },
+    {
+        id:    'needle_too_heavy_for_fabric',
+        level: 'warning',
+        check: (ctx) => {
+            if (!ctx.fabric || !ctx.needle) return false;
+            return ctx.fabric.weight < ctx.needle.for_weight.min;
+        },
+        message: (ctx) =>
+            `Needle ${ctx.needle.label} is too heavy for ${ctx.fabric.label} ` +
+            `(${ctx.fabric.weight} g/m²). It needs at least ${ctx.needle.for_weight.min} g/m².`
     }
 ];
 
