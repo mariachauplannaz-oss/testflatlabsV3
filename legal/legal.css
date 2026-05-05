@@ -609,4 +609,23 @@ footer a:hover { color: var(--accent); }
   .legal-header h1 { font-size: 42px; letter-spacing: -1.5px; }
   .legal-bottom-nav { grid-template-columns: 1fr; }
   footer { padding: 24px 20px; flex-direction: column; align-items: flex-start; }
+
+  /* Subnav: horizontal scroll on mobile */
+  .legal-subnav-inner {
+    display: flex;
+    grid-template-columns: none;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    padding: 0 20px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .legal-subnav-inner::-webkit-scrollbar { display: none; }
+  .legal-subnav a {
+    flex-shrink: 0;
+    padding: 12px 0;
+    padding-right: 24px;
+    scroll-snap-align: start;
+  }
+  .legal-subnav a:last-child { padding-right: 0; }
 }
