@@ -261,10 +261,7 @@ nav {
 }
 .price-callout p:last-child { margin-bottom: 0; color: rgba(255,255,255,.9); font-weight: 500; }
 
-/* Labeled blocks inside problem narrative */
-.problem-block {
-  margin-bottom: 32px;
-}
+.problem-block { margin-bottom: 32px; }
 .problem-block:last-child { margin-bottom: 0; }
 .problem-block-label {
   font-size: 10px; font-weight: 700;
@@ -316,10 +313,7 @@ nav {
   position: relative;
   z-index: 1;
 }
-.how-header {
-  max-width: 620px;
-  margin-bottom: 72px;
-}
+.how-header { max-width: 620px; margin-bottom: 72px; }
 .how .section-label { color: var(--ink-soft); margin-bottom: 20px; }
 .how h2 {
   font-family: var(--serif);
@@ -382,16 +376,13 @@ nav {
   border-radius: 4px;
 }
 
-/* The Holy Trinity */
 .trinity {
   margin-top: 80px;
   padding-top: 56px;
   border-top: 1px solid rgba(33,43,49,.12);
   text-align: center;
 }
-.trinity-header {
-  margin-bottom: 40px;
-}
+.trinity-header { margin-bottom: 40px; }
 .trinity-label {
   font-size: 11px; font-weight: 700;
   letter-spacing: 2.5px; text-transform: uppercase;
@@ -600,16 +591,27 @@ nav {
 
 /* ── FOOTER ── */
 footer {
-  padding: 24px 60px;
+  padding: 32px 60px;
   border-top: 1px solid rgba(33,43,49,.07);
   display: flex; justify-content: space-between; align-items: center;
   max-width: 1200px; margin: 0 auto;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 footer span, footer a {
   font-size: 12px; color: var(--ink-soft); text-decoration: none;
+  transition: color .2s;
 }
-footer a:hover { color: var(--ink); }
-.footer-links { display: flex; gap: 24px; }
+footer a:hover { color: var(--accent); }
+.footer-links { display: flex; gap: 24px; flex-wrap: wrap; }
+.footer-legal {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  padding-top: 4px;
+}
+.footer-legal a {
+  font-size: 11px;
+  letter-spacing: .5px;
+}
 
 /* ── REVEAL ── */
 .reveal {
@@ -679,7 +681,8 @@ footer a:hover { color: var(--ink); }
   .final-cta { padding: 72px 24px; }
   .final-cta p { font-size: 15px; margin-bottom: 32px; }
 
-  footer { padding: 20px 20px; flex-direction: column; gap: 12px; text-align: center; }
+  footer { padding: 24px 20px; flex-direction: column; gap: 16px; text-align: center; align-items: center; }
+  .footer-links, .footer-legal { justify-content: center; }
 }
 
 @media (max-width: 600px) {
@@ -709,13 +712,11 @@ footer a:hover { color: var(--ink); }
 </head>
 <body>
 
-<!-- Hidden form for Netlify form detection (validation button) -->
 <form name="validation" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input name="form-name" value="validation">
   <input name="action" value="this-makes-sense">
 </form>
 
-<!-- NAV -->
 <nav>
   <a href="/" class="logo">Flat<em>Labs</em></a>
   <div class="nav-links">
@@ -726,7 +727,6 @@ footer a:hover { color: var(--ink); }
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-text">
     <div class="hero-kicker reveal">Skip the technical drawing. Keep the creative decisions.</div>
@@ -753,7 +753,6 @@ footer a:hover { color: var(--ink); }
   </div>
 </section>
 
-<!-- PROBLEM -->
 <section class="problem" id="problem">
   <div class="problem-bg-num">01</div>
   <div class="problem-inner">
@@ -793,7 +792,6 @@ footer a:hover { color: var(--ink); }
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
 <section class="how" id="how">
   <div class="how-bg-num">02</div>
   <div class="how-inner">
@@ -803,10 +801,9 @@ footer a:hover { color: var(--ink); }
     </div>
 
     <div class="steps-grid">
-      <!-- Step 1 -->
       <div class="step-item reveal">
         <div class="step-illustration">
-          <svg id="Layer_5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
             <path fill="none" stroke="#fb8f6c" stroke-width="9" stroke-miterlimit="10" d="M192.51,57.41s-.92,41.73-42.4,41.73-42.26-42.29-42.26-42.29"/>
             <path fill="none" stroke="#231f20" stroke-width="4" stroke-linejoin="round" d="M221.98,246.14c7.83-.18,9.42-6.1,9.42-10.01s.09-153.59.09-159.19-2.67-8.01-6.48-9.25-41.02-12.96-41.02-12.96c0,0-6.65,10.12-33.78,10.12s-33.98-10.12-33.98-10.12c0,0-37.21,11.72-41.02,12.96s-6.48,3.65-6.48,9.25.09,155.27.09,159.19,1.59,9.84,9.42,10.01c3.88.09,139.85.09,143.73,0Z"/>
             <path fill="none" stroke="#231f20" stroke-width="4" stroke-miterlimit="10" d="M198.77,59.4s-4.44,46.19-48.51,46.19h-.3c-44.08,0-48.51-46.19-48.51-46.19"/>
@@ -820,10 +817,9 @@ footer a:hover { color: var(--ink); }
         </div>
       </div>
 
-      <!-- Step 2 -->
       <div class="step-item reveal reveal-delay-1">
         <div class="step-illustration">
-          <svg id="Layer_6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
             <path fill="none" stroke="#fb8f6c" stroke-width="11" stroke-linejoin="round" d="M185.81,62.56s47.8,16.51,76.06,7.85"/>
             <path fill="none" stroke="#fb8f6c" stroke-width="11" stroke-linejoin="round" d="M179.74,57.44c5.2,47.38,56.15,89.11,56.15,89.11l27.19-16.96"/>
             <path fill="none" stroke="#231f20" stroke-width="4" stroke-linecap="square" stroke-linejoin="round" d="M109.75,245.48v-47.11s26.1-53.78-4.12-115.56l81.78-28s32.61,21.04,70.82,9.67"/>
@@ -842,10 +838,9 @@ footer a:hover { color: var(--ink); }
         </div>
       </div>
 
-      <!-- Step 3 -->
       <div class="step-item reveal reveal-delay-2">
         <div class="step-illustration">
-          <svg id="Layer_7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="height:72px;width:auto">
             <line fill="none" stroke="#fb8f6c" stroke-width="17" stroke-linecap="round" stroke-linejoin="round" x1="66.99" y1="239.75" x2="233.01" y2="239.65"/>
             <polygon fill="none" stroke="#231f20" stroke-width="4" stroke-linecap="square" stroke-linejoin="round" points="93.56 150 150.1 212.37 205.11 150 174.89 150 174.3 55.33 123.33 55.33 123.93 150 93.56 150"/>
           </svg>
@@ -859,7 +854,6 @@ footer a:hover { color: var(--ink); }
       </div>
     </div>
 
-    <!-- The Holy Trinity -->
     <div class="trinity reveal">
       <div class="trinity-header">
         <span class="trinity-label">Available now · The Holy Trinity</span>
@@ -892,7 +886,6 @@ footer a:hover { color: var(--ink); }
   </div>
 </section>
 
-<!-- DISCLAIMER -->
 <section class="disclaimer" id="disclaimer">
   <div class="disclaimer-inner">
     <div>
@@ -916,28 +909,18 @@ footer a:hover { color: var(--ink); }
           <line x1="71" y1="104" x2="71" y2="255" stroke="#212B31" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
           <line x1="249" y1="104" x2="249" y2="255" stroke="#212B31" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
           <line x1="63" y1="249" x2="257" y2="249" stroke="#212B31" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
-          <line x1="20" y1="0" x2="20" y2="380" stroke="#212B31" stroke-width="1.5" stroke-dasharray="7 5" opacity=".2"/>
-          <line x1="14" y1="0" x2="14" y2="380" stroke="#212B31" stroke-width=".8" stroke-dasharray="7 5" opacity=".12"/>
-          <line x1="300" y1="0" x2="300" y2="380" stroke="#212B31" stroke-width="1.5" stroke-dasharray="7 5" opacity=".2"/>
-          <line x1="306" y1="0" x2="306" y2="380" stroke="#212B31" stroke-width=".8" stroke-dasharray="7 5" opacity=".12"/>
           <line x1="60" y1="78" x2="260" y2="78" stroke="#ff9a6e" stroke-width="1" opacity=".6"/>
           <line x1="60" y1="74" x2="60" y2="82" stroke="#ff9a6e" stroke-width="1" opacity=".6"/>
           <line x1="260" y1="74" x2="260" y2="82" stroke="#ff9a6e" stroke-width="1" opacity=".6"/>
           <text x="160" y="73" font-family="'DM Sans', sans-serif" font-size="10" fill="#ff9a6e" text-anchor="middle" opacity=".8">12 cm</text>
           <text x="160" y="188" font-family="'DM Sans', sans-serif" font-size="11" fill="#5F7385" text-anchor="middle" opacity=".6" font-weight="600" letter-spacing="1">CHEST POCKET</text>
           <text x="160" y="202" font-family="'DM Sans', sans-serif" font-size="9" fill="#5F7385" text-anchor="middle" opacity=".5">patch · double topstitch</text>
-          <rect x="58" y="88" width="20" height="20" stroke="#ff9a6e" stroke-width="1" fill="none" opacity=".5" rx="1"/>
-          <line x1="78" y1="98" x2="98" y2="78" stroke="#ff9a6e" stroke-width=".8" opacity=".4"/>
-          <rect x="96" y="54" width="50" height="50" stroke="#ff9a6e" stroke-width="1" fill="rgba(255,239,212,.4)" rx="2"/>
-          <path d="M 100 100 C 100 96 102 94 106 94" stroke="#212B31" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-          <path d="M 101 100 C 101 96.5 103 95 106 95" stroke="#212B31" stroke-width=".8" stroke-dasharray="3 2" fill="none" opacity=".6"/>
         </svg>
       </div>
     </div>
   </div>
 </section>
 
-<!-- VALIDATION -->
 <section class="validation" id="validate">
   <div class="validation-inner">
     <div class="section-label reveal" style="justify-content:center">Get on the list</div>
@@ -970,7 +953,6 @@ footer a:hover { color: var(--ink); }
   </div>
 </section>
 
-<!-- FINAL CTA -->
 <section class="final-cta">
   <div class="final-cta-inner reveal">
     <h2>Stop wasting time on flats.</h2>
@@ -982,25 +964,28 @@ footer a:hover { color: var(--ink); }
   </div>
 </section>
 
-<!-- FOOTER -->
 <footer>
   <span>&copy; 2026 FlatLabs</span>
   <div class="footer-links">
     <a href="#problem">Why</a>
     <a href="#how">How it works</a>
-    <a href="mailto:flatsgenerator@gmail.com">Contact</a>
+    <a href="learn/">Glossary</a>
+    <a href="legal/contact.html">Contact</a>
+  </div>
+  <div class="footer-legal">
+    <a href="legal/privacy.html">Privacy</a>
+    <a href="legal/terms.html">Terms</a>
+    <a href="legal/legal.html">Legal Notice</a>
   </div>
 </footer>
 
 <script>
-// Scroll reveal
 const reveals = document.querySelectorAll('.reveal');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
 }, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
 reveals.forEach(el => observer.observe(el));
 
-// Validation
 let votes = JSON.parse(localStorage.getItem('fl_votes') || '{"yes":0,"emails":[]}');
 
 function updateCount() {
