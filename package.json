@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@netlify/neon": "0.1.0"
+    "@netlify/neon": "0.1.0",
+    "stripe": "17.7.0"
   }
 }
