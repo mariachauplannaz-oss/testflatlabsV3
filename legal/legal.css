@@ -571,6 +571,15 @@ footer a:hover { color: var(--accent); }
 }
 .contact-form .form-fine a { color: var(--ink); }
 
+footer {
+  position: relative;
+  z-index: 0;
+  clear: both;
+}
+.legal-bottom-nav {
+  margin-bottom: 40px;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 900px) {
   .nav-links a:not(.nav-cta) { display: none; }
