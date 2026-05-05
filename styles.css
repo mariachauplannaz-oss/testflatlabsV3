@@ -567,3 +567,31 @@ body.iso-mode .man-btn.active {
     font-size: 13px;
     text-align: center;
 }
+/* ═══ STEP 3 — Disabled (incompatible) opt-card ════════════════ */
+.opt-card.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--gray4);
+    border-color: var(--gray3);
+    pointer-events: auto; /* allow tooltip on hover, but click is blocked in JS */
+}
+.opt-card.disabled:hover {
+    transform: none;
+    border-color: var(--gray3);
+    box-shadow: none;
+}
+.opt-card .lock-icon {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    background: var(--gray3);
+    border-radius: 50%;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: help;
+    z-index: 2;
+}
