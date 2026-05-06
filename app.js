@@ -264,11 +264,6 @@ async function init() {
     emailInput?.addEventListener('focus', function() { this.style.borderColor = 'var(--accent)'; });
     emailInput?.addEventListener('blur',  function() { this.style.borderColor = 'var(--gray3)'; });
 
-    // Skip email hover
-    const btnSkip = document.getElementById('btnSkipEmail');
-    btnSkip?.addEventListener('mouseover', function() { this.style.opacity = '1'; });
-    btnSkip?.addEventListener('mouseout',  function() { this.style.opacity = '.6'; });
-
     // Gender toggle wiring
     document.querySelectorAll('[data-gender]').forEach(btn => {
         btn.addEventListener('click', () => {
