@@ -1,90 +1,156 @@
-// ═══ download.js — SVG download & email capture logic ═══
+// ═══ download.js — FREE SVG download flow with backend gating ═══
 
 import { MANNEQUIN_CFG } from './config.js';
+const LS_EMAIL_KEY = 'fl_user_email';
+
+// ─── Public exports (app.js imports these — signatures must not change) ───────
 
 export function downloadSVG(state, log) {
-    const cfg = MANNEQUIN_CFG[state.currentMannequin];
-    
-    // Check if email already captured
-    if (state.emailCaptured || localStorage.getItem('fl_email_captured')) {
-        triggerDownload(state, log);
-        return;
-    }
-    
-    // Show email modal
-    document.getElementById('emailModal').classList.add('show');
+  const savedEmail = localStorage.getItem(LS_EMAIL_KEY);
+
+  if (savedEmail) {
+    // Email already known — go straight to backend validation
+    log(`Email found in localStorage: ${savedEmail}`, 'info');
+    _registerFreeDownload(savedEmail, state, log);
+  } else {
+    // Show email modal — user must provide email + accept T&C
+    _showEmailModal();
+  }
+}
+
+export function handleEmailSubmit(event, state, log) {
+  event.preventDefault();
+
+  const email    = document.getElementById('emailInput')?.value.trim() || '';
+  const accepted = document.getElementById('emailAcceptTC')?.checked;
+  const errEl    = document.getElementById('emailModalError');
+
+  // Clear previous error
+  if (errEl) { errEl.textContent = ''; errEl.hidden = true; }
+
+  // Validate
+  if (!email.includes('@')) {
+    _showModalError('Please enter a valid email address.');
+    return;
+  }
+  if (!accepted) {
+    _showModalError('Please accept the Terms and Privacy Policy to continue.');
+    return;
+  }
+
+  _registerFreeDownload(email, state, log);
 }
 
 export function triggerDownload(state, log) {
-    const svgEl = document.querySelector('#svg-preview svg');
-    if (!svgEl) {
-        log('No SVG to download', 'err');
-        return;
-    }
-    
-    const cfg = MANNEQUIN_CFG[state.currentMannequin];
-    
-    // Clone and prepare for export
-    const clone = svgEl.cloneNode(true);
-    clone.setAttribute('viewBox', cfg.exportViewBox);
-    
-    // Serialize
-    const serializer = new XMLSerializer();
-    let svgString = serializer.serializeToString(clone);
-    
-    // Add XML declaration
-    svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
-    
-    // Create blob and download
-    const blob = new Blob([svgString], { type: 'image/svg+xml' });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `flatlabs-${state.selectedCategory || 'garment'}-${Date.now()}.svg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    log('SVG downloaded!', 'ok');
-    
-    // Close modal if open
-    document.getElementById('emailModal').classList.remove('show');
+  // Actual SVG export — called only after backend confirms 'allowed'
+  const svgEl = document.getElementById('svg-preview')?.querySelector('svg');
+  if (!svgEl) {
+    log('No SVG to download', 'warn');
+    return;
+  }
+
+  const cfg        = MANNEQUIN_CFG[state.currentMannequin] || {};
+  const exportVB   = cfg.exportViewBox || svgEl.getAttribute('viewBox') || '0 0 800 800';
+  const clone      = svgEl.cloneNode(true);
+  clone.setAttribute('viewBox', exportVB);
+  clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+
+  const serializer = new XMLSerializer();
+  const svgStr     = serializer.serializeToString(clone);
+  const blob       = new Blob([svgStr], { type: 'image/svg+xml' });
+  const url        = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href     = url;
+  a.download = `flatlabs-flat-${Date.now()}.svg`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  log('SVG downloaded', 'ok');
 }
 
-export function handleEmailSubmit(event, state, triggerDownloadFn) {
-    event.preventDefault();
-    
-    const form = event.target;
-    const email = form.querySelector('input[name="email"]').value;
-    
-    if (!email || !email.includes('@')) {
-        return;
-    }
-    
-    // Submit to Netlify
-    const formData = new FormData(form);
-    
-    fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(formData).toString()
-    })
-    .then(() => {
-        state.emailCaptured = true;
-        localStorage.setItem('fl_email_captured', 'true');
-        triggerDownloadFn();
-    })
-    .catch(err => {
-        console.error('Form submission error:', err);
-        // Still allow download on error
-        triggerDownloadFn();
+// No-op — skip is no longer allowed. Kept to avoid breaking imports.
+export function skipEmail(state, log) {
+  console.warn('[FlatLabs ⚠] skipEmail called but skip is disabled. No action taken.');
+}
+
+// ─── Internal helpers ─────────────────────────────────────────────────────────
+
+function _showEmailModal() {
+  const modal = document.getElementById('emailModal');
+  if (modal) modal.classList.add('show');
+}
+
+function _hideEmailModal() {
+  const modal = document.getElementById('emailModal');
+  if (modal) modal.classList.remove('show');
+}
+
+function _showModalError(message) {
+  const errEl = document.getElementById('emailModalError');
+  if (errEl) {
+    errEl.textContent = message;
+    errEl.hidden = false;
+  }
+}
+
+async function _registerFreeDownload(email, state, log) {
+  const garment_config = {
+    garment:    state.selectedCategory || 'tshirt',
+    selections: state.selections,
+    gender:     state.gender,
+    fabric:     state.fabric,
+    stitchType: state.stitchType,
+  };
+
+  try {
+    const response = await fetch('/api/register-free-download', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email, garment_config, accepted_tc: true }),
     });
-}
 
-export function skipEmail(state, triggerDownloadFn) {
-    state.emailCaptured = true;
-    localStorage.setItem('fl_email_captured', 'true');
-    triggerDownloadFn();
+    const data = await response.json();
+
+    if (!response.ok) {
+      // 400 / 500 — show error in modal
+      _showEmailModal();
+      _showModalError(data.error || 'Something went wrong. Please try again.');
+      return;
+    }
+
+    if (data.status === 'allowed') {
+      localStorage.setItem(LS_EMAIL_KEY, email);
+      _hideEmailModal();
+      log('Free download approved', 'ok');
+      triggerDownload(state, log);
+      return;
+    }
+
+    if (data.status === 'already_used_free') {
+      localStorage.setItem(LS_EMAIL_KEY, email); // remember them anyway
+      _hideEmailModal();
+      log('Email already used free download — showing upsell', 'warn');
+      document.getElementById('alreadyUsedModal')?.classList.add('show');
+      return;
+    }
+
+    if (data.status === 'ip_blocked') {
+      _hideEmailModal();
+      log('IP blocked — showing block modal', 'warn');
+      document.getElementById('ipBlockedModal')?.classList.add('show');
+      return;
+    }
+
+    // Unknown status — surface as error
+    _showEmailModal();
+    _showModalError('Unexpected response. Please try again.');
+
+  } catch (err) {
+    log(`register-free-download network error: ${err.message}`, 'err');
+    _showEmailModal();
+    _showModalError('Network error. Please check your connection and try again.');
+  }
 }
