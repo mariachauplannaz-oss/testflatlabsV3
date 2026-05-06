@@ -177,15 +177,19 @@
 <div class="modal-overlay" id="emailModal" role="dialog" aria-modal="true" aria-labelledby="emailModalTitle">
     <div class="modal-content">
         <h3 class="modal-title" id="emailModalTitle">Almost there!</h3>
-        <p class="modal-text">This is a BETA version. Enter your email to download your SVG and get notified about new modules.</p>
+        <p class="modal-text">Enter your email to download your SVG and get notified about new modules.</p>
         <form name="leads-flatlabs" method="POST" data-netlify="true" id="leadForm">
             <input type="hidden" name="form-name" value="leads-flatlabs">
-            <input type="email" name="email" placeholder="flatsgenerator@gmail.com" required id="emailInput"
-                style="width:100%;padding:12px;border:1.5px solid var(--gray3);border-radius:10px;margin-bottom:15px;font-size:15px;font-family:inherit;outline:none;transition:border .2s"
+            <input type="email" name="email" placeholder="your@email.com" required id="emailInput"
+                style="width:100%;padding:12px;border:1.5px solid var(--gray3);border-radius:10px;margin-bottom:12px;font-size:15px;font-family:inherit;outline:none;transition:border .2s"
                 aria-label="Email address">
-            <button type="submit" class="btn btn-blue" style="width:100%">Download SVG</button>
+            <label class="modal-checkbox-label">
+                <input type="checkbox" id="emailAcceptTC">
+                I accept the <a href="/legal/terms.html" target="_blank">Terms and Conditions</a> and <a href="/legal/privacy.html" target="_blank">Privacy Policy</a>
+            </label>
+            <div id="emailModalError" hidden style="margin-bottom:10px"></div>
+            <button type="submit" class="btn btn-blue" style="width:100%;margin-top:12px">Download SVG</button>
         </form>
-        <button id="btnSkipEmail" style="background:none;border:none;color:var(--gray2);font-size:12px;cursor:pointer;margin-top:10px;width:100%;text-align:center;opacity:.6;transition:opacity .2s">Not interested, download anyway →</button>
         <button id="btnCloseEmailModal" style="background:none;border:none;color:var(--gray2);margin-top:15px;cursor:pointer;font-size:12px;font-family:inherit">Close</button>
     </div>
 </div>
@@ -219,9 +223,26 @@
     </div>
 </div>
   
-<a href="https://buymeacoffee.com/flatlabs" target="_blank" rel="noopener" class="support-button" aria-label="Support FlatLabs development">
-    <span>☕</span><span>Support Beta</span>
-</a>
+<!-- Already Used Free Download Modal — upsell toward Tech Pack -->
+<div class="modal-overlay" id="alreadyUsedModal" role="dialog" aria-modal="true" aria-labelledby="alreadyUsedModalTitle">
+    <div class="modal-content">
+        <h3 class="modal-title" id="alreadyUsedModalTitle">You've already used your free download</h3>
+        <p class="modal-text">Ready for the full Tech Pack? Get POM, BOM, and construction notes.</p>
+        <button class="btn btn-blue" id="btnGetTechPack" style="width:100%">Get Tech Pack — 10€ →</button>
+        <button id="btnCloseAlreadyUsedModal" style="background:none;border:none;color:var(--gray2);font-size:12px;cursor:pointer;margin-top:10px;width:100%;text-align:center;opacity:.6">Maybe later</button>
+    </div>
+</div>
+
+<!-- IP Blocked Modal -->
+<div class="modal-overlay" id="ipBlockedModal" role="dialog" aria-modal="true" aria-labelledby="ipBlockedModalTitle">
+    <div class="modal-content">
+        <h3 class="modal-title" id="ipBlockedModalTitle">Download paused</h3>
+        <p class="modal-text">Our system has detected high activity from your network. As a precaution, free downloads from this connection are paused for 30 days.</p>
+        <p class="modal-text">If you believe this is a mistake or you're using FlatLabs from a school or studio with multiple users, please contact us — we'd love to learn how you're using FlatLabs and find a solution that works for you.</p>
+        <a href="/legal/contact.html" class="btn btn-blue" style="width:100%;text-decoration:none;display:flex">Contact us</a>
+        <button id="btnCloseIpBlockedModal" style="background:none;border:none;color:var(--gray2);font-size:12px;cursor:pointer;margin-top:10px;width:100%;text-align:center;opacity:.6">Close</button>
+    </div>
+</div>
 
 <script type="module" src="app.js"></script>
   
