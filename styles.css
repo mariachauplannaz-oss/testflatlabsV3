@@ -595,3 +595,34 @@ body.iso-mode .man-btn.active {
     cursor: help;
     z-index: 2;
 }
+/* ═══ EMAIL MODAL — Checkbox + inline error ══════════════════ */
+.modal-checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--gray2);
+    text-align: left;
+    cursor: pointer;
+    line-height: 1.4;
+}
+.modal-checkbox-label input[type="checkbox"] {
+    margin-top: 2px;
+    flex-shrink: 0;
+    accent-color: var(--accent);
+}
+.modal-checkbox-label a {
+    color: var(--gray1);
+    text-decoration: underline;
+}
+
+#emailModalError {
+    background: rgba(255, 59, 48, 0.08);
+    border: 1px solid rgba(255, 59, 48, 0.2);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--red);
+    text-align: left;
+}
+
