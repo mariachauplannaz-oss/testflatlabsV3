@@ -4,7 +4,7 @@ import { MANNEQUIN_CFG } from './config.js';
 import { parseSVG } from './parser.js';
 import { generate } from './generator.js';
 import { initCategories, goStep, updateButton, buildStep1, buildStep2, initToggles, toggleSidebar, closeSidebar, setIsoMode } from './ui.js';
-import { downloadSVG, triggerDownload, handleEmailSubmit, skipEmail } from './download.js';
+import { downloadSVG, triggerDownload, handleEmailSubmit } from './download.js';
 import { exportSpecSheet } from './specsheet.js';
 import { showTooltip, hideTooltip, openInfoPanel, closeInfoPanel } from './infoPanel.js';
 
@@ -91,8 +91,7 @@ function nextAction() {
 // ═══ DOWNLOAD WRAPPERS ═══
 function doDownload()      { downloadSVG(state, log); }
 function doTriggerDownload() { triggerDownload(state, log); }
-function doEmailSubmit(e)  { handleEmailSubmit(e, state, doTriggerDownload); }
-function doSkipEmail()     { skipEmail(state, doTriggerDownload); }
+function doEmailSubmit(e)  { handleEmailSubmit(e, state, log); }
 
 // CHANGE 1 — doExportTechPack now saves state and redirects to /checkout.html
 function doExportTechPack() {
@@ -243,9 +242,18 @@ async function init() {
 
     // Modal listeners
     document.getElementById('leadForm')?.addEventListener('submit', doEmailSubmit);
-    document.getElementById('btnSkipEmail')?.addEventListener('click', doSkipEmail);
     document.getElementById('btnCloseEmailModal')?.addEventListener('click', () => {
         document.getElementById('emailModal').classList.remove('show');
+    });
+    document.getElementById('btnCloseAlreadyUsedModal')?.addEventListener('click', () => {
+        document.getElementById('alreadyUsedModal').classList.remove('show');
+    });
+    document.getElementById('btnCloseIpBlockedModal')?.addEventListener('click', () => {
+        document.getElementById('ipBlockedModal').classList.remove('show');
+    });
+    document.getElementById('btnGetTechPack')?.addEventListener('click', () => {
+        document.getElementById('alreadyUsedModal').classList.remove('show');
+        doExportTechPack();
     });
     document.getElementById('btnCloseProModal')?.addEventListener('click', () => {
         document.getElementById('proModal').classList.remove('show');
