@@ -10,7 +10,6 @@ export default async function handler(req, context) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const sql = neon(process.env.NETLIFY_DATABASE_URL);
 
-  // 1. Verify Stripe signature — critical for security
   const signature = req.headers.get("stripe-signature");
   const rawBody = await req.text();
   
@@ -31,7 +30,6 @@ export default async function handler(req, context) {
     });
   }
 
-  // 2. Only handle the event we care about
   if (event.type !== "checkout.session.completed") {
     return new Response(JSON.stringify({ 
       received: true, 
@@ -48,9 +46,9 @@ export default async function handler(req, context) {
     ? JSON.parse(session.metadata.garment_config) 
     : {};
   const tcVersion = session.metadata?.tc_version || "1.0";
+  const productKey = session.metadata?.product_key ?? null;
 
   try {
-    // 3. Idempotency check — if Stripe retries, don't duplicate
     const existing = await sql`
       SELECT id, download_token FROM downloads 
       WHERE stripe_session_id = ${stripeSessionId}
@@ -66,17 +64,15 @@ export default async function handler(req, context) {
       });
     }
 
-    // 4. Upsert user
     await sql`
       INSERT INTO users (email) 
       VALUES (${email})
       ON CONFLICT (email) DO NOTHING
     `;
 
-    // 5. Generate secure random download token (32 bytes hex = 64 chars)
     const downloadToken = crypto.randomBytes(32).toString("hex");
 
-    // 6. Insert download record
+    // TODO: when subscriptions are added, derive tier from product_key
     await sql`
       INSERT INTO downloads (
         user_email, 
